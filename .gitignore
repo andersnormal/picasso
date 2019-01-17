@@ -1,0 +1,15 @@
+
+# dist
+bin
+pkg
+packrd
+
+# tools
+
+vendor
+
+debug
+
+# test
+*.out
+coverage.html
