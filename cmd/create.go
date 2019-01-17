@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/andersnormal/picassso/utils"
 
 	"github.com/gobuffalo/packr/v2"
 	"github.com/spf13/cobra"
@@ -14,17 +15,24 @@ func init() {
 var Create = &cobra.Command{
 	Use:   "create",
 	Short: "creates a new project",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("creating project")
 
-		box := packr.New("myBox", "../templates")
-
-		s, err := box.FindString("_README.md")
-		if err != nil {
-			log.Fatal(err)
+		// use readme generator
+		if err := generate(packr.New("readme", "../templates/readme")); err != nil {
+			return err
 		}
-		fmt.Println(s)
 
-		return
+		return nil
 	},
+}
+
+func generate(b *packr.Box) error {
+	g := utils.NewGenerator(b, &utils.GeneratorContext{})
+
+	if err := g.Write(); err != nil {
+		return err
+	}
+
+	return nil
 }
