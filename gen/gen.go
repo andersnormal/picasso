@@ -1,35 +1,13 @@
-package utils
+package gen
 
 import (
-	"fmt"
 	"os"
+	"text/template"
 
 	"github.com/gobuffalo/packr/v2"
 )
 
-type Generator interface {
-	// Write all of the templates
-	Write() error
-}
-
-type GeneratorContext struct {
-	Project string
-}
-
-type generator struct {
-	gc   *GeneratorContext
-	opts *Opts
-	box  *packr.Box
-}
-
-type Opt func(*Opts)
-
-type Opts struct {
-	// Dir is the directory to write to
-	Dir string
-}
-
-func NewGenerator(b *packr.Box, gc *GeneratorContext, opts ...Opt) Generator {
+func NewGenerator(b *packr.Box, gc Context, opts ...Opt) Generator {
 	options := &Opts{}
 
 	var g = new(generator)
@@ -59,11 +37,16 @@ func (g *generator) writeWalkFunc() packr.WalkFunc {
 		if err != nil {
 			return err
 		}
+		defer fs.Close()
 
-		_, err = fs.WriteString(f.String())
-		fmt.Printf("created %s\n", fs.Name())
+		t, err := template.New("test").Parse(f.String())
+		if err != nil {
+			return err
+		}
 
-		fs.Sync()
+		if err = t.Execute(fs, g.gc); err != nil {
+			return err
+		}
 
 		return nil
 	}

@@ -4,8 +4,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/andersnormal/picassso/cmd"
-	"github.com/andersnormal/picassso/config"
+	"github.com/andersnormal/picasso/cmd"
+	"github.com/andersnormal/picasso/config"
 
 	"github.com/spf13/cobra"
 )

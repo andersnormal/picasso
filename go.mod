@@ -1,4 +1,4 @@
-module github.com/andersnormal/picassso
+module github.com/andersnormal/picasso
 
 require (
 	github.com/coreos/etcd v3.3.11+incompatible // indirect

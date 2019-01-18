@@ -6,8 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-}
+func init() {}
 
 var Build = &cobra.Command{
 	Use:   "build",
