@@ -2,32 +2,20 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"text/template"
 
+	"github.com/andersnormal/picasso/context"
 	"github.com/andersnormal/picasso/gen"
 
 	"github.com/gobuffalo/packr/v2"
 	"github.com/spf13/cobra"
 )
 
-var _ gen.Context = (*context)(nil)
-var gc *context
-
-type context struct {
-	Project string
-}
-
-func (c *context) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringVar(&c.Project, "project", c.Project, "project name")
-}
-
-func (c *context) Execute(t *template.Template, f *os.File) error {
-	return t.Execute(f, c)
-}
+var (
+	gc gen.Context
+)
 
 func init() {
-	gc = new(context)
+	gc := context.NewCreateContext()
 	gc.Flags(Create)
 }
 

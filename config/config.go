@@ -6,9 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var C = NewConfig()
+const (
+	ConfigFile = ".picasso"
+)
 
-func NewConfig() *Config {
+func New() *Config {
 	c := &Config{
 		LogLevel: log.WarnLevel,
 	}
@@ -19,4 +21,7 @@ func NewConfig() *Config {
 func (c *Config) AddFlags(cmd *cobra.Command) {
 	// enable verbose output
 	cmd.PersistentFlags().BoolVar(&c.Verbose, "verbose", c.Verbose, "enable verbose output")
+
+	// enable verbose output
+	cmd.PersistentFlags().StringVar(&c.CfgFile, "config", c.CfgFile, "config file (default is .picasso.yaml)")
 }

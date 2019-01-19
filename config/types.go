@@ -5,8 +5,11 @@ import (
 )
 
 type Config struct {
+	// CfgFile
+	CfgFile string `envconfig:"PICASSO_CONFIG_FILE" default:""`
+
 	// LogFormat
-	LogFormat string `envconfig:"PICASSO_LOG_FORMAT" default:""`
+	LogFormat string `envconfig:"PICASSO_CONFIG_LOG_FORMAT" default:""`
 
 	// LogLevel
 	LogLevel log.Level
