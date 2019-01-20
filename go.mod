@@ -20,4 +20,5 @@ require (
 	golang.org/x/tools v0.0.0-20190116231616-b258f6da2383 // indirect
 	google.golang.org/appengine v1.2.0 // indirect
 	google.golang.org/grpc v1.18.0
+	gopkg.in/yaml.v2 v2.2.2
 )

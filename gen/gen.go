@@ -75,7 +75,7 @@ func configure(g *generator, opts ...Opt) error {
 	}
 
 	if g.opts.FileMode == 0 {
-		g.opts.FileMode = 0777
+		g.opts.FileMode = 0775
 	}
 
 	return nil

@@ -7,14 +7,17 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/config"
+	"github.com/andersnormal/picasso/settings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
 	cfg *config.Config
+)
+
+var (
+	defaults = settings.NewDefaults()
 )
 
 var rootCmd = &cobra.Command{
@@ -52,22 +55,6 @@ func init() {
 }
 
 func initConfig() {
-	// reading config file
-	if cfg.CfgFile != "" {
-		viper.SetConfigFile(cfg.CfgFile)
-	} else {
-		dir, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		viper.AddConfigPath(dir)
-		viper.SetConfigName(config.ConfigFile)
-	}
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("could not read config: %v", err)
-	}
 }
 
 func Execute() {

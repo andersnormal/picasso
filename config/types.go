@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	// CfgFile
-	CfgFile string `envconfig:"PICASSO_CONFIG_FILE" default:""`
+	File string `envconfig:"PICASSO_CONFIG_FILE" default:".picasso.yaml"`
 
 	// LogFormat
 	LogFormat string `envconfig:"PICASSO_CONFIG_LOG_FORMAT" default:""`

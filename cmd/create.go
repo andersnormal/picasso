@@ -5,18 +5,16 @@ import (
 	"path"
 
 	"github.com/andersnormal/picasso/gen"
+	"github.com/andersnormal/picasso/settings"
 
 	"github.com/gobuffalo/packr/v2"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
-	Create.Flags().String("name", "", "name")
-	Create.Flags().String("author", "", "author")
-
-	viper.BindPFlag("name", Create.Flags().Lookup("name"))
-	viper.BindPFlag("author", Create.Flags().Lookup("author"))
+	Create.Flags().StringVar(&defaults.Author, "author", defaults.Author, "author")
+	Create.Flags().StringVar(&defaults.Project, "project", defaults.Project, "project")
 }
 
 var Create = &cobra.Command{
@@ -43,22 +41,25 @@ var Create = &cobra.Command{
 		}
 
 		// opts for generator
-		opts := []gen.Opt{func(o *gen.Opts) {
+		gopts := []gen.Opt{func(o *gen.Opts) {
 			o.Dir = cwd
 		}}
 
-		// construct context
-		gc := struct {
-			Name   string
-			Author string
-		}{
-			Name:   viper.GetString("name"),
-			Author: viper.GetString("author"),
+		// use README generator
+		if err := generate(packr.New("readme", "../templates/readme"), defaults, gopts...); err != nil {
+			return err
 		}
 
-		// use README generator
-		if err := generate(packr.New("readme", "../templates/readme"), gc, opts...); err != nil {
-			return err
+		// settings opts
+		sopts := []settings.Opt{func(o *settings.Opts) {
+			o.File = cfg.File
+			o.FileMode = cfg.FileMode
+		}}
+
+		// read in config
+		s := settings.New(sopts...)
+		if err = s.Write(defaults); err != nil {
+			log.Fatal(err)
 		}
 
 		return nil

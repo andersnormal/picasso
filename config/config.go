@@ -8,14 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	ConfigFile = ".picasso"
-)
-
 func New() *Config {
 	c := &Config{
 		LogLevel: log.WarnLevel,
-		FileMode: 0777,
 	}
 	envconfig.Process("", c)
 	return c
@@ -30,5 +25,5 @@ func (c *Config) AddFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().BoolVar(&c.Verbose, "verbose", c.Verbose, "enable verbose output")
 
 	// enable verbose output
-	cmd.PersistentFlags().StringVar(&c.CfgFile, "config", c.CfgFile, "config file (default is .picasso.yaml)")
+	cmd.PersistentFlags().StringVar(&c.File, "config", c.File, "config file (default is .picasso.yaml)")
 }
