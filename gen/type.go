@@ -2,10 +2,8 @@ package gen
 
 import (
 	"os"
-	"text/template"
 
 	"github.com/gobuffalo/packr/v2"
-	"github.com/spf13/cobra"
 )
 
 type Generator interface {
@@ -13,13 +11,7 @@ type Generator interface {
 	Write() error
 }
 
-type Context interface {
-	// Flags is adding flags to the command
-	// mapping from the command to the struct
-	Flags(cmd *cobra.Command)
-	// Execute and write to file
-	Execute(t *template.Template, f *os.File) error
-}
+type Context interface{}
 
 type generator struct {
 	gc   Context
@@ -32,4 +24,6 @@ type Opt func(*Opts)
 type Opts struct {
 	// Dir is the directory to write to
 	Dir string
+	// FileMode
+	FileMode os.FileMode
 }

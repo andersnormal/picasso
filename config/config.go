@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -13,9 +15,14 @@ const (
 func New() *Config {
 	c := &Config{
 		LogLevel: log.WarnLevel,
+		FileMode: 0777,
 	}
 	envconfig.Process("", c)
 	return c
+}
+
+func (c *Config) Cwd() (string, error) {
+	return os.Getwd()
 }
 
 func (c *Config) AddFlags(cmd *cobra.Command) {

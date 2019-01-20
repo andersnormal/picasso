@@ -7,7 +7,7 @@ import (
 	"github.com/andersnormal/picasso/gen"
 
 	"github.com/spf13/cobra"
-	// "github.com/spf13/viper"
+	"github.com/spf13/viper"
 )
 
 var _ gen.Context = (*createContext)(nil)
@@ -24,6 +24,9 @@ type createContext struct {
 func (c *createContext) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&c.Project, "project", c.Project, "project name")
 	cmd.Flags().StringVar(&c.Author, "author", c.Author, "author")
+
+	viper.BindPFlag("project", cmd.Flags().Lookup("project"))
+	viper.BindPFlag("author", cmd.Flags().Lookup("author"))
 }
 
 func (c *createContext) Execute(t *template.Template, f *os.File) error {

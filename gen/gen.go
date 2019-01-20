@@ -2,6 +2,8 @@ package gen
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/gobuffalo/packr/v2"
@@ -32,8 +34,15 @@ func (g *generator) Write() error {
 // +private
 
 func (g *generator) writeWalkFunc() packr.WalkFunc {
-	return func(s string, f packr.File) error {
-		fs, err := os.Create(s)
+	return func(n string, f packr.File) error {
+		name := strings.TrimPrefix(filepath.Base(n), "_")
+		fp := filepath.Join(g.opts.Dir, filepath.Dir(n))
+
+		if err := MkdirAll(fp, g.opts.FileMode); err != nil {
+			return err
+		}
+
+		fs, err := os.Create(filepath.Join(fp, name))
 		if err != nil {
 			return err
 		}
@@ -52,9 +61,21 @@ func (g *generator) writeWalkFunc() packr.WalkFunc {
 	}
 }
 
+func MkdirAll(path string, mode os.FileMode) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return os.MkdirAll(path, mode)
+	}
+
+	return nil
+}
+
 func configure(g *generator, opts ...Opt) error {
 	for _, o := range opts {
 		o(g.opts)
+	}
+
+	if g.opts.FileMode == 0 {
+		g.opts.FileMode = 0777
 	}
 
 	return nil

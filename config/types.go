@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,4 +18,7 @@ type Config struct {
 
 	// Verbose
 	Verbose bool `envconfig:"PICASSO_VERBOSE"`
+
+	// FileMode
+	FileMode os.FileMode
 }

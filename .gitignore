@@ -2,10 +2,9 @@
 # dist
 bin
 pkg
-packrd
+picasso
 
 # tools
-
 vendor
 
 debug
