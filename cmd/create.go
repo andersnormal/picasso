@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/andersnormal/picasso/templates"
 	"path"
 
 	"github.com/andersnormal/picasso/gen"
@@ -10,6 +11,10 @@ import (
 	"github.com/gobuffalo/packr/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+)
+
+var (
+	readmePackr = packr.New("readme", "../templates/readme")
 )
 
 func init() {
@@ -35,24 +40,22 @@ var Create = &cobra.Command{
 			cwd = path.Join(cwd, args[0])
 		}
 
-		// try to create path
-		if err := gen.MkdirAll(cwd, cfg.FileMode); err != nil {
-			return err
+		// opts for generator
+		gopts := []gen.Opt{
+			func(o *gen.Opts) {
+				o.Dir = cwd
+				o.Templates = templates.Packr
+			},
 		}
 
-		// opts for generator
-		gopts := []gen.Opt{func(o *gen.Opts) {
-			o.Dir = cwd
-		}}
-
 		// use README generator
-		if err := generate(packr.New("readme", "../templates/readme"), defaults, gopts...); err != nil {
+		if err := generate(readmePackr, defaults, gopts...); err != nil {
 			return err
 		}
 
 		// settings opts
 		sopts := []settings.Opt{func(o *settings.Opts) {
-			o.File = cfg.File
+			o.File = path.Join(cwd, settings.DefaultFile)
 			o.FileMode = cfg.FileMode
 		}}
 

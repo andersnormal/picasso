@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	defaultFile     = ".picasso.yaml"
-	defaultFileMode = 0755
+	DefaultFile     = ".picasso.yaml"
+	DefaultFileMode = 0755
 )
 
 func NewDefaults() *Defaults {
@@ -67,11 +67,11 @@ func configure(s *settings, opts ...Opt) error {
 	}
 
 	if s.opts.File == "" {
-		s.opts.File = defaultFile
+		s.opts.File = DefaultFile
 	}
 
 	if s.opts.FileMode == 0 {
-		s.opts.FileMode = defaultFileMode
+		s.opts.FileMode = DefaultFileMode
 	}
 
 	return nil

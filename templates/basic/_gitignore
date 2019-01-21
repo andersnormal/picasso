@@ -1,0 +1,12 @@
+
+# dist
+bin
+pkg
+
+# tools
+vendor
+
+# test
+debug
+*.out
+coverage.html

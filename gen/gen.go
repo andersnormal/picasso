@@ -1,11 +1,12 @@
 package gen
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 
+	"github.com/andersnormal/picasso/templates"
 	"github.com/gobuffalo/packr/v2"
 )
 
@@ -16,6 +17,7 @@ func NewGenerator(b *packr.Box, gc Context, opts ...Opt) Generator {
 	g.opts = options
 	g.gc = gc
 	g.box = b
+	g.templates = make(templates.Templates)
 
 	configure(g, opts...)
 
@@ -35,10 +37,16 @@ func (g *generator) Write() error {
 
 func (g *generator) writeWalkFunc() packr.WalkFunc {
 	return func(n string, f packr.File) error {
-		name := strings.TrimPrefix(filepath.Base(n), "_")
-		fp := filepath.Join(g.opts.Dir, filepath.Dir(n))
+		target := n
+		if v, ok := g.templates[n]; ok {
+			target = v
+		}
 
-		if err := MkdirAll(fp, g.opts.FileMode); err != nil {
+		name := filepath.Base(target)
+		fp := filepath.Join(g.opts.Dir, filepath.Dir(target))
+
+		if err := MkdirAll(fp, os.FileMode(g.opts.FileMode)); err != nil {
+			fmt.Println(err)
 			return err
 		}
 
@@ -74,8 +82,10 @@ func configure(g *generator, opts ...Opt) error {
 		o(g.opts)
 	}
 
+	g.templates = g.opts.Templates
+
 	if g.opts.FileMode == 0 {
-		g.opts.FileMode = 0775
+		g.opts.FileMode = 0755
 	}
 
 	return nil
