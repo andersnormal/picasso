@@ -15,6 +15,7 @@ import (
 
 var (
 	readmePackr = packr.New("readme", "../templates/readme")
+	basicPackr  = packr.New("readme", "../templates/basic")
 )
 
 func init() {
