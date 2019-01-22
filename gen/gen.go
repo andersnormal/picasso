@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"text/template"
 
-	"github.com/andersnormal/picasso/templates"
+	"github.com/andersnormal/picasso/templr"
+	"github.com/andersnormal/picasso/utils"
+
 	"github.com/gobuffalo/packr/v2"
 )
 
@@ -17,7 +18,7 @@ func NewGenerator(b *packr.Box, gc Context, opts ...Opt) Generator {
 	g.opts = options
 	g.gc = gc
 	g.box = b
-	g.templates = make(templates.Templates)
+	g.templates = make(map[string]string)
 
 	configure(g, opts...)
 
@@ -43,25 +44,35 @@ func (g *generator) writeWalkFunc() packr.WalkFunc {
 		}
 
 		name := filepath.Base(target)
-		fp := filepath.Join(g.opts.Dir, filepath.Dir(target))
+		dp := filepath.Join(g.opts.Dir, filepath.Dir(target))
 
-		if err := MkdirAll(fp, os.FileMode(g.opts.FileMode)); err != nil {
+		if err := MkdirAll(dp, os.FileMode(g.opts.FileMode)); err != nil {
 			fmt.Println(err)
 			return err
 		}
 
-		fs, err := os.Create(filepath.Join(fp, name))
+		fp := filepath.Join(dp, name)
+		if ok, _ := utils.FileExists(fp); !ok {
+			fmt.Printf("picasso: %s already exists", fp)
+			// do not create, but do not error
+			return nil
+		}
+
+		fs, err := os.Create(fp)
 		if err != nil {
 			return err
 		}
 		defer fs.Close()
 
-		t, err := template.New("test").Parse(f.String())
-		if err != nil {
-			return err
+		topts := []templr.Opt{
+			func(o *templr.Opts) {
+				o.Vars = g.opts.Vars
+			},
 		}
 
-		if err = t.Execute(fs, g.gc); err != nil {
+		t := templr.New(topts...)
+		_, err = fs.WriteString(t.Parse(f.String()))
+		if err != nil {
 			return err
 		}
 

@@ -2,6 +2,7 @@ module github.com/andersnormal/picasso
 
 require (
 	github.com/coreos/etcd v3.3.11+incompatible // indirect
+	github.com/fatih/structs v1.1.0
 	github.com/gobuffalo/buffalo-plugins v1.11.0 // indirect
 	github.com/gobuffalo/flect v0.0.0-20190117183517-bea7f920a9f1 // indirect
 	github.com/gobuffalo/packr v1.21.9 // indirect

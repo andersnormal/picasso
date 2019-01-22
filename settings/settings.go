@@ -14,10 +14,6 @@ const (
 	DefaultFileMode = 0755
 )
 
-func NewDefaults() *Defaults {
-	return &Defaults{}
-}
-
 func New(opts ...Opt) Settings {
 	options := &Opts{}
 

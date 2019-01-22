@@ -3,7 +3,8 @@ package gen
 import (
 	"os"
 
-	"github.com/andersnormal/picasso/templates"
+	"github.com/andersnormal/picasso/templr"
+
 	"github.com/gobuffalo/packr/v2"
 )
 
@@ -18,7 +19,7 @@ type generator struct {
 	gc        Context
 	opts      *Opts
 	box       *packr.Box
-	templates templates.Templates
+	templates map[string]string
 }
 
 type Opt func(*Opts)
@@ -29,5 +30,7 @@ type Opts struct {
 	// FileMode
 	FileMode os.FileMode
 	// Templates
-	Templates templates.Templates
+	Templates map[string]string
+	// Vars
+	Vars templr.Vars
 }

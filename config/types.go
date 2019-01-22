@@ -22,3 +22,8 @@ type Config struct {
 	// FileMode
 	FileMode os.FileMode
 }
+
+type Settings struct {
+	Author  string `yaml:"author,omitempty" json:"author,omitempty"`
+	Project string `yaml:"project,omitempty" json:"project,omitempty"`
+}

@@ -1,9 +1,7 @@
 package templates
 
-type Templates = map[string]string
-
 var (
-	Packr = Templates{
+	Packr = map[string]string{
 		"_README.md":       "README.md",
 		"_CHANGELOG.md":    "CHANGELOG.md",
 		"_CONTRIBUTORS.md": "CONTRIBUTORS.md",

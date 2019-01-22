@@ -2,6 +2,7 @@ package templr
 
 import (
 	"bytes"
+
 	"text/template"
 )
 
@@ -44,6 +45,8 @@ func configure(t *templr, opts ...Opt) error {
 	for _, o := range opts {
 		o(t.opts)
 	}
+
+	t.vars = t.opts.Vars
 
 	return nil
 }

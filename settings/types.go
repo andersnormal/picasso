@@ -19,8 +19,3 @@ type Opts struct {
 	File     string
 	FileMode os.FileMode
 }
-
-type Defaults struct {
-	Author  string `yaml:"author,omitempty" json:"author,omitempty"`
-	Project string `yaml:"project,omitempty" json:"project,omitempty"`
-}

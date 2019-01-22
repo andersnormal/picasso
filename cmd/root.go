@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/config"
-	"github.com/andersnormal/picasso/settings"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +16,7 @@ var (
 )
 
 var (
-	defaults = settings.NewDefaults()
+	settings = config.NewSettings()
 )
 
 var rootCmd = &cobra.Command{

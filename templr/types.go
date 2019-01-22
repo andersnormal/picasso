@@ -7,7 +7,6 @@ type Templr interface {
 
 type templr struct {
 	vars Vars
-
 	opts *Opts
 	err  error
 }
@@ -19,14 +18,5 @@ type Var string
 type Opt func(*Opts)
 
 type Opts struct {
+	Vars Vars
 }
-
-// todo: move to templates
-// type Templates map[string]*Template
-
-// type Template struct {
-// 	File        string
-// 	Output      string
-// 	IgnoreError bool `yaml:"ignore_error"`
-// 	Vars        Vars
-// }

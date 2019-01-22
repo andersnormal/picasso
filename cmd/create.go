@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/andersnormal/picasso/templates"
 	"path"
 
 	"github.com/andersnormal/picasso/gen"
-	"github.com/andersnormal/picasso/settings"
+	s "github.com/andersnormal/picasso/settings"
+	"github.com/andersnormal/picasso/templates"
 
 	"github.com/gobuffalo/packr/v2"
 	log "github.com/sirupsen/logrus"
@@ -19,8 +19,8 @@ var (
 )
 
 func init() {
-	Create.Flags().StringVar(&defaults.Author, "author", defaults.Author, "author")
-	Create.Flags().StringVar(&defaults.Project, "project", defaults.Project, "project")
+	Create.Flags().StringVar(&settings.Author, "author", settings.Author, "author")
+	Create.Flags().StringVar(&settings.Project, "project", settings.Project, "project")
 }
 
 var Create = &cobra.Command{
@@ -46,23 +46,24 @@ var Create = &cobra.Command{
 			func(o *gen.Opts) {
 				o.Dir = cwd
 				o.Templates = templates.Packr
+				o.Vars = settings.Vars()
 			},
 		}
 
 		// use README generator
-		if err := generate(readmePackr, defaults, gopts...); err != nil {
+		if err := generate(readmePackr, settings, gopts...); err != nil {
 			return err
 		}
 
 		// settings opts
-		sopts := []settings.Opt{func(o *settings.Opts) {
-			o.File = path.Join(cwd, settings.DefaultFile)
+		sopts := []s.Opt{func(o *s.Opts) {
+			o.File = path.Join(cwd, s.DefaultFile)
 			o.FileMode = cfg.FileMode
 		}}
 
 		// read in config
-		s := settings.New(sopts...)
-		if err = s.Write(defaults); err != nil {
+		s := s.New(sopts...)
+		if err = s.Write(settings); err != nil {
 			log.Fatal(err)
 		}
 
