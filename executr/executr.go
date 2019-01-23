@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"os/exec"
-	"time"
 )
 
 func New(opts ...Opt) Executr {
@@ -25,29 +24,26 @@ func (e *exectur) Run(ctx context.Context) error {
 		return ErrNoCmd
 	}
 
-	cmd := exec.Command(e.opts.Cmd)
+	cctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
+	defer cancel()
+
+	if e.opts.Timeout != 0 {
+		ctx = cctx // use context withtimeout
+	}
+
+	cmd := exec.CommandContext(ctx, e.opts.Cmd)
 	cmd.Stdin = e.opts.Stdin
 	cmd.Stdout = e.opts.Stdout
 	cmd.Stderr = e.opts.Stderr
 
-	if e.opts.Timeout == 0 {
-		err := cmd.Wait()
+	err := cmd.Run() // wait for the result of the command
 
-		return err
-	}
-
-	done := make(chan error)
-	go func() { done <- cmd.Wait() }()
-
-	timeout := time.After(e.opts.Timeout)
-
-	select {
-	case <-timeout:
-		cmd.Process.Kill()
+	// if we just hit the timeout
+	if ctx.Err() == context.DeadlineExceeded {
 		return ErrTimeout
-	case err := <-done:
-		return err
 	}
+
+	return err
 }
 
 func (e *exectur) Env() []string {
