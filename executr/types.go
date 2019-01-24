@@ -9,7 +9,9 @@ import (
 
 type Executr interface {
 	Run(ctx context.Context) error
-	Env() []string
+	Stdin() io.Reader
+	Stdout() io.Writer
+	Stderr() io.Writer
 }
 
 type Env map[string]string

@@ -23,7 +23,29 @@ type Config struct {
 	FileMode os.FileMode
 }
 
+// Task ...
+type Task struct {
+	Cmds []Cmd
+	Desc string
+	Vars Vars
+}
+
+// Cmd ...
+type Cmd string
+
+// Build ...
+type Build map[string]*Task
+
+// Vars ...
+type Vars map[string][]Var
+
+// Var
+type Var string
+
 type Settings struct {
-	Author  string `yaml:"author,omitempty" json:"author,omitempty"`
-	Project string `yaml:"project,omitempty" json:"project,omitempty"`
+	Version string
+	Author  string
+	Project string
+	Build   Build
+	Vars    Vars
 }

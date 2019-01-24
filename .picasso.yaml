@@ -1,2 +1,15 @@
+version: 1
+
 author: Sebastian Döll <sebastian@katallaxie.me>
+
 project: Picasso
+
+build:
+  preRun:
+    desc: before run
+    vars:
+      region:
+        - test
+    cmds:
+      - go test -v ./...
+      

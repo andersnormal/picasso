@@ -2,8 +2,10 @@ package executr
 
 import (
 	"context"
+	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func New(opts ...Opt) Executr {
@@ -19,6 +21,21 @@ func New(opts ...Opt) Executr {
 	return e
 }
 
+// Stdin ...
+func (e *exectur) Stdin() io.Reader {
+	return e.opts.Stdin
+}
+
+// Stdout ...
+func (e *exectur) Stdout() io.Writer {
+	return e.opts.Stdout
+}
+
+// Stderr ...
+func (e *exectur) Stderr() io.Writer {
+	return e.opts.Stderr
+}
+
 func (e *exectur) Run(ctx context.Context) error {
 	if (e.opts.Cmd) == "" {
 		return ErrNoCmd
@@ -31,7 +48,18 @@ func (e *exectur) Run(ctx context.Context) error {
 		ctx = cctx // use context withtimeout
 	}
 
-	cmd := exec.CommandContext(ctx, e.opts.Cmd)
+	f := strings.Fields(e.opts.Cmd)
+	name := f[0]
+	args := []string{}
+	if len(f) > 1 {
+		args = append(args, f[1:]...)
+	}
+	cmd := exec.CommandContext(ctx, name, args...)
+
+	// set env
+	cmd.Env = append(os.Environ(), e.opts.Env.Strings()...)
+
+	// setting output
 	cmd.Stdin = e.opts.Stdin
 	cmd.Stdout = e.opts.Stdout
 	cmd.Stderr = e.opts.Stderr
@@ -46,16 +74,21 @@ func (e *exectur) Run(ctx context.Context) error {
 	return err
 }
 
-func (e *exectur) Env() []string {
-	environ := os.Environ()
-	environ = append(environ, e.opts.Env.Strings()...)
-
-	return environ
-}
-
 func configure(e *exectur, opts ...Opt) error {
 	for _, o := range opts {
 		o(e.opts)
+	}
+
+	if e.opts.Stdin == nil {
+		e.opts.Stdin = os.Stdin
+	}
+
+	if e.opts.Stdout == nil {
+		e.opts.Stdout = os.Stdout
+	}
+
+	if e.opts.Stderr == nil {
+		e.opts.Stderr = os.Stderr
 	}
 
 	return nil

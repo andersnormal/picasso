@@ -7,6 +7,7 @@ import (
 	"github.com/andersnormal/picasso/gen"
 	s "github.com/andersnormal/picasso/settings"
 	"github.com/andersnormal/picasso/templates"
+	"github.com/andersnormal/picasso/templr"
 
 	"github.com/gobuffalo/packr/v2"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +47,10 @@ var Create = &cobra.Command{
 			func(o *gen.Opts) {
 				o.Dir = cwd
 				o.Templates = templates.Packr
-				o.Vars = settings.Vars()
+				o.Vars = templr.Vars{
+					"author":  templr.Var(settings.Author),
+					"project": templr.Var(settings.Project),
+				}
 			},
 		}
 
