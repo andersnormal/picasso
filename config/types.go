@@ -3,6 +3,8 @@ package config
 import (
 	"os"
 
+	"github.com/andersnormal/picasso/templates"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,9 +27,10 @@ type Config struct {
 
 // Task ...
 type Task struct {
-	Cmds []Cmd
-	Desc string
-	Vars Vars
+	Cmds      []Cmd
+	Desc      string
+	Vars      Vars
+	Templates templates.Templates
 }
 
 // Cmd ...

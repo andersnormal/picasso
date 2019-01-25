@@ -12,4 +12,10 @@ build:
         - test
     cmds:
       - go test -v ./...
+    templates:
+      - 
+        file: ./examples/config.json.tpl
+        output: ./config.json
+        vars:
+          foo: bar
       

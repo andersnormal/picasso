@@ -1,14 +1,16 @@
 package templates
 
-import (
-	"github.com/andersnormal/picasso/templr"
-)
+import ()
 
 type Templates []*Template
+
+type Vars map[string]Var
+
+type Var string
 
 type Template struct {
 	File        string
 	Output      string
 	IgnoreError bool `yaml:"ignore_error"`
-	Vars        templr.Vars
+	Vars        Vars
 }

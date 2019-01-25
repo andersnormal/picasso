@@ -3,12 +3,16 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 	"path"
 	"time"
 
 	"github.com/andersnormal/picasso/config"
 	"github.com/andersnormal/picasso/executr"
 	s "github.com/andersnormal/picasso/settings"
+	"github.com/andersnormal/picasso/templates"
+	"github.com/andersnormal/picasso/templr"
+	"github.com/andersnormal/picasso/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -41,12 +45,20 @@ var Build = &cobra.Command{
 		// new settings
 		settings := config.NewSettings()
 		ss := s.New(sopts...)
-		ss.Read(&settings)
+		if err := ss.Read(&settings); err != nil {
+			return err
+		}
 
 		for _, hook := range hooks {
 			task, ok := settings.Build[hook]
 			if !ok {
 				continue
+			}
+
+			for _, tmpl := range task.Templates {
+				if err := writeTemplate(ctx, cwd, tmpl); err != nil {
+					return err
+				}
 			}
 
 			fmt.Printf("executing %s", task.Desc)
@@ -59,6 +71,39 @@ var Build = &cobra.Command{
 
 		return nil
 	},
+}
+
+func writeTemplate(ctx context.Context, cwd string, tmpl *templates.Template) error {
+	in := path.Join(cwd, tmpl.File)
+	out := path.Join(cwd, tmpl.Output)
+
+	t, err := utils.Stream(in)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(out)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	topts := []templr.Opt{
+		func(o *templr.Opts) {
+			o.Vars = make(templr.Vars)
+			for k, v := range tmpl.Vars {
+				o.Vars[k] = templr.Var(v)
+			}
+		},
+	}
+
+	tr := templr.New(topts...)
+	_, err = f.WriteString(tr.Parse(string(t)))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func execTask(ctx context.Context, task *config.Task) error {
