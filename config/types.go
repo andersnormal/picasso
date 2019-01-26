@@ -28,6 +28,7 @@ type Config struct {
 // Task ...
 type Task struct {
 	Cmds      []Cmd
+	Paths     []string
 	Desc      string
 	Vars      Vars
 	Templates templates.Templates
@@ -36,8 +37,11 @@ type Task struct {
 // Cmd ...
 type Cmd string
 
-// Build ...
-type Build map[string]*Task
+// Tasks ...
+type Tasks map[string]*Task
+
+// Watch ...
+type Watch map[string]interface{}
 
 // Vars ...
 type Vars map[string][]Var
@@ -45,10 +49,11 @@ type Vars map[string][]Var
 // Var
 type Var string
 
+// Settings ...
 type Settings struct {
 	Version string
 	Author  string
 	Project string
-	Build   Build
+	Tasks   Tasks
 	Vars    Vars
 }

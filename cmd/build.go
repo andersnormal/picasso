@@ -23,54 +23,65 @@ var (
 	hooks = []string{"preRun", "postRun"}
 )
 
+func init() {
+	Build.Flags().StringVar(&settings.Author, "author", settings.Author, "author")
+	Build.Flags().StringVar(&settings.Project, "project", settings.Project, "project")
+}
+
 var Build = &cobra.Command{
 	Use:   "build",
 	Short: "build a new project",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-		defer cancel()
+	RunE:  buildRunE,
+}
 
-		// configure path
-		cwd, err := cfg.Cwd()
-		if err != nil {
-			return err
+func buildRunE(cmd *cobra.Command, args []string) error {
+	var (
+		hooks = []string{"preRun", "postRun"}
+	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	// configure path
+	cwd, err := cfg.Cwd()
+	if err != nil {
+		return err
+	}
+
+	// settings opts
+	sopts := []s.Opt{func(o *s.Opts) {
+		o.File = path.Join(cwd, cfg.File)
+		o.FileMode = cfg.FileMode
+	}}
+
+	// new settings
+	settings := config.NewSettings()
+	ss := s.New(sopts...)
+	if err := ss.Read(&settings); err != nil {
+		return err
+	}
+
+	for _, hook := range hooks {
+		task, ok := settings.Tasks[hook]
+		if !ok {
+			continue
 		}
 
-		// settings opts
-		sopts := []s.Opt{func(o *s.Opts) {
-			o.File = path.Join(cwd, cfg.File)
-			o.FileMode = cfg.FileMode
-		}}
-
-		// new settings
-		settings := config.NewSettings()
-		ss := s.New(sopts...)
-		if err := ss.Read(&settings); err != nil {
-			return err
-		}
-
-		for _, hook := range hooks {
-			task, ok := settings.Build[hook]
-			if !ok {
-				continue
-			}
-
-			for _, tmpl := range task.Templates {
-				if err := writeTemplate(ctx, cwd, tmpl); err != nil {
-					return err
-				}
-			}
-
-			fmt.Printf("executing %s", task.Desc)
-
-			err := execTask(ctx, task)
-			if err != nil {
+		for _, tmpl := range task.Templates {
+			if err := writeTemplate(ctx, cwd, tmpl); err != nil {
 				return err
 			}
 		}
 
-		return nil
-	},
+		fmt.Printf("executing %s", task.Desc)
+
+		err := execTask(ctx, task)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func writeTemplate(ctx context.Context, cwd string, tmpl *templates.Template) error {

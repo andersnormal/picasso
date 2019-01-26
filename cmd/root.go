@@ -48,6 +48,7 @@ func init() {
 	rootCmd.AddCommand(Create)
 	rootCmd.AddCommand(Build)
 	rootCmd.AddCommand(Test)
+	rootCmd.AddCommand(Watch)
 
 	// initialize upon running commands
 	cobra.OnInitialize(initConfig)

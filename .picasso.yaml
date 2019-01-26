@@ -4,7 +4,16 @@ author: Sebastian Döll <sebastian@katallaxie.me>
 
 project: Picasso
 
-build:
+tasks:
+  watch:
+    cmds:
+      - go test -v -race ./...
+    paths:
+      - examples
+    ignore:
+      - .gitignore
+      - .picasso.yml
+
   preRun:
     desc: before run
     vars:
