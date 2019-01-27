@@ -1,11 +1,15 @@
 package watcher
 
 import (
+	"context"
+
+	"github.com/andersnormal/picasso/task"
+
 	"github.com/fsnotify/fsnotify"
 )
 
 type Watcher interface {
-	Watch() error
+	Reload(ctx context.Context) error
 	Errors() <-chan error
 	Events() <-chan fsnotify.Event
 	Close()
@@ -15,6 +19,7 @@ type Watcher interface {
 type watcher struct {
 	opts *Opts
 	stop chan bool
+	task *task.Task
 
 	fs *fsnotify.Watcher
 }

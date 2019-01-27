@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"path"
 
@@ -19,6 +20,9 @@ var Watch = &cobra.Command{
 	Short: "watch your developmetn",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("watching files (press ctrl-c to stop) ...")
+
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
 
 		// configure path
 		cwd, err := cfg.Cwd()
@@ -52,8 +56,8 @@ var Watch = &cobra.Command{
 		}}
 
 		// create watcher
-		w := watcher.New(wopts...)
-		err = w.Watch()
+		w := watcher.New(task, wopts...)
+		err = w.Reload(ctx)
 
 		return nil
 	},

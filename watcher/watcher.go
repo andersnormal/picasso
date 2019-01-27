@@ -1,18 +1,21 @@
 package watcher
 
 import (
-	"fmt"
+	"context"
 	"path"
 	"time"
+
+	"github.com/andersnormal/picasso/task"
 
 	"github.com/fsnotify/fsnotify"
 )
 
-func New(opts ...Opt) Watcher {
+func New(task *task.Task, opts ...Opt) Watcher {
 	options := &Opts{}
 
 	var w = new(watcher)
 	w.opts = options
+	w.task = task
 
 	configure(w, opts...)
 
@@ -27,7 +30,7 @@ func (w *watcher) Events() <-chan fsnotify.Event {
 	return w.fs.Events
 }
 
-func (w *watcher) Watch() error {
+func (w *watcher) Reload(ctx context.Context) error {
 	ticker := time.NewTicker(1 * time.Second)
 
 	fs, err := fsnotify.NewWatcher()
@@ -45,8 +48,10 @@ func (w *watcher) Watch() error {
 	for {
 		select {
 		case <-ticker.C:
-		case event := <-w.fs.Events:
-			fmt.Println(event.Name, event.Op)
+		case <-w.fs.Events:
+			if err := w.task.Exec(ctx); err != nil {
+				return err
+			}
 		default:
 		}
 	}
