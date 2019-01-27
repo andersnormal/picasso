@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/andersnormal/picasso/templates"
+	"github.com/andersnormal/picasso/task"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -25,24 +25,6 @@ type Config struct {
 	FileMode os.FileMode
 }
 
-// Task ...
-type Task struct {
-	Cmds      []Cmd
-	Paths     []string
-	Desc      string
-	Vars      Vars
-	Templates templates.Templates
-}
-
-// Cmd ...
-type Cmd string
-
-// Tasks ...
-type Tasks map[string]*Task
-
-// Watch ...
-type Watch map[string]interface{}
-
 // Vars ...
 type Vars map[string][]Var
 
@@ -54,6 +36,6 @@ type Settings struct {
 	Version string
 	Author  string
 	Project string
-	Tasks   Tasks
+	Tasks   task.Tasks
 	Vars    Vars
 }

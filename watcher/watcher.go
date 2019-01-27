@@ -19,6 +19,14 @@ func New(opts ...Opt) Watcher {
 	return w
 }
 
+func (w *watcher) Errors() <-chan error {
+	return w.fs.Errors
+}
+
+func (w *watcher) Events() <-chan fsnotify.Event {
+	return w.fs.Events
+}
+
 func (w *watcher) Watch() error {
 	ticker := time.NewTicker(1 * time.Second)
 
@@ -37,8 +45,8 @@ func (w *watcher) Watch() error {
 	for {
 		select {
 		case <-ticker.C:
-		case events := <-w.fs.Events:
-			fmt.Println(events)
+		case event := <-w.fs.Events:
+			fmt.Println(event.Name, event.Op)
 		default:
 		}
 	}

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/config"
-	"github.com/andersnormal/picasso/executr"
 	s "github.com/andersnormal/picasso/settings"
 	"github.com/andersnormal/picasso/templates"
 	"github.com/andersnormal/picasso/templr"
@@ -75,7 +74,7 @@ func buildRunE(cmd *cobra.Command, args []string) error {
 
 		fmt.Printf("executing %s", task.Desc)
 
-		err := execTask(ctx, task)
+		err := task.Exec(ctx)
 		if err != nil {
 			return err
 		}
@@ -112,23 +111,6 @@ func writeTemplate(ctx context.Context, cwd string, tmpl *templates.Template) er
 	_, err = f.WriteString(tr.Parse(string(t)))
 	if err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func execTask(ctx context.Context, task *config.Task) error {
-	for _, cmd := range task.Cmds {
-		opts := []executr.Opt{func(o *executr.Opts) {
-			o.Cmd = string(cmd)
-		}}
-
-		e := executr.New(opts...)
-
-		if err := e.Run(ctx); err != nil {
-			return err
-		}
-
 	}
 
 	return nil

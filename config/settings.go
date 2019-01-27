@@ -1,14 +1,14 @@
 package config
 
 import (
-// "github.com/andersnormal/picasso/templr"
+	"github.com/andersnormal/picasso/task"
 )
 
 func NewSettings() *Settings {
 	return &Settings{}
 }
 
-func (s *Settings) Task(n string) (*Task, error) {
+func (s *Settings) Task(n string) (*task.Task, error) {
 	task, ok := s.Tasks[n]
 	if !ok {
 		return nil, ErrNoWatch
@@ -22,7 +22,7 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		Version string
 		Author  string
 		Project string
-		Tasks   Tasks
+		Tasks   task.Tasks
 		Vars    Vars
 	}
 	if err := unmarshal(&settings); err != nil {

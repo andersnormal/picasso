@@ -6,6 +6,8 @@ import (
 
 type Watcher interface {
 	Watch() error
+	Errors() <-chan error
+	Events() <-chan fsnotify.Event
 	Close()
 	Stop()
 }
