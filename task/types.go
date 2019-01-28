@@ -7,13 +7,20 @@ import (
 // Tasks ...
 type Tasks map[string]*Task
 
+// Watch
+type Watch struct {
+	Paths  []string `yaml:"paths,omitempty"`
+	Ignore []string `yaml:"ignore,omitempty"`
+}
+
 // Task ...
 type Task struct {
-	Cmds      []Cmd
-	Paths     []string
-	Desc      string
-	Vars      Vars
-	Templates templates.Templates
+	Cmds      []Cmd               `yaml:"cmds,omitempty"`
+	Paths     []string            `yaml:"paths,omitempty"`
+	Desc      string              `yaml:"desc,omitempty"`
+	Vars      Vars                `yaml:"vars,omitempty"`
+	Watch     Watch               `yaml:"watch,omitempty"`
+	Templates templates.Templates `yaml:"templates,omitempty"`
 }
 
 // Cmd ...

@@ -5,22 +5,19 @@ author: Sebastian Döll <sebastian@katallaxie.me>
 project: Picasso
 
 tasks:
-  watch:
-    cmds:
-      - go test -v -race ./...
-    paths:
-      - examples
-    ignore:
-      - .gitignore
-      - .picasso.yml
-
-  preRun:
+  build:
     desc: before run
     vars:
       region:
         - test
     cmds:
       - go test -v ./...
+    watch:
+      paths:
+        - examples
+      ignore:
+        - .gitignore
+        - .picasso.yml
     templates:
       - 
         file: ./examples/config.json.tpl
