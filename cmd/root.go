@@ -17,10 +17,6 @@ var (
 	cfg *config.Config
 )
 
-var (
-	settings = config.NewSettings()
-)
-
 var root = &cobra.Command{
 	Use:     "picasso",
 	Version: "0.0.1",
@@ -33,6 +29,7 @@ func init() {
 	// seed
 	rand.Seed(time.Now().UnixNano())
 
+	// init config
 	// create config
 	cfg = config.New()
 
@@ -47,18 +44,21 @@ func init() {
 	root.SilenceUsage = true
 
 	// add commands
-	addComamnds(root)
+	addTaskCommands(root)
 
 	// initialize upon running commands
 	cobra.OnInitialize(initConfig)
 }
 
-func addComamnds(root *cobra.Command) error {
+func addTaskCommands(root *cobra.Command) error {
 	// configure path
 	cwd, err := cfg.Cwd()
 	if err != nil {
 		return err
 	}
+
+	// add create task
+	root.AddCommand(generateCreate(cwd))
 
 	// settings opts
 	sopts := []s.Opt{func(o *s.Opts) {
@@ -69,22 +69,19 @@ func addComamnds(root *cobra.Command) error {
 	// new settings
 	settings := config.NewSettings()
 	ss := s.New(sopts...)
-	if err := ss.Read(&settings); err != nil {
+	if err := ss.Read(&settings); err != nil && err != os.ErrNotExist {
 		return err
 	}
 
+	// attach tasks
 	for use, task := range settings.Tasks {
 		root.AddCommand(generateTask(use, task))
 	}
 
-	// add create not programmatically
-	root.AddCommand(Create)
-
 	return nil
 }
 
-func initConfig() {
-}
+func initConfig() {}
 
 func Execute() {
 	if err := root.Execute(); err != nil {
