@@ -2,6 +2,13 @@
 
 Picasso is a tool to bootstrap and manage your [Go](https://golang.org/) projects.
 
+## Features
+
+* Universal task runner
+* Template generation in task runs
+* Task watcher
+* Scaffolding of projects
+
 ## Example
 
 ```yaml
