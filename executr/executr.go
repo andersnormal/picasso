@@ -4,8 +4,11 @@ import (
 	"context"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
+
+	"mvdan.cc/sh/expand"
+	"mvdan.cc/sh/interp"
+	"mvdan.cc/sh/syntax"
 )
 
 func New(opts ...Opt) Executr {
@@ -45,26 +48,28 @@ func (e *exectur) Run(ctx context.Context) error {
 	defer cancel()
 
 	if e.opts.Timeout != 0 {
-		ctx = cctx // use context withtimeout
+		ctx = cctx // use context with timeout
 	}
 
-	f := strings.Fields(e.opts.Cmd)
-	name := f[0]
-	args := []string{}
-	if len(f) > 1 {
-		args = append(args, f[1:]...)
+	p, err := syntax.NewParser().Parse(strings.NewReader(e.opts.Cmd), "")
+	if err != nil {
+		return err
 	}
-	cmd := exec.CommandContext(ctx, name, args...)
 
-	// set env
-	cmd.Env = append(os.Environ(), e.opts.Env.Strings()...)
+	r, err := interp.New(
+		interp.Dir(e.opts.Dir),
+		interp.Env(expand.ListEnviron(append(os.Environ(), e.opts.Env.Strings()...)...)),
 
-	// setting output
-	cmd.Stdin = e.opts.Stdin
-	cmd.Stdout = e.opts.Stdout
-	cmd.Stderr = e.opts.Stderr
+		interp.Module(interp.DefaultExec),
+		interp.Module(interp.OpenDevImpls(interp.DefaultOpen)),
 
-	err := cmd.Run() // wait for the result of the command
+		interp.StdIO(e.opts.Stdin, e.opts.Stdout, e.opts.Stderr),
+	)
+	if err != nil {
+		return err
+	}
+
+	err = r.Run(ctx, p)
 
 	// if we just hit the timeout
 	if ctx.Err() == context.DeadlineExceeded {

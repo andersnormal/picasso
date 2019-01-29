@@ -5,6 +5,10 @@ author: Sebastian Döll <sebastian@katallaxie.me>
 project: Picasso
 
 tasks:
+  release:
+    desc: release
+    cmds:
+      - gox -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}" -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
   test:
     desc: test
     vars:

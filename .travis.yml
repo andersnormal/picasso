@@ -1,0 +1,38 @@
+language: go
+matrix:
+  include:
+  - go: 1.11.x
+    env: LATEST=true
+  - go: tip
+  allow_failures:
+  - go: tip
+cache:
+  directories:
+  - "$GOPATH/src"
+  - "$GOPATH/pkg"
+install:
+- env GO111MODULE=on go install . ./cmd/...
+- env GO111MODULE=off go get -u github.com/alecthomas/gometalinter
+- env GO111MODULE=off go get -u github.com/mitchellh/gox
+- env GO111MODULE=off gometalinter --install
+- go get -t ./...
+script:
+- export PATH=$PATH:$HOME/gopath/bin
+- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on mkdir -p bin && go build -i -o bin/picasso; fi
+notifications:
+  slack:
+    rooms:
+      secure: TLH9zXNPvHqn/gigELjAm0gor3d/umk+zGM+NTEoeybwge3P1LeyXbVJPxj1zOYQ9CogV022nfiACp5M1HLMjA9VSMEcFNE8Hy+yIkVM89K11WgcVPCsPapOZ3twMV6CcHn3TxFnvyackqsP2C6xLn3UyQ1fkiVm+vkJVGyoWj6kvwr06ZmCMtTlC5aYU8BB0135V7GuUywFrMCASGRhE11F5oZvRkhVi0M8LtgwDGyWJiFIhtQYCwdbSn/jS2OJoItgp7FhVZSEfoGOWrnHyJ6IESZOpfHMPUL8nv0B4q+PTSVrhsP1Lj0lvoyCB64lEkusakLqQERWMP+/NdIbLr4SaonpMHAYDSMHt8MX3mZu8NpqEaf7+sWX2tMcfOsn9iIw9ghfuuNqU3KAHZyt6bDb0deEiaAn3ZcPdMAMwkSbiRB1fUuWQOqOurYmvW8EGqxZDWAIb7hbGa+ga4Dq3ctlfRwedXjQu7w3epuni412w1gMlWLnRL4Cz6WwyxB2WnN13vbZrRi/UoztPDe7rvdipEUZNPu0EVopIDtXh1I3qJNPMEXcwos1zyIoG/vIDyKps1khaL9vznhPlSl0/2ByMgO91KxUpFt7UOKPBK4OvbkOXGTtrBFM7GvYiLSz7O4jHHqVyKnLyuMq5n69MPAsWzM24aL/e2YpfvcvDBE=
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: qOFf8YOX4E1yILOFAEklN9sbGEXsj314A6SAWOUnPSZKRsTus9BQ2dQqXkwsoRDVd7kvBt/Tv9iYTtpFMvS7s7r407aiIT4rigS03rOkwJMsoT1cgGwh1RtJBX+9QrLUdbm4c07e2Joiu40UfwIVL6pPoIAzjHAiKVc/0WSLpV8Nb1N83/GQJXTK259o+nL3VOHI8BOPTPt9Dy5p0govPyCTWp1D2hEyqZKIHq9YlKftCa/NhFtyQRvnhCG0AVCLzz/lJSuX3zdsfiw4gakH2g/1R5KKa5bMtW502fl3ujxCEe2MDJ0oobSzim34W9VeG8j6Fq/ZPxFBWpAk0Cd/X9MdPZQfiUq4sND2sJXpYePUdqiLwq7ekrRiQmIJS294owhX4pbmzxundy0a+fSqeoy56D5HmzOgdm7n635Sn6vf3doiM5UoW/7/lUM5Ee0exBt+PbKWCkOMlM4ErF58KQjydm2qZm6AUsN7GdtHFsk7dvX9iC/5SjTQs/WTyVDyHyw59pofUS7DK7lVi6/GfAeBWBi2bnNte1aGJE3GqjxO6UdZzhg+3lnK/ipcrWBzSLgdPKZQaLAPQIgVDwgZ6Vq8P7e3MiD8ck6boFq9Pc3H7o9DEvGLzV/CwPMfu3ZI4qYYMp84XqRIzlsw5URNc8ZWDmVV12U9TpCj9EGMOkY=
+  file:
+  - bin/picasso
+  - bin/picasso_darwin_386
+  - bin/picasso_darwin_amd64
+  - bin/picasso_linux_386
+  - bin/picasso_linux_amd64
+  on:
+    repo: andersnormal/picasso
