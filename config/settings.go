@@ -1,6 +1,9 @@
 package config
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/andersnormal/picasso/task"
 )
 
@@ -25,8 +28,24 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		Tasks   task.Tasks
 		Vars    Vars
 	}
+
 	if err := unmarshal(&settings); err != nil {
 		return err
+	}
+
+	// try to resolve tasks
+	for name, task := range settings.Tasks {
+		if len(task.Deps) == 0 {
+			continue
+		}
+
+		for _, dep := range task.Deps {
+			t, ok := settings.Tasks[dep]
+			if !ok {
+				return errors.New(fmt.Sprintf("dep %s in %s does not exists", dep, name))
+			}
+			task.AddDep(t)
+		}
 	}
 
 	s.Version = settings.Version

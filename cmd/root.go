@@ -44,7 +44,10 @@ func init() {
 	root.SilenceUsage = true
 
 	// add commands
-	addTaskCommands(root)
+	if err := addTaskCommands(root); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	// initialize upon running commands
 	cobra.OnInitialize(initConfig)

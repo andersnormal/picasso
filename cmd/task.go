@@ -57,7 +57,12 @@ func generateTask(name string, task *task.Task) *cobra.Command {
 				return err
 			}
 
-			// first execute cmds
+			// first execute deps
+			if err := task.ExecDeps(ctx); err != nil {
+				return err
+			}
+
+			// then execute the cmds
 			if err := task.Exec(ctx); err != nil {
 				return err
 			}

@@ -7,7 +7,21 @@ import (
 )
 
 func (t *Task) Exec(ctx context.Context) error {
-	for _, cmd := range t.Cmds {
+	return execCmds(ctx, t.Cmds)
+}
+
+func (t *Task) ExecDeps(ctx context.Context) error {
+	for _, dep := range t.resolvedDeps {
+		if err := execCmds(ctx, dep.Cmds); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func execCmds(ctx context.Context, cmds []Cmd) error {
+	for _, cmd := range cmds {
 		opts := []executr.Opt{func(o *executr.Opts) {
 			o.Cmd = string(cmd)
 		}}
@@ -17,7 +31,6 @@ func (t *Task) Exec(ctx context.Context) error {
 		if err := e.Run(ctx); err != nil {
 			return err
 		}
-
 	}
 
 	return nil

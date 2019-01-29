@@ -16,8 +16,8 @@ version: 1
 author: demo demo@example.com
 project: demo
 tasks:
-  build:
-    desc: before run
+  dev:
+    desc: build and watch
     vars:
       region:
         - test
