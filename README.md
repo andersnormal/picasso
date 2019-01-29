@@ -16,8 +16,14 @@ version: 1
 author: demo demo@example.com
 project: demo
 tasks:
+  test:
+    desc: run tests
+    cmds:
+      - go test -v ./...
   dev:
     desc: build and watch
+    deps:
+      - test
     vars:
       region:
         - test
