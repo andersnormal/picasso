@@ -6,7 +6,7 @@ project: Picasso
 
 tasks:
   test:
-    desc: teest
+    desc: test
     vars:
       region:
         - test

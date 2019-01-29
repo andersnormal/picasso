@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/andersnormal/picasso/task"
 )
@@ -40,7 +41,7 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		}
 
 		for _, dep := range task.Deps {
-			t, ok := settings.Tasks[dep]
+			t, ok := settings.Tasks[strings.TrimSpace(dep)]
 			if !ok {
 				return errors.New(fmt.Sprintf("dep %s in %s does not exists", dep, name))
 			}
