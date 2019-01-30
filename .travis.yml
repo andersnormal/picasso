@@ -35,4 +35,6 @@ deploy:
   - bin/picasso_linux_386
   - bin/picasso_linux_amd64
   on:
-    repo: andersnormal/picasso
+    repo: andersnormal/outlaw
+    tags: true
+    condition: "$LATEST = true"
