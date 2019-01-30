@@ -18,8 +18,8 @@ install:
 - go get -t ./...
 script:
 - export PATH=$PATH:$HOME/gopath/bin
-- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on mkdir -p bin && go build -i
-  -o bin/picasso; fi
+- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on mkdir -p bin && go build -i -o bin/picasso && chmod +x bin/picasso fi
+- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on ./bin/picasso release; fi
 notifications:
   slack:
     rooms:
