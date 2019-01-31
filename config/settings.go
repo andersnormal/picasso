@@ -22,13 +22,17 @@ func (s *Settings) Task(n string) (*task.Task, error) {
 }
 
 func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	var settings struct {
-		Version string
-		Author  string
-		Project string
-		Tasks   task.Tasks
-		Vars    Vars
-	}
+	var (
+		defaultTask bool
+
+		settings struct {
+			Version string
+			Author  string
+			Project string
+			Tasks   task.Tasks
+			Vars    Vars
+		}
+	)
 
 	if err := unmarshal(&settings); err != nil {
 		return err
@@ -36,6 +40,14 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 	// try to resolve tasks
 	for name, task := range settings.Tasks {
+		if defaultTask && task.Default {
+			return ErrDuplicateDefault
+		}
+
+		if task.Default {
+			defaultTask = task.Default
+		}
+
 		if len(task.Deps) == 0 {
 			continue
 		}

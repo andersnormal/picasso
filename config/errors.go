@@ -5,5 +5,6 @@ import (
 )
 
 var (
-	ErrNoWatch = errors.New("picasso: task no defined")
+	ErrNoWatch          = errors.New("picasso: task no defined")
+	ErrDuplicateDefault = errors.New("picasso: duplicate default task")
 )

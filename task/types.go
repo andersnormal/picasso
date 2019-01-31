@@ -19,6 +19,7 @@ type Task struct {
 	Deps      Deps                `yaml:"deps,omitempty"`
 	Desc      string              `yaml:"desc,omitempty"`
 	Disable   bool                `yaml:"disable,omitempty"`
+	Default   bool                `yaml:"default,omitempty"`
 	Paths     Paths               `yaml:"paths,omitempty"`
 	Templates templates.Templates `yaml:"templates,omitempty"`
 	Vars      Vars                `yaml:"vars,omitempty"`

@@ -7,6 +7,7 @@ tasks:
     cmds:
       - gox -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-X github.com/andersnormal/picasso/version.Version=${TRAVIS_TAG}" -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
   test:
+    disable: true
     desc: test
     vars:
       region:
@@ -14,6 +15,7 @@ tasks:
     cmds:
       - go test -v ./...
   build:
+    default: true
     deps:
       - test
     vars:

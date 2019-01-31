@@ -79,6 +79,11 @@ func addTaskCommands(root *cobra.Command) error {
 		if task.Disable {
 			continue
 		}
+
+		t := generateTask(use, task)
+		if task.Default {
+			root.RunE = t.RunE
+		}
 		root.AddCommand(generateTask(use, task))
 	}
 
