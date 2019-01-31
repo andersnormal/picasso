@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"math/rand"
 	"os"
 	"path"
@@ -22,8 +21,8 @@ var (
 var root = &cobra.Command{
 	Use:     "picasso",
 	Version: version.Version,
-	Run: func(cmd *cobra.Command, args []string) {
-		return
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return config.ErrNoDefaultTask
 	},
 }
 
@@ -97,7 +96,12 @@ func initConfig() {
 
 func Execute() {
 	if err := root.Execute(); err != nil {
-		fmt.Println(err)
+		log.Error(err)
+
+		if err != config.ErrNoDefaultTask {
+			os.Exit(0)
+		}
+
 		os.Exit(1)
 	}
 }

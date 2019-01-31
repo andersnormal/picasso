@@ -13,7 +13,7 @@ type Config struct {
 	File string `envconfig:"PICASSO_CONFIG_FILE" default:".picasso.yaml"`
 
 	// LogFormat
-	LogFormat string `envconfig:"PICASSO_CONFIG_LOG_FORMAT" default:"json"`
+	LogFormat string `envconfig:"PICASSO_CONFIG_LOG_FORMAT" default:"text"`
 
 	// LogLevel
 	LogLevel log.Level
