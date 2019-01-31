@@ -1,12 +1,12 @@
 # :art: Picasso
 
-Picasso is a tool to bootstrap and manage your [Go](https://golang.org/) projects.
+Picasso is a versatile task runner :running:.
 
 ## Features
 
 * Universal task runner
 * Template generation in task runs
-* Task watcher
+* Task watcher (allows to watch on file system changes and re-runs tasks)
 * Scaffolding of projects
 
 ## Example
