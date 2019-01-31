@@ -62,7 +62,7 @@ func addTaskCommands(root *cobra.Command) error {
 	}
 
 	// add create task
-	root.AddCommand(generateCreate(cwd))
+	// root.AddCommand(generateCreate(cwd))
 
 	// settings opts
 	sopts := []s.Opt{func(o *s.Opts) {
