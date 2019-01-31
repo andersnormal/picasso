@@ -61,9 +61,6 @@ func addTaskCommands(root *cobra.Command) error {
 		return err
 	}
 
-	// add create task
-	// root.AddCommand(generateCreate(cwd))
-
 	// settings opts
 	sopts := []s.Opt{func(o *s.Opts) {
 		o.File = path.Join(cwd, cfg.File)
@@ -79,6 +76,9 @@ func addTaskCommands(root *cobra.Command) error {
 
 	// attach tasks
 	for use, task := range settings.Tasks {
+		if task.Disable {
+			continue
+		}
 		root.AddCommand(generateTask(use, task))
 	}
 

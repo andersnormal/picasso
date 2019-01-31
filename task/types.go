@@ -16,12 +16,13 @@ type Watch struct {
 // Task ...
 type Task struct {
 	Cmds      []Cmd               `yaml:"cmds,omitempty"`
-	Paths     Paths               `yaml:"paths,omitempty"`
 	Deps      Deps                `yaml:"deps,omitempty"`
 	Desc      string              `yaml:"desc,omitempty"`
+	Disable   bool                `yaml:"disable,omitempty"`
+	Paths     Paths               `yaml:"paths,omitempty"`
+	Templates templates.Templates `yaml:"templates,omitempty"`
 	Vars      Vars                `yaml:"vars,omitempty"`
 	Watch     Watch               `yaml:"watch,omitempty"`
-	Templates templates.Templates `yaml:"templates,omitempty"`
 
 	resolvedDeps []*Task
 }
