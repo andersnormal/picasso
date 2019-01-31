@@ -24,6 +24,9 @@ func (c *Config) AddFlags(cmd *cobra.Command) {
 	// enable verbose output
 	cmd.PersistentFlags().BoolVar(&c.Verbose, "verbose", c.Verbose, "enable verbose output")
 
+	// set logger
+	cmd.PersistentFlags().StringVar(&c.LogFormat, "format", c.LogFormat, "log format")
+
 	// enable verbose output
 	cmd.PersistentFlags().StringVar(&c.File, "config", c.File, "config file (default is .picasso.yaml)")
 }

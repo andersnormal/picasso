@@ -9,7 +9,9 @@ import (
 
 	"github.com/andersnormal/picasso/config"
 	s "github.com/andersnormal/picasso/settings"
+	"github.com/andersnormal/picasso/version"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +21,7 @@ var (
 
 var root = &cobra.Command{
 	Use:     "picasso",
-	Version: "0.0.1",
+	Version: version.Version,
 	Run: func(cmd *cobra.Command, args []string) {
 		return
 	},
@@ -33,11 +35,11 @@ func init() {
 	// create config
 	cfg = config.New()
 
-	// setup logger
-	cfg.SetupLogger()
-
 	// add flags
 	cfg.AddFlags(root)
+
+	// set default formatter
+	log.SetFormatter(&log.TextFormatter{})
 
 	// silence on the root cmd
 	root.SilenceErrors = true
@@ -45,8 +47,7 @@ func init() {
 
 	// add commands
 	if err := addTaskCommands(root); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	// initialize upon running commands
@@ -72,7 +73,7 @@ func addTaskCommands(root *cobra.Command) error {
 	// new settings
 	settings := config.NewSettings()
 	ss := s.New(sopts...)
-	if err := ss.Read(&settings); err != nil && err != os.ErrNotExist {
+	if err := ss.Read(&settings); err != nil {
 		return err
 	}
 
@@ -84,7 +85,10 @@ func addTaskCommands(root *cobra.Command) error {
 	return nil
 }
 
-func initConfig() {}
+func initConfig() {
+	// setup logger
+	cfg.SetupLogger()
+}
 
 func Execute() {
 	if err := root.Execute(); err != nil {
