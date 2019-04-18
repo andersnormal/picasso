@@ -4,9 +4,6 @@ bin
 pkg
 picasso
 
-# tools
-vendor
-
 debug
 
 # test
