@@ -14,11 +14,6 @@ addons:
     packages:
       - rpm
 
-cache:
-  directories:
-  - "$GOPATH/src"
-  - "$GOPATH/pkg"
-
 install:
 - env GO111MODULE=on go install . ./cmd/...
 - env GO111MODULE=off go get -u github.com/alecthomas/gometalinter
