@@ -14,13 +14,6 @@ addons:
     packages:
       - rpm
 
-install:
-- env GO111MODULE=on go install . ./cmd/...
-- env GO111MODULE=off go get -u github.com/alecthomas/gometalinter
-- env GO111MODULE=off go get -u github.com/mitchellh/gox
-- env GO111MODULE=off gometalinter --install
-- go get -t ./...
-
 notifications:
   slack:
     rooms:
