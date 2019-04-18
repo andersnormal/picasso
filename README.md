@@ -10,6 +10,14 @@ Picasso is a versatile task runner :running: and awesome build tool.
 * Template generation in task runs
 * Task watcher (allows to watch on file system changes and re-runs tasks)
 
+## Install
+
+### Homebrew
+
+```bash
+brew install andersnormal/picasso/picasso
+```
+
 ## Example
 
 ```yaml
