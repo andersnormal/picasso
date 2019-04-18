@@ -1,41 +1,40 @@
 language: go
+
 matrix:
   include:
   - go: 1.11.x
+  - go: 1.12.x
     env: LATEST=true
   - go: tip
   allow_failures:
   - go: tip
+
+addons:
+  apt:
+    packages:
+      - rpm
+
 cache:
   directories:
   - "$GOPATH/src"
   - "$GOPATH/pkg"
+
 install:
 - env GO111MODULE=on go install . ./cmd/...
 - env GO111MODULE=off go get -u github.com/alecthomas/gometalinter
 - env GO111MODULE=off go get -u github.com/mitchellh/gox
 - env GO111MODULE=off gometalinter --install
 - go get -t ./...
-script:
-- export PATH=$PATH:$HOME/gopath/bin
-- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on mkdir -p bin && go build -ldflags "-s -w -X github.com/andersnormal/picasso/version.Version=${TRAVIS_TAG}" -i -o bin/picasso && chmod +x bin/picasso; fi
-- if [ "${LATEST}" = "true" ]; then env GO111MODULE=on ./bin/picasso release; fi
+
 notifications:
   slack:
     rooms:
       secure: TLH9zXNPvHqn/gigELjAm0gor3d/umk+zGM+NTEoeybwge3P1LeyXbVJPxj1zOYQ9CogV022nfiACp5M1HLMjA9VSMEcFNE8Hy+yIkVM89K11WgcVPCsPapOZ3twMV6CcHn3TxFnvyackqsP2C6xLn3UyQ1fkiVm+vkJVGyoWj6kvwr06ZmCMtTlC5aYU8BB0135V7GuUywFrMCASGRhE11F5oZvRkhVi0M8LtgwDGyWJiFIhtQYCwdbSn/jS2OJoItgp7FhVZSEfoGOWrnHyJ6IESZOpfHMPUL8nv0B4q+PTSVrhsP1Lj0lvoyCB64lEkusakLqQERWMP+/NdIbLr4SaonpMHAYDSMHt8MX3mZu8NpqEaf7+sWX2tMcfOsn9iIw9ghfuuNqU3KAHZyt6bDb0deEiaAn3ZcPdMAMwkSbiRB1fUuWQOqOurYmvW8EGqxZDWAIb7hbGa+ga4Dq3ctlfRwedXjQu7w3epuni412w1gMlWLnRL4Cz6WwyxB2WnN13vbZrRi/UoztPDe7rvdipEUZNPu0EVopIDtXh1I3qJNPMEXcwos1zyIoG/vIDyKps1khaL9vznhPlSl0/2ByMgO91KxUpFt7UOKPBK4OvbkOXGTtrBFM7GvYiLSz7O4jHHqVyKnLyuMq5n69MPAsWzM24aL/e2YpfvcvDBE=
+
 deploy:
-  provider: releases
-  api_key:
-    secure: PMpd5MAWbSiqHbZA9vZw3vo2X9KGtGivuo0Jpph2ImouMfPxL/KjvTsWbpUCOXVa1WAa+AfuCHC3pi+BkFXsV2m7WwV7yYpUWNKyaLi+BjM1Pc9l3682Yu8V16/VDT3artGb9IgoogvvIXzPprY0iAUXzbWgS+eo4buoEqgJaSDGxKdLZZFWOUAKlKzGBOnxwJX7EKxB/4isxJDZzd/tqG7FdccyoBr0glZdNcgnwbEzNzvwrlejvbd+kTaSRjmbJZgZIhvNCJGn4YFT8Ux1stcx1uLSMWv20g4asPdiaGladeQAdC+DveXXWzWYbYmLyC0oVFK7zyzU0lws6Vl7j93bZzXf27Gs1fml113bFQhDaQtbaenFWjoHpp19i1BygWG8cJtwb7giFOACPlmyNWl2cyTVTM2uqUTXSWnYPt6VgzpoSITI2R3BZKkFIguS/hzb5yPwlzETT/yw0yUD375zJ0xCqZ9hFWE4bFI+O3ZbEGWm3Q+xbH10qL7kZgtPZLkK6+kACU4zvBhoJTITWd76e8BBZdmFkMUpq2D+uc5JYhpUMsWQYpGUU/AkynTmnecsWWuRzjWlaKWbbj+R7x61O+PwItNnM/EGLcA1OdWAKDf5GGWr3/9Tg+KiAbwhw6sVkoTlfcntfIwC1BWQCLTO4eaY+Iwyw+smkw2G1bM=
-  file:
-  - bin/picasso
-  - bin/picasso_darwin_386
-  - bin/picasso_darwin_amd64
-  - bin/picasso_linux_386
-  - bin/picasso_linux_amd64
-  skip_cleanup: true
-  on:
-    repo: andersnormal/picasso
-    tags: true
-    condition: "$LATEST = true"
+  - provider: script
+    skip_cleanup: true
+    script: curl -sL http://git.io/goreleaser | bash
+    on:
+      tags: true
+      condition: $TRAVIS_OS_NAME = linux
