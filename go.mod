@@ -10,7 +10,7 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/rogpeppe/go-internal v1.1.0 // indirect
 	github.com/sirupsen/logrus v1.3.0
-	github.com/spf13/cobra v0.0.3
+	github.com/spf13/cobra v0.0.5
 	golang.org/x/sys v0.0.0-20190116161447-11f53e031339 // indirect
 	golang.org/x/tools v0.0.0-20190116231616-b258f6da2383 // indirect
 	gopkg.in/yaml.v2 v2.2.2
