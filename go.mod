@@ -4,7 +4,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/gobuffalo/buffalo-plugins v1.11.0 // indirect
 	github.com/gobuffalo/flect v0.0.0-20190117183517-bea7f920a9f1 // indirect
-	github.com/gobuffalo/packr/v2 v2.0.0-rc.14
+	github.com/gobuffalo/packr/v2 v2.7.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/kelseyhightower/envconfig v1.3.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
