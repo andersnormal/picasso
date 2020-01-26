@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/andersnormal/picasso/config"
-	s "github.com/andersnormal/picasso/settings"
-	"github.com/andersnormal/picasso/task"
-	"github.com/andersnormal/picasso/watcher"
+	"github.com/andersnormal/picasso/pkg/config"
+	s "github.com/andersnormal/picasso/pkg/settings"
+	"github.com/andersnormal/picasso/pkg/task"
+	"github.com/andersnormal/picasso/pkg/watcher"
 
 	"github.com/spf13/cobra"
 )

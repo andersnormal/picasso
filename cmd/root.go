@@ -6,17 +6,18 @@ import (
 	"path"
 	"time"
 
-	"github.com/andersnormal/picasso/config"
-	s "github.com/andersnormal/picasso/settings"
-	"github.com/andersnormal/picasso/version"
+	"github.com/andersnormal/picasso/pkg/config"
+	s "github.com/andersnormal/picasso/pkg/settings"
+	"github.com/andersnormal/picasso/pkg/version"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var (
-	cfg *config.Config
-)
+var cfg *config.Config
+var build string
 
 var root = &cobra.Command{
 	Use:     "picasso",
@@ -90,6 +91,11 @@ func addTaskCommands(root *cobra.Command) error {
 }
 
 func initConfig() {
+	// unmarshal to config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		log.Fatalf(errors.Wrap(err, "cannot unmarshal config").Error())
+	}
+
 	// setup logger
 	cfg.SetupLogger()
 }

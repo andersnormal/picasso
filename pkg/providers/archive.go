@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg"
-	"github.com/andersnormal/picasso/config"
+	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v2"
