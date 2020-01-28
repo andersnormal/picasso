@@ -5,9 +5,11 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -18,17 +20,19 @@ import (
 )
 
 type archiveProvider struct {
-	opts *pkg.ProviderOpts
-	URL  string
+	opts   *pkg.ProviderOpts
+	url    string
+	folder string
 }
 
 // NewArchive ...
-func NewArchive(url string, opts ...pkg.ProviderOpt) pkg.Provider {
+func NewArchive(url string, folder string, opts ...pkg.ProviderOpt) pkg.Provider {
 	options := new(pkg.ProviderOpts)
 
 	p := new(archiveProvider)
 	p.opts = options
-	p.URL = url
+	p.url = url
+	p.folder = folder
 
 	configure(p, opts...)
 
@@ -44,7 +48,12 @@ func WithTimeout(t time.Duration) pkg.ProviderOpt {
 
 // CloneWithContext ...
 func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
-	resp, err := http.Get(a.URL)
+	path, err := filepath.Abs(a.folder)
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Get(a.url)
 	if err != nil {
 		return err
 	}
@@ -80,8 +89,42 @@ func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
 		return errors.New(`no sc spec found`)
 	}
 
-	for _, a := range assets {
-		fmt.Println(a.Name)
+	for _, f := range assets {
+		parts := strings.Split(f.Name, string(os.PathSeparator))
+
+		// Store filename/path for returning and using later on
+		fpath := filepath.Join(path, filepath.Join(parts[1:]...))
+
+		if f.FileInfo().IsDir() {
+			// Make Folder
+			os.MkdirAll(fpath, os.ModePerm)
+			continue
+		}
+
+		// Make File
+		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+			return err
+		}
+
+		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			return err
+		}
+
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(outFile, rc)
+
+		// Close the file without defer to close before next iteration of loop
+		outFile.Close()
+		rc.Close()
+
+		if err != nil {
+			return err
+		}
 	}
 
 	// this should be later filtered to be the root of the files

@@ -12,7 +12,7 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialized a new project from archive",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		p := providers.NewArchive(cfg.InitConfig.URL)
+		p := providers.NewArchive(cfg.InitConfig.URL, cfg.InitConfig.Folder)
 
 		// create root context
 		ctx, cancel := context.WithCancel(context.Background())

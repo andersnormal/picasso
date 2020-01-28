@@ -56,6 +56,7 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 			if !ok {
 				return fmt.Errorf("dep %s in %s does not exists", dep, name)
 			}
+
 			task.AddDep(t)
 		}
 	}
