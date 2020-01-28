@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -77,6 +78,10 @@ func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
 
 	if y == nil {
 		return errors.New(`no sc spec found`)
+	}
+
+	for _, a := range assets {
+		fmt.Println(a.Name)
 	}
 
 	// this should be later filtered to be the root of the files

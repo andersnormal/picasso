@@ -81,7 +81,7 @@ func generateTask(name string, task *task.Task) *cobra.Command {
 				err = w.Reload(ctx)
 			}
 
-			return nil
+			return err
 		},
 	}
 }

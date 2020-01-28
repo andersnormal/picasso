@@ -56,7 +56,6 @@ func (w *watcher) Reload(ctx context.Context) error {
 			if err := w.task.Exec(ctx); err != nil {
 				return err
 			}
-		default:
 		}
 	}
 }

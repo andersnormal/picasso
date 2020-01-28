@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -55,7 +54,7 @@ func (s *Settings) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		for _, dep := range task.Deps {
 			t, ok := settings.Tasks[strings.TrimSpace(dep)]
 			if !ok {
-				return errors.New(fmt.Sprintf("dep %s in %s does not exists", dep, name))
+				return fmt.Errorf("dep %s in %s does not exists", dep, name)
 			}
 			task.AddDep(t)
 		}

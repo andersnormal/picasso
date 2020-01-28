@@ -17,7 +17,6 @@ import (
 )
 
 var cfg *config.Config
-var build string
 
 var root = &cobra.Command{
 	Use:     "picasso",
