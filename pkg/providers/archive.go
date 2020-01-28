@@ -7,31 +7,43 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"path"
 	"strings"
+	"time"
 
 	"github.com/andersnormal/picasso/pkg"
-	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v2"
 )
 
 type archiveProvider struct {
-	cfg *config.Config
+	opts *pkg.ProviderOpts
+	URL  string
 }
 
 // NewArchive ...
-func NewArchive(cfg *config.Config) pkg.Provider {
+func NewArchive(url string, opts ...pkg.ProviderOpt) pkg.Provider {
+	options := new(pkg.ProviderOpts)
+
 	p := new(archiveProvider)
-	p.cfg = cfg
+	p.opts = options
+	p.URL = url
+
+	configure(p, opts...)
 
 	return p
 }
 
+// WithTimeout ...
+func WithTimeout(t time.Duration) pkg.ProviderOpt {
+	return func(opts *pkg.ProviderOpts) {
+		opts.Timeout = t
+	}
+}
+
 // CloneWithContext ...
 func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
-	resp, err := http.Get(a.cfg.URL)
+	resp, err := http.Get(a.URL)
 	if err != nil {
 		return err
 	}
@@ -68,7 +80,7 @@ func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
 	}
 
 	// this should be later filtered to be the root of the files
-	base := path.Base(y.Name)
+	// base := path.Base(y.Name)
 
 	var s *spec.Spec
 	raw, err := readZipFile(y)
@@ -91,4 +103,12 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	defer f.Close()
 
 	return ioutil.ReadAll(f)
+}
+
+func configure(a *archiveProvider, opts ...pkg.ProviderOpt) error {
+	for _, o := range opts {
+		o(a.opts)
+	}
+
+	return nil
 }

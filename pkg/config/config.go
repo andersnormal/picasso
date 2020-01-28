@@ -26,6 +26,16 @@ type Config struct {
 	File string
 	// FileMode
 	FileMode os.FileMode
+	// InitConfig ...
+	InitConfig InitConfig
+}
+
+// InitConfig ...
+type InitConfig struct {
+	// Folder ...
+	Folder string
+	// URL ...
+	URL string
 }
 
 // Vars ...
@@ -52,6 +62,7 @@ func New() *Config {
 		ReloadSignal: syscall.SIGHUP,
 		TermSignal:   syscall.SIGTERM,
 		Verbose:      false,
+		InitConfig:   InitConfig{Folder: "", URL: ""},
 	}
 }
 

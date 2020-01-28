@@ -37,6 +37,7 @@ func init() {
 
 	// add flags
 	cfg.AddFlags(root)
+	addFlags()
 
 	// set default formatter
 	log.SetFormatter(&log.TextFormatter{})
@@ -102,6 +103,11 @@ func initConfig() {
 
 	// setup logger
 	cfg.SetupLogger()
+}
+
+func addFlags() {
+	initCmd.Flags().StringVarP(&cfg.InitConfig.Folder, "folder", "f", cfg.InitConfig.Folder, "folder")
+	initCmd.Flags().StringVarP(&cfg.InitConfig.URL, "url", "u", cfg.InitConfig.Folder, "url of archive")
 }
 
 func Execute() {
