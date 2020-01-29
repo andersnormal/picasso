@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"path"
@@ -10,7 +12,6 @@ import (
 	s "github.com/andersnormal/picasso/pkg/settings"
 	"github.com/andersnormal/picasso/pkg/version"
 
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -74,7 +75,7 @@ func addTaskCommands(root *cobra.Command) error {
 	// new settings
 	settings := config.NewSettings()
 	ss := s.New(sopts...)
-	if err := ss.Read(&settings); err != nil {
+	if err := ss.Read(&settings); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
 
@@ -97,7 +98,7 @@ func addTaskCommands(root *cobra.Command) error {
 func initConfig() {
 	// unmarshal to config
 	if err := viper.Unmarshal(&cfg); err != nil {
-		log.Fatalf(errors.Wrap(err, "cannot unmarshal config").Error())
+		log.Fatalf(fmt.Sprintf("cannot unmarshal config: %v", err))
 	}
 
 	// setup logger
