@@ -17,7 +17,7 @@ func New(task *task.Task, opts ...Opt) Watcher {
 	w.opts = options
 	w.task = task
 
-	configure(w, opts...)
+	_ = configure(w, opts...)
 
 	return w
 }

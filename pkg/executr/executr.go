@@ -19,7 +19,7 @@ func New(opts ...Opt) Executr {
 	var e = new(exectur)
 	e.opts = options
 
-	configure(e, opts...)
+	_ = configure(e, opts...)
 
 	return e
 }

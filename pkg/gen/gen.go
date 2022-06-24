@@ -20,7 +20,7 @@ func NewGenerator(b *packr.Box, gc Context, opts ...Opt) Generator {
 	g.box = b
 	g.templates = make(map[string]string)
 
-	configure(g, opts...)
+	_ = configure(g, opts...)
 
 	return g
 }

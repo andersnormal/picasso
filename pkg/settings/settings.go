@@ -21,7 +21,7 @@ func New(opts ...Opt) Settings {
 	var s = new(settings)
 	s.opts = options
 
-	configure(s, opts...)
+	_ = configure(s, opts...)
 
 	return s
 }
@@ -50,7 +50,7 @@ func (s *settings) Write(out interface{}) error {
 		return err
 	}
 
-	ioutil.WriteFile(s.opts.File, y, s.opts.FileMode)
+	err = ioutil.WriteFile(s.opts.File, y, s.opts.FileMode)
 	if err != nil {
 		return err
 	}

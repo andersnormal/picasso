@@ -34,7 +34,7 @@ func NewArchive(url string, folder string, opts ...pkg.ProviderOpt) pkg.Provider
 	p.url = url
 	p.folder = folder
 
-	configure(p, opts...)
+	_ = configure(p, opts...)
 
 	return p
 }
@@ -97,7 +97,7 @@ func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
 
 		if f.FileInfo().IsDir() {
 			// Make Folder
-			os.MkdirAll(fpath, os.ModePerm)
+			_ = os.MkdirAll(fpath, os.ModePerm)
 			continue
 		}
 

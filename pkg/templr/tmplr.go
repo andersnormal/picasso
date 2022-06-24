@@ -12,7 +12,7 @@ func New(opts ...Opt) Templr {
 	var t = new(templr)
 	t.opts = options
 
-	configure(t, opts...)
+	_ = configure(t, opts...)
 
 	return t
 }
