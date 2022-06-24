@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/andersnormal/picasso/cmd"
+	"github.com/andersnormal/picasso/pkg/cmd"
 )
 
 func init() {
