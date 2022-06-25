@@ -2,12 +2,16 @@ package providers
 
 import (
 	"context"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
 
 	gg "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"go.uber.org/zap"
 )
 
@@ -37,113 +41,63 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
-	_, err = gg.PlainCloneContext(ctx, path, true, &gg.CloneOptions{
-		URL:      url,
-		Progress: os.Stdout,
+	r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
+		URL:   url,
+		Depth: 1,
 	})
 	if err != nil {
 		return err
 	}
 
-	// r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
-	// 	Depth:    1,
-	// 	URL:      url,
-	// 	Progress: os.Stdout,
-	// })
-	// if err != nil {
-	// 	return err
-	// }
+	head, err := r.Head()
+	if err != nil {
+		return err
+	}
 
-	// hash, err := r.ResolveRevision(plumbing.Revision("HEAD"))
-	// if err != nil {
-	// 	return err
-	// }
+	ref, err := r.CommitObject(head.Hash())
+	if err != nil {
+		return err
+	}
 
-	// // commit, err := r.CommitObject(*hash)
-	// // if err != nil {
-	// // 	return err
-	// // }
+	ff, err := ref.Files()
+	if err != nil {
+		return err
+	}
 
-	// // tree, err := commit.Tree()
-	// // if err != nil {
-	// // 	return err
-	// // }
+	if err := ff.ForEach(func(f *object.File) error {
+		parts := strings.Split(f.Name, string(os.PathSeparator))
+		fpath := filepath.Join(path, filepath.Join(parts...))
 
-	// w, err := r.Worktree()
-	// if err != nil {
-	// 	return err
-	// }
+		// Make File
+		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+			return err
+		}
 
-	// w.Filesystem.Chroot(path)
-	// w.Checkout(&gg.CheckoutOptions{
-	// 	Hash: *hash,
-	// })
+		mode, err := f.Mode.ToOSFileMode()
+		if err != nil {
+			return err
+		}
 
-	// files := tree.Files()
-	// err = files.ForEach(func(f *object.File) error {
-	// 	parts := strings.Split(f.Name, string(os.PathSeparator))
+		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
+		if err != nil {
+			return err
+		}
+		defer outFile.Close()
 
-	// 	// Store filename/path for returning and using later on
-	// 	fpath := filepath.Join(path, filepath.Join(parts...))
+		r, err := f.Reader()
+		if err != nil {
+			return err
+		}
 
-	// 	fmt.Println(fpath, parts)
+		_, err = io.Copy(outFile, r)
+		if err != nil {
+			return err
+		}
 
-	// 	// if f.FileInfo().IsDir() {
-	// 	// 	// Make Folder
-	// 	// 	_ = os.MkdirAll(fpath, os.ModePerm)
-	// 	// 	continue
-	// 	// }
-
-	// 	// // Make File
-	// 	// if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-	// 	// if err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// rc, err := f.Open()
-	// 	// if err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// _, err = io.Copy(outFile, rc)
-
-	// 	// // Close the file without defer to close before next iteration of loop
-	// 	// outFile.Close()
-	// 	// rc.Close()
-
-	// 	// if err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// file, err := os.Create(fpath)
-	// 	// if err != nil {
-	// 	// 	return err
-	// 	// }
-
-	// 	// fmt.Println(file)
-
-	// 	b, err := f.IsBinary()
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	if !b {
-	// 		fmt.Println(f.Name)
-	// 	}
-
-	// 	return nil
-	// })
-	// if err != nil {
-	// 	return err
-	// }
+		return nil
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
