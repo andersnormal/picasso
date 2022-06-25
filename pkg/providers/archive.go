@@ -11,49 +11,37 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
-	"github.com/andersnormal/picasso/pkg"
+	"github.com/andersnormal/picasso/pkg/providers/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v2"
 )
 
 type archiveProvider struct {
-	opts   *pkg.ProviderOpts
-	url    string
-	folder string
+	opts *iface.ProviderOpts
 }
 
 // NewArchive ...
-func NewArchive(url string, folder string, opts ...pkg.ProviderOpt) pkg.Provider {
-	options := new(pkg.ProviderOpts)
+func NewArchive(url string, folder string, opts ...iface.ProviderOpt) iface.Provider {
+	options := new(iface.ProviderOpts)
 
 	p := new(archiveProvider)
 	p.opts = options
-	p.url = url
-	p.folder = folder
 
 	_ = configure(p, opts...)
 
 	return p
 }
 
-// WithTimeout ...
-func WithTimeout(t time.Duration) pkg.ProviderOpt {
-	return func(opts *pkg.ProviderOpts) {
-		opts.Timeout = t
-	}
-}
-
 // CloneWithContext ...
-func (a *archiveProvider) CloneWithContext(ctx context.Context) error {
-	path, err := filepath.Abs(a.folder)
+func (a *archiveProvider) CloneWithContext(ctx context.Context, url, folder string) error {
+	path, err := filepath.Abs(folder)
 	if err != nil {
 		return err
 	}
 
-	resp, err := http.Get(a.url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
@@ -153,7 +141,7 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func configure(a *archiveProvider, opts ...pkg.ProviderOpt) error {
+func configure(a *archiveProvider, opts ...iface.ProviderOpt) error {
 	for _, o := range opts {
 		o(a.opts)
 	}

@@ -36,6 +36,8 @@ type InitConfig struct {
 	Folder string
 	// URL ...
 	URL string
+	// ArchiveMode ...
+	ArchiveMode bool
 }
 
 // Vars ...
@@ -71,7 +73,7 @@ func (c *Config) Cwd() (string, error) {
 }
 
 // SetupLogger prepares the logger instance
-func (c *Config) SetupLogger() {
+func (c *Config) SetupLogger() error {
 	switch c.LogFormat {
 	case "text":
 		log.SetFormatter(&log.TextFormatter{})
@@ -89,6 +91,8 @@ func (c *Config) SetupLogger() {
 	if level, err := log.ParseLevel(c.LogLevel); err == nil {
 		log.SetLevel(level)
 	}
+
+	return nil
 }
 
 func (c *Config) AddFlags(cmd *cobra.Command) {

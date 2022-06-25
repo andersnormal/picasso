@@ -106,6 +106,7 @@ func initConfig() {
 }
 
 func addFlags() {
+	initCmd.Flags().BoolVar(&cfg.InitConfig.ArchiveMode, "archive", cfg.InitConfig.ArchiveMode, "url is an archive")
 	initCmd.Flags().StringVarP(&cfg.InitConfig.Folder, "folder", "f", cfg.InitConfig.Folder, "folder")
 	initCmd.Flags().StringVarP(&cfg.InitConfig.URL, "url", "u", cfg.InitConfig.Folder, "url of archive")
 }
