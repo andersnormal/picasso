@@ -102,7 +102,7 @@ func initConfig() {
 	}
 
 	// setup logger
-	cfg.SetupLogger()
+	_ = cfg.SetupLogger()
 }
 
 func addFlags() {

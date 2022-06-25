@@ -41,6 +41,9 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		URL:      url,
 		Progress: os.Stdout,
 	})
+	if err != nil {
+		return err
+	}
 
 	// r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
 	// 	Depth:    1,
