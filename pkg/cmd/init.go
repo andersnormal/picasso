@@ -12,7 +12,7 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialized a new project from archive",
+	Short: "Initialized a new project",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		l, err := zap.NewProduction()
 		if err != nil {
