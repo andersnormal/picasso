@@ -2,12 +2,12 @@ package providers
 
 import (
 	"context"
-	"io"
-	"os"
-	"path/filepath"
+	"fmt"
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
+	"github.com/andersnormal/picasso/pkg/spec"
+	"gopkg.in/yaml.v2"
 
 	gg "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -36,10 +36,10 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 
 	ll.Info("Cloning repository")
 
-	path, err := filepath.Abs(folder)
-	if err != nil {
-		return err
-	}
+	// path, err := filepath.Abs(folder)
+	// if err != nil {
+	// 	return err
+	// }
 
 	r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
 		URL:   url,
@@ -64,35 +64,52 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
+	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
-		parts := strings.Split(f.Name, string(os.PathSeparator))
-		fpath := filepath.Join(path, filepath.Join(parts...))
+		// parts := strings.Split(f.Name, string(os.PathSeparator))
+		// fpath := filepath.Join(path, filepath.Join(parts...))
 
-		// Make File
-		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-			return err
+		if !strings.Contains(f.Name, ".picasso.yml") {
+			return nil
 		}
 
-		mode, err := f.Mode.ToOSFileMode()
-		if err != nil {
-			return err
-		}
-
-		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
-		if err != nil {
-			return err
-		}
-		defer outFile.Close()
-
+		var s *spec.Spec
 		r, err := f.Reader()
 		if err != nil {
 			return err
 		}
 
-		_, err = io.Copy(outFile, r)
+		err = yaml.NewDecoder(r).Decode(&s)
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(s)
+
+		// if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+		// 	return err
+		// }
+
+		// mode, err := f.Mode.ToOSFileMode()
+		// if err != nil {
+		// 	return err
+		// }
+
+		// outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
+		// if err != nil {
+		// 	return err
+		// }
+		// defer outFile.Close()
+
+		// r, err := f.Reader()
+		// if err != nil {
+		// 	return err
+		// }
+
+		// _, err = io.Copy(outFile, r)
+		// if err != nil {
+		// 	return err
+		// }
 
 		return nil
 	}); err != nil {
