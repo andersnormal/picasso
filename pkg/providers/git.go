@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
-	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/andersnormal/picasso/pkg/specs"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
 
@@ -32,8 +32,6 @@ func NewGit(opts ...iface.ProviderOpt) iface.Provider {
 
 	return g
 }
-
-var ignoreMatch = []string{".github", ".goreleaser.yml"}
 
 // CloneWithContext ...
 func (g *git) CloneWithContext(ctx context.Context, url string, folder string) error {
@@ -69,12 +67,12 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
-	var s *spec.Spec
+	var s *specs.Tmpl
 	t := tmpl.New()
 
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
-		if !strings.Contains(f.Name, ".picasso.yml") {
+		if !strings.Contains(f.Name, specs.TmplFile) {
 			return nil
 		}
 
@@ -88,7 +86,7 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 			return err
 		}
 
-		err = t.ApplyPrompts(s.Template.Placeholders)
+		err = t.ApplyPrompts(s.Inputs)
 		if err != nil {
 			return err
 		}
@@ -131,8 +129,8 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		}
 
 		var ignore bool
-		for _, match := range ignoreMatch {
-			if strings.Contains(f.Name, match) {
+		for _, p := range s.Ignores {
+			if strings.Contains(f.Name, p) {
 				ignore = true
 				break
 			}

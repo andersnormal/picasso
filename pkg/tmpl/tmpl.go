@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"text/template"
 
-	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/andersnormal/picasso/pkg/specs"
 
 	"github.com/manifoldco/promptui"
 )
@@ -42,7 +42,7 @@ func (t *Template) Apply(s string) (string, error) {
 }
 
 // ApplyPrompts ...
-func (t *Template) ApplyPrompts(pp spec.Placeholders) error {
+func (t *Template) ApplyPrompts(pp specs.TmplInputs) error {
 	ff := make(Fields)
 
 	for _, p := range pp {
