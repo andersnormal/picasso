@@ -2,7 +2,9 @@ package providers
 
 import (
 	"context"
-	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
@@ -39,10 +41,10 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 
 	ll.Info("Cloning repository")
 
-	// path, err := filepath.Abs(folder)
-	// if err != nil {
-	// 	return err
-	// }
+	path, err := filepath.Abs(folder)
+	if err != nil {
+		return err
+	}
 
 	r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
 		URL:   url,
@@ -67,16 +69,15 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
+	var s *spec.Spec
+	t := tmpl.New()
+
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
-		// parts := strings.Split(f.Name, string(os.PathSeparator))
-		// fpath := filepath.Join(path, filepath.Join(parts...))
-
 		if !strings.Contains(f.Name, ".picasso.yml") {
 			return nil
 		}
 
-		var s *spec.Spec
 		r, err := f.Reader()
 		if err != nil {
 			return err
@@ -87,32 +88,10 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 			return err
 		}
 
-		fmt.Println(s)
-
-		// if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-		// 	return err
-		// }
-
-		// mode, err := f.Mode.ToOSFileMode()
-		// if err != nil {
-		// 	return err
-		// }
-
-		// outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
-		// if err != nil {
-		// 	return err
-		// }
-		// defer outFile.Close()
-
-		// r, err := f.Reader()
-		// if err != nil {
-		// 	return err
-		// }
-
-		// _, err = io.Copy(outFile, r)
-		// if err != nil {
-		// 	return err
-		// }
+		err = t.ApplyPrompts(s.Template.Placeholders)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	}); err != nil {
@@ -128,6 +107,24 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
+		parts := strings.Split(f.Name, string(os.PathSeparator))
+		fpath := filepath.Join(path, filepath.Join(parts...))
+
+		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+			return err
+		}
+
+		mode, err := f.Mode.ToOSFileMode()
+		if err != nil {
+			return err
+		}
+
+		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
+		if err != nil {
+			return err
+		}
+		defer outFile.Close()
+
 		ok, err := f.IsBinary()
 		if err != nil {
 			return err
@@ -141,20 +138,33 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 			}
 		}
 
+		r, err := f.Reader()
+		if err != nil {
+			return err
+		}
+
 		if !ignore && !ok {
 			text, err := f.Contents()
 			if err != nil {
 				return err
 			}
 
-			t := tmpl.New(tmpl.WithExtraFields(tmpl.TmplFields{"ProjectName": "picasso"}))
-
 			out, err := t.Apply(text)
 			if err != nil {
 				return err
 			}
 
-			fmt.Println(out)
+			r := strings.NewReader(out)
+
+			_, err = io.Copy(outFile, r)
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err = io.Copy(outFile, r)
+			if err != nil {
+				return err
+			}
 		}
 
 		return err

@@ -5,6 +5,8 @@ import (
 	"text/template"
 
 	"github.com/andersnormal/picasso/pkg/spec"
+
+	"github.com/manifoldco/promptui"
 )
 
 // Template ...
@@ -25,12 +27,6 @@ func New(opts ...TmplOpt) *Template {
 	}
 }
 
-// ApplyWithPrompts ...
-func (t *Template) ApplyWithPrompts(s string, p spec.Placeholders) (string, error) {
-
-	return "", nil
-}
-
 // Apply ...
 func (t *Template) Apply(s string) (string, error) {
 	var out bytes.Buffer
@@ -43,4 +39,27 @@ func (t *Template) Apply(s string) (string, error) {
 	err = tmpl.Execute(&out, t.opts.Fields)
 
 	return out.String(), err
+}
+
+// ApplyPrompts ...
+func (t *Template) ApplyPrompts(pp spec.Placeholders) error {
+	ff := make(Fields)
+
+	for _, p := range pp {
+		prompt := promptui.Prompt{
+			Label: p.Prompt,
+		}
+
+		res, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+		ff[p.Name] = res
+	}
+
+	for f, v := range ff {
+		t.opts.Fields[f] = v
+	}
+
+	return nil
 }
