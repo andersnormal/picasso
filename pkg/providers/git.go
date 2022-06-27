@@ -3,12 +3,11 @@ package providers
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
-	"text/template"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
 
 	gg "github.com/go-git/go-git/v5"
@@ -32,7 +31,7 @@ func NewGit(opts ...iface.ProviderOpt) iface.Provider {
 	return g
 }
 
-var ignoreMatch = []string{".github"}
+var ignoreMatch = []string{".github", ".goreleaser.yml"}
 
 // CloneWithContext ...
 func (g *git) CloneWithContext(ctx context.Context, url string, folder string) error {
@@ -148,20 +147,18 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 				return err
 			}
 
-			t, err := template.New("tmp").Parse(text)
+			t := tmpl.New(tmpl.WithExtraFields(tmpl.TmplFields{"ProjectName": "picasso"}))
+
+			out, err := t.Apply(text)
 			if err != nil {
 				return err
 			}
 
-			data := make(map[string]interface{})
-			data["project_name"] = "picasso"
-
-			t.Execute(os.Stdout, data)
+			fmt.Println(out)
 		}
 
 		return err
 	}); err != nil {
-		fmt.Println(err)
 		return err
 	}
 
