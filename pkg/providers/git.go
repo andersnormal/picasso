@@ -3,7 +3,9 @@ package providers
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
+	"text/template"
 
 	"github.com/andersnormal/picasso/pkg/providers/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
@@ -29,6 +31,8 @@ func NewGit(opts ...iface.ProviderOpt) iface.Provider {
 
 	return g
 }
+
+var ignoreMatch = []string{".github"}
 
 // CloneWithContext ...
 func (g *git) CloneWithContext(ctx context.Context, url string, folder string) error {
@@ -113,6 +117,51 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 
 		return nil
 	}); err != nil {
+		return err
+	}
+
+	// :-) just resetting the iterator
+	ff.Close()
+	ff, err = ref.Files()
+	if err != nil {
+		return err
+	}
+
+	// Find spec ...
+	if err := ff.ForEach(func(f *object.File) error {
+		ok, err := f.IsBinary()
+		if err != nil {
+			return err
+		}
+
+		var ignore bool
+		for _, match := range ignoreMatch {
+			if strings.Contains(f.Name, match) {
+				ignore = true
+				break
+			}
+		}
+
+		if !ignore && !ok {
+			text, err := f.Contents()
+			if err != nil {
+				return err
+			}
+
+			t, err := template.New("tmp").Parse(text)
+			if err != nil {
+				return err
+			}
+
+			data := make(map[string]interface{})
+			data["project_name"] = "picasso"
+
+			t.Execute(os.Stdout, data)
+		}
+
+		return err
+	}); err != nil {
+		fmt.Println(err)
 		return err
 	}
 
