@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -12,10 +13,16 @@ import (
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
 
+	"github.com/andersnormal/pkg/utils"
 	gg "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"go.uber.org/zap"
+)
+
+var (
+	// ErrFolderNotEmpty signals that the destination folder not empty
+	ErrFolderNotEmpty = errors.New("destination folder not empty")
 )
 
 type git struct {
@@ -42,6 +49,15 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 	path, err := filepath.Abs(folder)
 	if err != nil {
 		return err
+	}
+
+	empty, err := utils.IsDirEmpty(path)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	if !os.IsNotExist(err) && !empty {
+		return ErrFolderNotEmpty
 	}
 
 	r, err := gg.CloneContext(ctx, memory.NewStorage(), nil, &gg.CloneOptions{
