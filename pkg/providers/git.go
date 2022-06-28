@@ -124,6 +124,11 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		parts := strings.Split(f.Name, string(os.PathSeparator))
 		fpath := filepath.Join(path, filepath.Join(parts...))
 
+		// do not write the .template.yml file back
+		if !strings.Contains(f.Name, specs.TmplFile) {
+			return nil
+		}
+
 		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
 			return err
 		}
