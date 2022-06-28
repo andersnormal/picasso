@@ -1,4 +1,4 @@
-package providers
+package gen
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/providers/iface"
+	"github.com/andersnormal/picasso/pkg/gen/iface"
 	"github.com/andersnormal/picasso/pkg/specs"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
@@ -125,7 +125,7 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		fpath := filepath.Join(path, filepath.Join(parts...))
 
 		// do not write the .template.yml file back
-		if !strings.Contains(f.Name, specs.TmplFile) {
+		if strings.Contains(f.Name, specs.TmplFile) {
 			return nil
 		}
 

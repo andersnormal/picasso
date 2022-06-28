@@ -1,4 +1,4 @@
-package providers
+package gen
 
 import (
 	"archive/zip"
@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/providers/iface"
+	"github.com/andersnormal/picasso/pkg/gen/iface"
 	"github.com/andersnormal/picasso/pkg/specs"
 
 	"gopkg.in/yaml.v2"
