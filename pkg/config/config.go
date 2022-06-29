@@ -28,6 +28,8 @@ type Config struct {
 	FileMode os.FileMode
 	// InitConfig ...
 	InitConfig InitConfig
+	// Plugins ...
+	Plugins []string
 }
 
 // InitConfig ...
@@ -104,4 +106,6 @@ func (c *Config) AddFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&c.LogLevel, "log-level", "warn", "log level")
 	// enable verbose output
 	cmd.PersistentFlags().StringVar(&c.File, "config", c.File, "config file")
+	// enable plugins
+	cmd.PersistentFlags().StringSliceVar(&c.Plugins, "plugin", c.Plugins, "plugin")
 }

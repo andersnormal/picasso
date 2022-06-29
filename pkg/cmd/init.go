@@ -5,14 +5,16 @@ import (
 
 	"github.com/andersnormal/picasso/pkg/gen"
 	"github.com/andersnormal/picasso/pkg/gen/iface"
+	"github.com/andersnormal/picasso/pkg/plugin"
 	"go.uber.org/zap"
 
 	"github.com/spf13/cobra"
 )
 
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialized a new project",
+	Use:                "init",
+	Short:              "Initialized a new project",
+	FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		l, err := zap.NewProduction()
 		if err != nil {
@@ -32,7 +34,19 @@ var initCmd = &cobra.Command{
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		// noop
-		return p.CloneWithContext(ctx, cfg.InitConfig.URL, cfg.InitConfig.Folder)
+		// clone the repository
+		err = p.CloneWithContext(ctx, cfg.InitConfig.URL, cfg.InitConfig.Folder)
+		if err != nil {
+			return err
+		}
+
+		// run plugins ...
+		exec := plugin.NewExecutor()
+		err = exec.ExecWithContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }

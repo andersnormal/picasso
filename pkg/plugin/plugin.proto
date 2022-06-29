@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package plugin;
+
+option go_package = "github.com/andersnormal/picasso/pkg/plugin";
+
+// PluginRequest ...
+message PluginRequest {
+    // FilePaths ...
+    repeated string FilePaths        = 1;
+    // Parameters ...
+    map<string, string> Parameters   = 2;
+    // Spec ...
+    string Spec                      = 3;
+    // Version ...
+    string Version                   = 4;
+}
