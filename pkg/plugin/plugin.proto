@@ -15,3 +15,10 @@ message PluginRequest {
     // Version ...
     string Version                   = 4;
 }
+
+
+// PluginResponse ...
+message PluginResponse {
+    // Error ...
+    string Error                    = 1;
+}

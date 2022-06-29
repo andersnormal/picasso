@@ -1,14 +1,12 @@
 package plugin
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/andersnormal/picasso/pkg/specs"
+	"google.golang.org/protobuf/proto"
 )
 
 // Run ...
@@ -25,22 +23,30 @@ func run(opts Options, f func(*Plugin) error) error {
 		return err
 	}
 
-	s := bytes.NewReader(in)
-
-	var spec specs.Tmpl
-	dec := gob.NewDecoder(s)
-	err = dec.Decode(&spec)
+	req := &PluginRequest{}
+	err = proto.Unmarshal(in, req)
 	if err != nil {
 		return err
 	}
 
-	gen, err := opts.New()
+	p, err := opts.New(req)
 	if err != nil {
 		return err
 	}
 
-	if err := f(gen); err != nil {
-		gen.Error(err)
+	if err := f(p); err != nil {
+		p.Error(err)
+	}
+
+	res := p.Response()
+	out, err := proto.Marshal(res)
+	if err != nil {
+		return err
+	}
+
+	_, err = os.Stdout.Write(out)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -54,22 +60,39 @@ type Options struct {
 
 // Plugin ...
 type Plugin struct {
-	Spec specs.Tmpl
+	Parameters map[string]string
+	Version    string
+	Spec       string
 
 	opts Options
 	err  error
 }
 
 // New returns a new Plugin.
-func (opts Options) New() (*Plugin, error) {
-	gen := &Plugin{}
+func (opts Options) New(req *PluginRequest) (*Plugin, error) {
+	gen := &Plugin{
+		Parameters: req.GetParameters(),
+		Version:    req.GetVersion(),
+		Spec:       req.GetSpec(),
+	}
 
 	return gen, nil
 }
 
 // Error ...
-func (gen *Plugin) Error(err error) {
-	if gen.err == nil {
-		gen.err = err
+func (p *Plugin) Error(err error) {
+	if p.err == nil {
+		p.err = err
 	}
+}
+
+// Response ...
+func (p *Plugin) Response() *PluginResponse {
+	res := &PluginResponse{}
+
+	if p.err != nil {
+		res.Error = p.err.Error()
+	}
+
+	return res
 }
