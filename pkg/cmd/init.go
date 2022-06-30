@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 
 	"github.com/andersnormal/picasso/pkg/gen"
 	"github.com/andersnormal/picasso/pkg/gen/iface"
@@ -40,9 +42,18 @@ var initCmd = &cobra.Command{
 			return err
 		}
 
+		path, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+
 		// run plugins ...
+		req := &plugin.PluginRequest{
+			Parameters: map[string]string{},
+		}
+
 		exec := plugin.NewExecutor()
-		err = exec.ExecWithContext(ctx)
+		err = exec.ExecWithContext(ctx, filepath.Join(path, "examples", "gen-tmpl", "main"), req)
 		if err != nil {
 			return err
 		}

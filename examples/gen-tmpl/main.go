@@ -7,10 +7,8 @@ import (
 )
 
 func main() {
-	plugin.Options{}.Run(func(gen *plugin.Plugin) error {
+	plugin.Options{}.Run(func(p *plugin.Plugin) error {
 		// dummy log spec
-		fmt.Println(gen.Spec)
-
-		return nil
+		return fmt.Errorf("hello he %s", "help")
 	})
 }
