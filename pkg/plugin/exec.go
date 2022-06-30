@@ -46,8 +46,6 @@ func (e *executor) ExecWithContext(ctx context.Context, p string, req *PluginReq
 		return err
 	}
 
-	fmt.Println(string(bb))
-
 	msg := &PluginResponse{}
 	err = proto.Unmarshal(bb, msg)
 	if err != nil {

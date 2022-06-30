@@ -1,13 +1,9 @@
 package cmd
 
 import (
-	"reflect"
-	"strings"
-
 	"github.com/andersnormal/picasso/pkg/settings"
 	"github.com/andersnormal/picasso/pkg/specs"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
 )
 
@@ -27,20 +23,6 @@ var validateCmd = &cobra.Command{
 			return err
 		}
 
-		v := validator.New()
-		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-			name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
-			if name == "-" {
-				return ""
-			}
-			return name
-		})
-
-		err = v.Struct(spec)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return spec.Validate()
 	},
 }

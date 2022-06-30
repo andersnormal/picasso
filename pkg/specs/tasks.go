@@ -1,7 +1,12 @@
 package specs
 
 import (
+	"reflect"
+	"strings"
+
 	"github.com/andersnormal/picasso/pkg/templates"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Spec ...
@@ -18,6 +23,26 @@ type Spec struct {
 	Tasks Tasks `yaml:"tasks"`
 	// Plugins ...
 	Plugins Plugins `yaml:"plugins"`
+}
+
+// Validate ..
+func (s *Spec) Validate() error {
+
+	v := validator.New()
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	err := v.Struct(s)
+	if err != nil {
+		return err
+	}
+
+	return v.Struct(s)
 }
 
 // Plugins ...
