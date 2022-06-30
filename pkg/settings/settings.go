@@ -15,17 +15,51 @@ const (
 	DefaultFileMode = 0755
 )
 
+type settings struct {
+	opts *Opts
+}
+
+type Settings interface {
+	Read(in interface{}) error
+	Write(out interface{}) error
+}
+
+// Opt ...
+type Opt func(*Opts)
+
+// Opts ...
+type Opts struct {
+	File     string
+	FileMode os.FileMode
+}
+
+// Configure ...
+func (o *Opts) Configure(opts ...Opt) {
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	if o.File == "" {
+		o.File = DefaultFile
+	}
+
+	if o.FileMode == 0 {
+		o.FileMode = DefaultFileMode
+	}
+}
+
+// New ...
 func New(opts ...Opt) Settings {
 	options := &Opts{}
+	options.Configure(opts...)
 
 	var s = new(settings)
 	s.opts = options
 
-	_ = configure(s, opts...)
-
 	return s
 }
 
+// Read ...
 func (s *settings) Read(in interface{}) error {
 	if _, err := os.Stat(s.opts.File); os.IsNotExist(err) {
 		return fmt.Errorf("settings error: %w", err)
@@ -44,6 +78,7 @@ func (s *settings) Read(in interface{}) error {
 	return nil
 }
 
+// Write ...
 func (s *settings) Write(out interface{}) error {
 	y, err := yaml.Marshal(out)
 	if err != nil {
@@ -58,18 +93,9 @@ func (s *settings) Write(out interface{}) error {
 	return nil
 }
 
-func configure(s *settings, opts ...Opt) error {
-	for _, o := range opts {
-		o(s.opts)
+// WithFile ...
+func WithFile(f string) Opt {
+	return func(o *Opts) {
+		o.File = f
 	}
-
-	if s.opts.File == "" {
-		s.opts.File = DefaultFile
-	}
-
-	if s.opts.FileMode == 0 {
-		s.opts.FileMode = DefaultFileMode
-	}
-
-	return nil
 }

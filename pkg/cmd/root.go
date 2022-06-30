@@ -54,6 +54,7 @@ func init() {
 	// add sub-commands
 	root.AddCommand(run)
 	root.AddCommand(initCmd)
+	root.AddCommand(validateCmd)
 
 	// initialize upon running commands
 	cobra.OnInitialize(initConfig)

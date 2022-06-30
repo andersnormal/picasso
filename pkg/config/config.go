@@ -2,9 +2,11 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"syscall"
 
 	"github.com/andersnormal/picasso/pkg/task"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -70,8 +72,19 @@ func New() *Config {
 	}
 }
 
+// Cwd ...
 func (c *Config) Cwd() (string, error) {
 	return os.Getwd()
+}
+
+// Settings ...
+func (c *Config) Settings() (string, error) {
+	cwd, err := c.Cwd()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(cwd, c.File), nil
 }
 
 // SetupLogger prepares the logger instance
