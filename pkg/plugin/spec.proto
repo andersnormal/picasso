@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package plugin;
+
+option go_package = "github.com/andersnormal/picasso/pkg/plugin";
+
+// Spec ...
+message Spec {
+    string name                 = 1;
+    string version              = 2;
+    string description          = 3;
+    repeated string authors     = 4;
+    string homepage             = 5;
+    string license              = 6;
+    string repository           = 7;
+    repeated Plugin plugins     = 8;
+    repeated Task tasks         = 9;
+    repeated Generator generators  = 10;
+
+    // Task ...
+    message Task {
+        string id                   = 1;
+        string name                 = 2;
+        string description          = 3;
+        repeated string commands    = 4;
+        bool disabled               = 5;
+        bool default                = 6;
+        repeated string depends_on  = 7;
+        map<string, string> vars    = 8;
+        repeated Watch watch        = 9;
+    }
+
+    // Watch ...
+    message Watch {
+        repeated string paths       = 1;
+        repeated string ignores     = 2;
+    }
+
+    // Plugin ...
+    message Plugin {
+        string id                   = 1;
+        string name                 = 2;
+        string description          = 3;
+        string paths                = 4;
+    }
+
+    // Generator ...
+    message Generator {
+        string id                   = 1;
+        string name                 = 2;
+        string path                 = 3;
+        repeated string includes    = 4;
+        repeated string excludes    = 5;
+        repeated Input inputs       = 6;
+
+        // Input ...
+        message Input {
+            string name                 = 1;
+            string type                 = 2;
+            string prompt               = 3;
+            string regex                = 4;    
+        }
+    }
+}

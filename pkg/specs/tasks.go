@@ -27,7 +27,6 @@ type Spec struct {
 
 // Validate ..
 func (s *Spec) Validate() error {
-
 	v := validator.New()
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
