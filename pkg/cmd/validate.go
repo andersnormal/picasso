@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/andersnormal/picasso/pkg/settings"
-	"github.com/andersnormal/picasso/pkg/specs"
+	"github.com/andersnormal/picasso/pkg/spec"
 
 	"github.com/spf13/cobra"
 )
@@ -16,7 +16,7 @@ var validateCmd = &cobra.Command{
 			return err
 		}
 
-		spec := specs.Spec{}
+		spec := spec.Spec{}
 		s := settings.New(settings.WithFile(spath))
 		err = s.Read(&spec)
 		if err != nil {

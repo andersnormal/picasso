@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/gen/iface"
-	"github.com/andersnormal/picasso/pkg/specs"
+	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v2"
 )
@@ -118,7 +118,7 @@ func (a *archiveProvider) CloneWithContext(ctx context.Context, url, folder stri
 	// this should be later filtered to be the root of the files
 	// base := path.Base(y.Name)
 
-	var s *specs.Spec
+	var s *spec.Spec
 	raw, err := readZipFile(y)
 	if err != nil {
 		return err

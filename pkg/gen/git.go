@@ -3,13 +3,12 @@ package gen
 import (
 	"context"
 	"errors"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/gen/iface"
-	"github.com/andersnormal/picasso/pkg/specs"
+	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
 
@@ -83,12 +82,12 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
-	var s *specs.Tmpl
-	t := tmpl.New()
+	var s *spec.Spec
+	_ = tmpl.New()
 
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
-		if !strings.Contains(f.Name, specs.TmplFile) {
+		if !strings.Contains(f.Name, spec.DefaultFilename) {
 			return nil
 		}
 
@@ -98,11 +97,6 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		}
 
 		err = yaml.NewDecoder(r).Decode(&s)
-		if err != nil {
-			return err
-		}
-
-		err = t.ApplyPrompts(s.Inputs)
 		if err != nil {
 			return err
 		}
@@ -124,11 +118,6 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		parts := strings.Split(f.Name, string(os.PathSeparator))
 		fpath := filepath.Join(path, filepath.Join(parts...))
 
-		// do not write the .template.yml file back
-		if strings.Contains(f.Name, specs.TmplFile) {
-			return nil
-		}
-
 		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
 			return err
 		}
@@ -144,47 +133,47 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		}
 		defer outFile.Close()
 
-		ok, err := f.IsBinary()
-		if err != nil {
-			return err
-		}
+		// ok, err := f.IsBinary()
+		// if err != nil {
+		// 	return err
+		// }
 
-		var ignore bool
-		for _, p := range s.Ignores {
-			if strings.Contains(f.Name, p) {
-				ignore = true
-				break
-			}
-		}
+		// var ignore bool
+		// for _, p := range s.Ignores {
+		// 	if strings.Contains(f.Name, p) {
+		// 		ignore = true
+		// 		break
+		// 	}
+		// }
 
-		r, err := f.Reader()
-		if err != nil {
-			return err
-		}
+		// r, err := f.Reader()
+		// if err != nil {
+		// 	return err
+		// }
 
-		if !ignore && !ok {
-			text, err := f.Contents()
-			if err != nil {
-				return err
-			}
+		// if !ignore && !ok {
+		// 	text, err := f.Contents()
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			out, err := t.Apply(text)
-			if err != nil {
-				return err
-			}
+		// 	out, err := t.Apply(text)
+		// 	if err != nil {
+		// 		return err
+		// 	}
 
-			r := strings.NewReader(out)
+		// 	r := strings.NewReader(out)
 
-			_, err = io.Copy(outFile, r)
-			if err != nil {
-				return err
-			}
-		} else {
-			_, err = io.Copy(outFile, r)
-			if err != nil {
-				return err
-			}
-		}
+		// 	_, err = io.Copy(outFile, r)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// } else {
+		// 	_, err = io.Copy(outFile, r)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// }
 
 		return err
 	}); err != nil {

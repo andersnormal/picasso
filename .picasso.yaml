@@ -1,6 +1,31 @@
-version: 1
-author: Sebastian Döll <sebastian@katallaxie.me>
-project: Picasso
+spec: 1
+version: 1.0.0
+authors:
+  - Sebastian Döll <sebastian@katallaxie.me>
+homepage:
+  - https://github.com/andersnormal/picasso
+repository:
+  - https://github.com/andersnormal/picasso
+generators:
+  - 
+    id: picasso-gen-react
+    name: React generator
+    path: picasso-gen-react
+    inputs:
+      -
+        name: View
+        type: string
+        description: Name of the view to generate
+plugins:
+  -
+    id: picasso-plugin-remote
+    path: picasso-plugin-remote
+template:
+  inputs:
+    -
+      name: ProjectName
+      type: string
+      description: The name of a new project if clones
 tasks:
   release:
     desc: release
