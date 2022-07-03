@@ -61,7 +61,7 @@ type Settings struct {
 
 func New() *Config {
 	return &Config{
-		File:         ".picasso.yaml",
+		File:         ".picasso.yml",
 		KillSignal:   syscall.SIGINT,
 		LogFormat:    "text",
 		LogLevel:     "warn",
@@ -78,7 +78,7 @@ func (c *Config) Cwd() (string, error) {
 }
 
 // Settings ...
-func (c *Config) Settings() (string, error) {
+func (c *Config) SpecFile() (string, error) {
 	cwd, err := c.Cwd()
 	if err != nil {
 		return "", err

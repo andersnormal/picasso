@@ -46,11 +46,6 @@ func init() {
 	root.SilenceErrors = true
 	root.SilenceUsage = true
 
-	// add run commands
-	if err := addTaskCommands(run); err != nil {
-		log.Fatal(err)
-	}
-
 	// add sub-commands
 	root.AddCommand(run)
 	root.AddCommand(initCmd)
@@ -90,7 +85,8 @@ func addTaskCommands(root *cobra.Command) error {
 		if task.Default {
 			root.RunE = t.RunE
 		}
-		root.AddCommand(generateTask(use, task))
+
+		root.AddCommand(t)
 	}
 
 	return nil
@@ -100,6 +96,11 @@ func initConfig() {
 	// unmarshal to config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatalf(fmt.Sprintf("cannot unmarshal config: %v", err))
+	}
+
+	// add run commands
+	if err := addTaskCommands(run); err != nil {
+		log.Fatal(err)
 	}
 
 	// setup logger

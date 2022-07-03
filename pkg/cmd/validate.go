@@ -11,7 +11,7 @@ var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate a task file",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		spath, err := cfg.Settings()
+		spath, err := cfg.SpecFile()
 		if err != nil {
 			return err
 		}
