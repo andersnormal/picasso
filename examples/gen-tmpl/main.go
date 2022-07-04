@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/andersnormal/picasso/pkg/plugin"
+	"github.com/andersnormal/picasso/pkg/proto"
 )
 
 func main() {
-	plugin.Options{}.Run(func(p *plugin.Plugin) error {
+	proto.Options{}.Run(func(p *proto.Plugin) error {
 		// dummy log spec
 		return fmt.Errorf("hello he %s", "help")
 	})

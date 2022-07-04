@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
-	"github.com/andersnormal/picasso/pkg/task"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -68,7 +67,6 @@ type Settings struct {
 	Version string
 	Author  string
 	Project string
-	Tasks   task.Tasks
 	Vars    Vars
 }
 

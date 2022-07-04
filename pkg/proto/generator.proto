@@ -10,15 +10,15 @@ message GeneratorRequest {
     repeated string FilePaths        = 1;
     // Parameters ...
     map<string, string> Parameters   = 2;
-    // Spec ...
-    string Spec                      = 3;
     // Version ...
-    string Version                   = 4;
+    string Version                   = 3;
 }
 
 
 // GeneratorResponse ...
 message GeneratorResponse {
+    // FilePaths ...
+    repeated string FilePaths        = 1;
     // Error ...
-    string Error                    = 1;
+    string Error                     = 2;
 }

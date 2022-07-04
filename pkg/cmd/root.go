@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"math/rand"
 	"os"
-	"path"
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
-	s "github.com/andersnormal/picasso/pkg/settings"
 	"github.com/andersnormal/picasso/pkg/version"
 
 	log "github.com/sirupsen/logrus"
@@ -60,52 +57,10 @@ func init() {
 	cobra.OnInitialize(initConfig)
 }
 
-func addTaskCommands(root *cobra.Command) error {
-	// configure path
-	cwd, err := cfg.Cwd()
-	if err != nil {
-		return err
-	}
-
-	// settings opts
-	sopts := []s.Opt{func(o *s.Opts) {
-		o.File = path.Join(cwd, cfg.File)
-		o.FileMode = cfg.FileMode
-	}}
-
-	// new settings
-	settings := config.NewSettings()
-	ss := s.New(sopts...)
-	if err := ss.Read(&settings); err != nil && !errors.Is(err, os.ErrNotExist) {
-		return err
-	}
-
-	// attach tasks
-	for use, task := range settings.Tasks {
-		if task.Disable {
-			continue
-		}
-
-		t := generateTask(use, task)
-		if task.Default {
-			root.RunE = t.RunE
-		}
-
-		root.AddCommand(t)
-	}
-
-	return nil
-}
-
 func initConfig() {
 	// unmarshal to config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatalf(fmt.Sprintf("cannot unmarshal config: %v", err))
-	}
-
-	// add run commands
-	if err := addTaskCommands(runCmd); err != nil {
-		log.Fatal(err)
 	}
 
 	// setup logger

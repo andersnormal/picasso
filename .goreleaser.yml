@@ -9,17 +9,12 @@ build:
     - 386
     - amd64
   ignore:
-    - goos: darwin
-      goarch: 386
+      - goos: darwin
+        goarch: 386
   env:
     - CGO_ENABLED=0
-
-archive:
-  name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}"
-
-  format_overrides:
-    - goos: windows
-      format: zip
+  ldflags:
+      - -s -w
 
 release:
   draft: true
@@ -29,16 +24,3 @@ snapshot:
 
 checksum:
   name_template: "task_checksums.txt"
-
-nfpm:
-  vendor: Picasso
-  homepage: https://github.com/andersnormal/picasso
-  maintainer: Sebastian Döll <sebastian@andersnormal.us>
-  description: Picasso is a versatile task runnter and awesome build tool
-  license: Apache 2.0
-  conflicts:
-    - taskwarrior
-  formats:
-    - deb
-    - rpm
-  name_template: "{{.ProjectName}}_{{.Os}}_{{.Arch}}"

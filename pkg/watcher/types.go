@@ -3,7 +3,7 @@ package watcher
 import (
 	"context"
 
-	"github.com/andersnormal/picasso/pkg/task"
+	"github.com/andersnormal/picasso/pkg/spec"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -19,7 +19,7 @@ type Watcher interface {
 type watcher struct {
 	opts *Opts
 	stop chan bool
-	task *task.Task
+	task spec.Task
 
 	fs *fsnotify.Watcher
 }

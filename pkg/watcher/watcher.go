@@ -5,12 +5,12 @@ import (
 	"path"
 	"time"
 
-	"github.com/andersnormal/picasso/pkg/task"
+	"github.com/andersnormal/picasso/pkg/spec"
 
 	"github.com/fsnotify/fsnotify"
 )
 
-func New(task *task.Task, opts ...Opt) Watcher {
+func New(task spec.Task, opts ...Opt) Watcher {
 	options := &Opts{}
 
 	var w = new(watcher)
