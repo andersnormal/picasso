@@ -7,10 +7,19 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 )
+
+// Flags ...
+type Flags struct {
+	Version bool
+	Silent  bool
+	Help    bool
+	Init    bool
+	Force   bool
+	Verbose bool
+	Dry     bool
+	Env     []string
+}
 
 // Config ...
 type Config struct {
@@ -36,6 +45,15 @@ type Config struct {
 	RunConfig RunConfig
 	// Plugins ...
 	Plugins []string
+
+	// Flags ...
+	Flags Flags
+	// Stdin ...
+	Stdin *os.FileInfo
+	// Stdout ...
+	Stdout *os.FileInfo
+	// Stderr ...
+	Stderr *os.FileInfo
 }
 
 // InitConfig ...
@@ -110,40 +128,4 @@ func (c *Config) LoadSpec() (*spec.Spec, error) {
 	}
 
 	return s, nil
-}
-
-// SetupLogger prepares the logger instance
-func (c *Config) SetupLogger() error {
-	switch c.LogFormat {
-	case "text":
-		log.SetFormatter(&log.TextFormatter{})
-	case "json":
-		log.SetFormatter(&log.JSONFormatter{})
-	default:
-		log.SetFormatter(&log.JSONFormatter{})
-	}
-
-	if c.Verbose {
-		c.LogLevel = "debug"
-	}
-
-	// set the configured log level
-	if level, err := log.ParseLevel(c.LogLevel); err == nil {
-		log.SetLevel(level)
-	}
-
-	return nil
-}
-
-func (c *Config) AddFlags(cmd *cobra.Command) {
-	// enable verbose output
-	cmd.PersistentFlags().BoolVar(&c.Verbose, "verbose", false, "enable verbose output")
-	// set log format
-	cmd.PersistentFlags().StringVar(&c.LogFormat, "log-format", "text", "log format")
-	// set log level
-	cmd.PersistentFlags().StringVar(&c.LogLevel, "log-level", "warn", "log level")
-	// enable verbose output
-	cmd.PersistentFlags().StringVar(&c.File, "config", c.File, "config file")
-	// enable plugins
-	cmd.PersistentFlags().StringSliceVar(&c.Plugins, "plugin", c.Plugins, "plugin")
 }

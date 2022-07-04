@@ -37,10 +37,6 @@ func init() {
 		panic(err)
 	}
 
-	// add flags
-	cfg.AddFlags(root)
-	addFlags()
-
 	// set default formatter
 	log.SetFormatter(&log.TextFormatter{})
 
@@ -63,8 +59,6 @@ func initConfig() {
 		log.Fatalf(fmt.Sprintf("cannot unmarshal config: %v", err))
 	}
 
-	// setup logger
-	_ = cfg.SetupLogger()
 }
 
 func addFlags() {

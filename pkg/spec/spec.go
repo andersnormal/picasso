@@ -6,7 +6,6 @@ import (
 	"reflect"
 	"strings"
 
-	plugin "github.com/andersnormal/picasso/pkg/proto"
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v2"
 )
@@ -116,11 +115,11 @@ func (s *Spec) Find(names []string) ([]Task, error) {
 }
 
 // Proto ...
-func (s *Spec) Proto() *plugin.Spec {
-	spec := &plugin.Spec{}
+// func (s *Spec) Proto() *plugin.Spec {
+// 	spec := &plugin.Spec{}
 
-	return spec
-}
+// 	return spec
+// }
 
 // Authors ...
 type Authors []string
