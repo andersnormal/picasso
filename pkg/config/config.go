@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
+	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/task"
@@ -12,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Config ...
 type Config struct {
 	// Verbose toggles the verbosity
 	Verbose bool
@@ -51,6 +53,8 @@ type InitConfig struct {
 type RunConfig struct {
 	// Env ...
 	Env []string
+	// TImeout ...
+	Timeout time.Duration
 }
 
 // Vars ...
@@ -79,7 +83,7 @@ func New() *Config {
 		TermSignal:   syscall.SIGTERM,
 		Verbose:      false,
 		InitConfig:   InitConfig{Folder: "", URL: ""},
-		RunConfig:    RunConfig{Env: []string{}},
+		RunConfig:    RunConfig{Env: []string{}, Timeout: time.Second * 300},
 	}
 }
 

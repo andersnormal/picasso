@@ -6,12 +6,14 @@ import (
 	"io"
 	"os"
 	"time"
+
+	"github.com/andersnormal/picasso/pkg/spec"
 )
 
 // Executr ...
 type Executr interface {
 	// Run ...
-	Run(ctx context.Context) error
+	Run(ctx context.Context, task spec.Task) error
 	// Stdin ...
 	Stdin() io.Reader
 	// Stdout ...
@@ -19,6 +21,9 @@ type Executr interface {
 	// Stderr ...
 	Stderr() io.Writer
 }
+
+// Cmd ...
+type Cmd string
 
 // Env ...
 type Env map[string]string
@@ -74,5 +79,12 @@ func (o *Opts) Configure(opts ...Opt) {
 func WithEnv(env Env) Opt {
 	return func(o *Opts) {
 		o.Env = env
+	}
+}
+
+// WithTimeout ...
+func WithTimeout(timeout time.Duration) Opt {
+	return func(o *Opts) {
+		o.Timeout = timeout
 	}
 }

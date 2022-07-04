@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/andersnormal/picasso/pkg/spec"
+
 	"mvdan.cc/sh/expand"
 	"mvdan.cc/sh/interp"
 	"mvdan.cc/sh/syntax"
@@ -40,42 +42,33 @@ func (e *exectur) Stderr() io.Writer {
 }
 
 // Run ...
-func (e *exectur) Run(ctx context.Context) error {
-	if (e.opts.Cmd) == "" {
-		return ErrNoCmd
-	}
-
-	cctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
+func (e *exectur) Run(ctx context.Context, task spec.Task) error {
+	ctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
 	defer cancel()
 
-	if e.opts.Timeout != 0 {
-		ctx = cctx // use context with timeout
+	for _, cmd := range task.Commands {
+		p, err := syntax.NewParser().Parse(strings.NewReader(string(cmd)), "")
+		if err != nil {
+			return err
+		}
+
+		r, err := interp.New(
+			interp.Env(expand.ListEnviron(append(os.Environ(), e.opts.Env.Strings()...)...)),
+
+			interp.Module(interp.DefaultExec),
+			interp.Module(interp.OpenDevImpls(interp.DefaultOpen)),
+
+			interp.StdIO(e.opts.Stdin, e.opts.Stdout, e.opts.Stderr),
+		)
+		if err != nil {
+			return err
+		}
+
+		err = r.Run(ctx, p)
+		if err != nil {
+			return err
+		}
 	}
 
-	p, err := syntax.NewParser().Parse(strings.NewReader(e.opts.Cmd), "")
-	if err != nil {
-		return err
-	}
-
-	r, err := interp.New(
-		interp.Dir(e.opts.Dir),
-		interp.Env(expand.ListEnviron(append(os.Environ(), e.opts.Env.Strings()...)...)),
-
-		interp.Module(interp.DefaultExec),
-		interp.Module(interp.OpenDevImpls(interp.DefaultOpen)),
-
-		interp.StdIO(e.opts.Stdin, e.opts.Stdout, e.opts.Stderr),
-	)
-	if err != nil {
-		return err
-	}
-
-	err = r.Run(ctx, p)
-
-	// if we just hit the timeout
-	if ctx.Err() == context.DeadlineExceeded {
-		return ErrTimeout
-	}
-
-	return err
+	return nil
 }

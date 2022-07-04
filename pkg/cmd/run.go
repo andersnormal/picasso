@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -13,6 +14,10 @@ var runCmd = &cobra.Command{
 	Use:   "run [command]",
 	Short: "Run task from your task file",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// create root context
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
 		s, err := cfg.LoadSpec()
 		if err != nil {
 			return err
@@ -37,8 +42,15 @@ var runCmd = &cobra.Command{
 			env[k[0]] = k[1]
 		}
 
-		fmt.Println(env)
-		fmt.Println(tt)
+		exec := executr.New(
+			executr.WithEnv(env),
+			executr.WithTimeout(cfg.RunConfig.Timeout),
+		)
+		for _, t := range tt {
+			if err := exec.Run(ctx, t); err != nil {
+				return err
+			}
+		}
 
 		return nil
 	},

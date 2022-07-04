@@ -118,6 +118,7 @@ func addFlags() {
 	initCmd.Flags().StringVarP(&cfg.InitConfig.URL, "url", "u", cfg.InitConfig.Folder, "url of archive")
 
 	runCmd.Flags().StringSliceVarP(&cfg.RunConfig.Env, "env", "e", cfg.RunConfig.Env, "environment variables")
+	runCmd.Flags().DurationVar(&cfg.RunConfig.Timeout, "timeout", cfg.RunConfig.Timeout, "timeout")
 }
 
 func Execute() {

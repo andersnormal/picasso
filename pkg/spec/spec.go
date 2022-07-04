@@ -139,11 +139,12 @@ type Task struct {
 	Id          string    `yaml:"id"`
 	Name        string    `yaml:"name"`
 	Description string    `yaml:"description"`
-	Commands    Commands  `yaml:"commands"`
+	Commands    Commands  `yaml:"cmd"`
 	Disabled    bool      `yaml:"disabled"`
 	Default     bool      `yaml:"default"`
 	DependsOn   DependsOn `yaml:"depends_on"`
-	Vars        Vars      `yaml:"vars"`
+	Var         Var       `yaml:"vars"`
+	Env         Env       `yaml:"env"`
 	Watch       Watch     `yaml:"watch"`
 }
 
@@ -163,8 +164,8 @@ type Template struct {
 	File string `yaml:"file"`
 	// Out ...
 	Out string `yaml:"out"`
-	// Vars ...
-	Vars Vars `yaml:"vars"`
+	// Var ...
+	Var Var `yaml:"var"`
 }
 
 // Watch ...
@@ -180,7 +181,10 @@ type Paths []string
 type Ignores []string
 
 // Vars ...
-type Vars map[string]string
+type Var map[string]string
+
+// Env ...
+type Env map[string]string
 
 // DependsOn ...
 type DependsOn []string

@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"path"
 
 	"github.com/andersnormal/picasso/pkg/config"
 	s "github.com/andersnormal/picasso/pkg/settings"
 	"github.com/andersnormal/picasso/pkg/task"
-	"github.com/andersnormal/picasso/pkg/watcher"
 
 	"github.com/spf13/cobra"
 )
@@ -58,28 +56,28 @@ func generateTask(name string, task *task.Task) *cobra.Command {
 			}
 
 			// first execute deps
-			if err := task.ExecDeps(ctx); err != nil {
-				return err
-			}
+			// if err := task.ExecDeps(ctx); err != nil {
+			// 	return err
+			// }
 
-			// then execute the cmds
-			if err := task.Exec(ctx); err != nil {
-				return err
-			}
+			// // then execute the cmds
+			// if err := task.Exec(ctx); err != nil {
+			// 	return err
+			// }
 
-			if task.ShouldWatch() {
-				fmt.Println("watching files (press ctrl-c to stop) ...")
+			// if task.ShouldWatch() {
+			// 	fmt.Println("watching files (press ctrl-c to stop) ...")
 
-				// watcher opts
-				wopts := []watcher.Opt{func(o *watcher.Opts) {
-					o.Paths = task.Paths
-					o.Cwd = cwd
-				}}
+			// 	// watcher opts
+			// 	wopts := []watcher.Opt{func(o *watcher.Opts) {
+			// 		o.Paths = task.Paths
+			// 		o.Cwd = cwd
+			// 	}}
 
-				// create watcher
-				w := watcher.New(task, wopts...)
-				err = w.Reload(ctx)
-			}
+			// 	// create watcher
+			// 	w := watcher.New(task, wopts...)
+			// 	err = w.Reload(ctx)
+			// }
 
 			return err
 		},
