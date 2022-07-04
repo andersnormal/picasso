@@ -1,13 +1,15 @@
-package gen
+package init
 
 import (
 	"context"
 	"errors"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/gen/iface"
+	"github.com/andersnormal/picasso/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v2"
@@ -16,7 +18,6 @@ import (
 	gg "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"go.uber.org/zap"
 )
 
 var (
@@ -41,10 +42,6 @@ func NewGit(opts ...iface.ProviderOpt) iface.Provider {
 
 // CloneWithContext ...
 func (g *git) CloneWithContext(ctx context.Context, url string, folder string) error {
-	ll := g.opts.Logger.With(zap.String("provider", "git"), zap.String("url", url))
-
-	ll.Info("Cloning repository")
-
 	path, err := filepath.Abs(folder)
 	if err != nil {
 		return err
@@ -113,6 +110,12 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
+	// Apply prompts ...
+	t := tmpl.New()
+	if err := t.ApplyPrompts(s.Template.Inputs); err != nil {
+		return err
+	}
+
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
 		parts := strings.Split(f.Name, string(os.PathSeparator))
@@ -133,49 +136,47 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		}
 		defer outFile.Close()
 
-		// ok, err := f.IsBinary()
-		// if err != nil {
-		// 	return err
-		// }
+		ok, err := f.IsBinary()
+		if err != nil {
+			return err
+		}
 
-		// var ignore bool
-		// for _, p := range s.Ignores {
-		// 	if strings.Contains(f.Name, p) {
-		// 		ignore = true
-		// 		break
-		// 	}
-		// }
+		for _, e := range s.Template.Excludes {
+			if strings.Contains(f.Name, e) {
+				return nil
+			}
+		}
 
-		// r, err := f.Reader()
-		// if err != nil {
-		// 	return err
-		// }
+		r, err := f.Reader()
+		if err != nil {
+			return err
+		}
 
-		// if !ignore && !ok {
-		// 	text, err := f.Contents()
-		// 	if err != nil {
-		// 		return err
-		// 	}
+		if ok {
+			_, err = io.Copy(outFile, r)
+			if err != nil {
+				return err
+			}
 
-		// 	out, err := t.Apply(text)
-		// 	if err != nil {
-		// 		return err
-		// 	}
+			return nil
+		}
 
-		// 	r := strings.NewReader(out)
+		buf, err := ioutil.ReadAll(r)
+		if err != nil {
+			return err
+		}
 
-		// 	_, err = io.Copy(outFile, r)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// } else {
-		// 	_, err = io.Copy(outFile, r)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// }
+		out, err := t.Apply(string(buf))
+		if err != nil {
+			return err
+		}
 
-		return err
+		_, err = io.Copy(outFile, strings.NewReader(out))
+		if err != nil {
+			return err
+		}
+
+		return nil
 	}); err != nil {
 		return err
 	}

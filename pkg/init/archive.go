@@ -1,4 +1,4 @@
-package gen
+package init
 
 import (
 	"archive/zip"
@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/gen/iface"
+	"github.com/andersnormal/picasso/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v2"

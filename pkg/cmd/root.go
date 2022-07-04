@@ -35,6 +35,11 @@ func init() {
 	// create config
 	cfg = config.New()
 
+	err := cfg.InitDefaultConfig()
+	if err != nil {
+		panic(err)
+	}
+
 	// add flags
 	cfg.AddFlags(root)
 	addFlags()

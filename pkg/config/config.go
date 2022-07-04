@@ -59,6 +59,7 @@ type Settings struct {
 	Vars    Vars
 }
 
+// New ...
 func New() *Config {
 	return &Config{
 		File:         ".picasso.yml",
@@ -70,6 +71,18 @@ func New() *Config {
 		Verbose:      false,
 		InitConfig:   InitConfig{Folder: "", URL: ""},
 	}
+}
+
+// InitDefaultConfig() ...
+func (c *Config) InitDefaultConfig() error {
+	cwd, err := c.Cwd()
+	if err != nil {
+		return err
+	}
+	c.File = filepath.Join(cwd, c.File)
+	c.InitConfig.Folder = cwd
+
+	return nil
 }
 
 // Cwd ...
