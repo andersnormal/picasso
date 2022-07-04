@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/andersnormal/picasso/pkg/proto";
+
+// GeneratorRequest ...
+message GeneratorRequest {
+    // FilePaths ...
+    repeated string FilePaths        = 1;
+    // Parameters ...
+    map<string, string> Parameters   = 2;
+    // Spec ...
+    string Spec                      = 3;
+    // Version ...
+    string Version                   = 4;
+}
+
+
+// GeneratorResponse ...
+message GeneratorResponse {
+    // Error ...
+    string Error                    = 1;
+}

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/plugin"
+	plugin "github.com/andersnormal/picasso/pkg/proto"
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v2"
 )
