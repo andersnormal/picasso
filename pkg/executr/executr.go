@@ -11,15 +11,15 @@ import (
 	"mvdan.cc/sh/syntax"
 )
 
+// New ...
 func New(opts ...Opt) Executr {
 	options := &Opts{
 		Env: make(Env),
 	}
+	options.Configure(opts...)
 
-	var e = new(exectur)
+	e := new(exectur)
 	e.opts = options
-
-	_ = configure(e, opts...)
 
 	return e
 }
@@ -39,6 +39,7 @@ func (e *exectur) Stderr() io.Writer {
 	return e.opts.Stderr
 }
 
+// Run ...
 func (e *exectur) Run(ctx context.Context) error {
 	if (e.opts.Cmd) == "" {
 		return ErrNoCmd
@@ -77,24 +78,4 @@ func (e *exectur) Run(ctx context.Context) error {
 	}
 
 	return err
-}
-
-func configure(e *exectur, opts ...Opt) error {
-	for _, o := range opts {
-		o(e.opts)
-	}
-
-	if e.opts.Stdin == nil {
-		e.opts.Stdin = os.Stdin
-	}
-
-	if e.opts.Stdout == nil {
-		e.opts.Stdout = os.Stdout
-	}
-
-	if e.opts.Stderr == nil {
-		e.opts.Stderr = os.Stderr
-	}
-
-	return nil
 }

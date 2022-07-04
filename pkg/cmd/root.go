@@ -52,7 +52,7 @@ func init() {
 	root.SilenceUsage = true
 
 	// add sub-commands
-	root.AddCommand(run)
+	root.AddCommand(runCmd)
 	root.AddCommand(initCmd)
 	root.AddCommand(validateCmd)
 
@@ -104,7 +104,7 @@ func initConfig() {
 	}
 
 	// add run commands
-	if err := addTaskCommands(run); err != nil {
+	if err := addTaskCommands(runCmd); err != nil {
 		log.Fatal(err)
 	}
 
@@ -116,6 +116,8 @@ func addFlags() {
 	initCmd.Flags().BoolVar(&cfg.InitConfig.ArchiveMode, "archive", cfg.InitConfig.ArchiveMode, "url is an archive")
 	initCmd.Flags().StringVarP(&cfg.InitConfig.Folder, "folder", "f", cfg.InitConfig.Folder, "folder")
 	initCmd.Flags().StringVarP(&cfg.InitConfig.URL, "url", "u", cfg.InitConfig.Folder, "url of archive")
+
+	runCmd.Flags().StringSliceVarP(&cfg.RunConfig.Env, "env", "e", cfg.RunConfig.Env, "environment variables")
 }
 
 func Execute() {

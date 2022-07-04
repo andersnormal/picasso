@@ -31,6 +31,8 @@ type Config struct {
 	FileMode os.FileMode
 	// InitConfig ...
 	InitConfig InitConfig
+	// RunConfig ...
+	RunConfig RunConfig
 	// Plugins ...
 	Plugins []string
 }
@@ -43,6 +45,12 @@ type InitConfig struct {
 	URL string
 	// ArchiveMode ...
 	ArchiveMode bool
+}
+
+// RunConfig ...
+type RunConfig struct {
+	// Env ...
+	Env []string
 }
 
 // Vars ...
@@ -71,6 +79,7 @@ func New() *Config {
 		TermSignal:   syscall.SIGTERM,
 		Verbose:      false,
 		InitConfig:   InitConfig{Folder: "", URL: ""},
+		RunConfig:    RunConfig{Env: []string{}},
 	}
 }
 
