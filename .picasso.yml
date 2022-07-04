@@ -2,10 +2,8 @@ spec: 1
 version: 1.0.0
 authors:
   - Sebastian Döll <sebastian@katallaxie.me>
-homepage:
-  - https://github.com/andersnormal/picasso
-repository:
-  - https://github.com/andersnormal/picasso
+homepage: https://github.com/andersnormal/picasso
+repository: https://github.com/andersnormal/picasso
 generators:
   - 
     id: picasso-gen-react
@@ -35,8 +33,7 @@ tasks:
     disable: true
     desc: test
     vars:
-      region:
-        - test
+      region: test
     cmds:
       - go test -v ./...
   build:
@@ -44,8 +41,7 @@ tasks:
     deps:
       - test
     vars:
-      region:
-        - test
+      region: test
     cmds:
       - go build
     watch:

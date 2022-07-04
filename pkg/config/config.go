@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/task"
 
 	log "github.com/sirupsen/logrus"
@@ -90,14 +91,14 @@ func (c *Config) Cwd() (string, error) {
 	return os.Getwd()
 }
 
-// Settings ...
-func (c *Config) SpecFile() (string, error) {
-	cwd, err := c.Cwd()
+// SpecFile ...
+func (c *Config) LoadSpec() (*spec.Spec, error) {
+	s, err := spec.Load(c.File)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return filepath.Join(cwd, c.File), nil
+	return s, nil
 }
 
 // SetupLogger prepares the logger instance

@@ -1,11 +1,18 @@
 package spec
 
 import (
+	"fmt"
+	"io/ioutil"
 	"reflect"
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/go-playground/validator/v10"
+	"gopkg.in/yaml.v2"
+)
+
+var (
+	ErrTaskNotFound = fmt.Errorf("task not found")
 )
 
 // DefaultFilename ...
@@ -58,6 +65,56 @@ func (s *Spec) Validate() error {
 	return v.Struct(s)
 }
 
+// Load ...
+func Load(file string) (*Spec, error) {
+	f, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	var spec Spec
+	err = yaml.Unmarshal(f, &spec)
+	if err != nil {
+		return nil, err
+	}
+
+	return &spec, nil
+}
+
+// Default ...
+func (s *Spec) Default() []Task {
+	tt := make([]Task, 0)
+
+	for _, t := range s.Tasks {
+		if t.Default {
+			tt = append(tt, t)
+		}
+	}
+
+	return tt
+}
+
+// Find ...
+func (s *Spec) Find(names []string) ([]Task, error) {
+	tt := make([]Task, 0, len(names))
+
+	for _, name := range names {
+		found := false
+		for k, t := range s.Tasks {
+			if k == name {
+				tt = append(tt, t)
+				found = true
+			}
+		}
+
+		if !found {
+			return nil, ErrTaskNotFound
+		}
+	}
+
+	return tt, nil
+}
+
 // Proto ...
 func (s *Spec) Proto() *plugin.Spec {
 	spec := &plugin.Spec{}
@@ -69,13 +126,13 @@ func (s *Spec) Proto() *plugin.Spec {
 type Authors []string
 
 // Plugins ...
-type Plugins []string
+type Plugins []Plugin
 
 // Tasks ...
 type Tasks map[string]Task
 
 // Generators ...
-type Generators map[string]Generator
+type Generators []Generator
 
 // Task ...
 type Task struct {
