@@ -11,18 +11,18 @@ import (
 
 // Flags ...
 type Flags struct {
-	Version   bool
-	Generator string
-	List      bool
-	Validate  bool
-	Silent    bool
-	Help      bool
-	Init      bool
-	Force     bool
-	Verbose   bool
-	Dry       bool
-	Env       []string
-	Timeout   time.Duration
+	Version  bool
+	Plugin   string
+	List     bool
+	Validate bool
+	Silent   bool
+	Help     bool
+	Init     bool
+	Force    bool
+	Verbose  bool
+	Dry      bool
+	Env      []string
+	Timeout  time.Duration
 }
 
 // Config ...
@@ -51,16 +51,6 @@ type Config struct {
 	Stdout *os.File
 	// Stderr ...
 	Stderr *os.File
-}
-
-// InitConfig ...
-type InitConfig struct {
-	// Folder ...
-	Folder string
-	// URL ...
-	URL string
-	// ArchiveMode ...
-	ArchiveMode bool
 }
 
 // New ...

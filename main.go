@@ -11,6 +11,7 @@ import (
 
 	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/executr"
+	"github.com/andersnormal/picasso/pkg/proto"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
 
@@ -23,7 +24,7 @@ var (
 	version = ""
 )
 
-const usage = `Usage: picasso [-cfglvsd] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--validate] [--init] [--version] [task...] 
+const usage = `Usage: picasso [-cfglvsdp] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--validate] [--init] [--version] [task...] 
 
 '''
 spec: 	 1
@@ -64,7 +65,7 @@ func main() {
 	pflag.BoolVarP(&cfg.Flags.Silent, "silent", "s", cfg.Flags.Silent, "silent mode")
 	pflag.StringVarP(&cfg.File, "config", "c", cfg.File, "config file")
 	pflag.StringSliceVarP(&cfg.Flags.Env, "env", "e", cfg.Flags.Env, "environment variables")
-	pflag.StringVarP(&cfg.Flags.Generator, "generator", "g", cfg.Flags.Generator, "generator")
+	pflag.StringVarP(&cfg.Flags.Plugin, "plugin", "p", cfg.Flags.Plugin, "plugin")
 	pflag.BoolVarP(&cfg.Flags.Validate, "validate", "V", cfg.Flags.Validate, "validate config")
 	pflag.BoolVarP(&cfg.Flags.List, "list", "l", cfg.Flags.List, "list tasks")
 	pflag.DurationVarP(&cfg.Flags.Timeout, "timeout", "t", time.Second*300, "timeout")
@@ -136,6 +137,24 @@ func main() {
 		os.Exit(0)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if cfg.Flags.Plugin != "" {
+		e := proto.NewExecutor(
+			proto.WithStderr(cfg.Stderr),
+			proto.WithStdin(cfg.Stdin),
+			proto.WithStdout(cfg.Stdout),
+		)
+
+		err = e.ExecWithContext(context.Background(), cfg.Flags.Plugin, &proto.PluginRequest{})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		os.Exit(0)
+	}
+
 	tasks := s.Default()
 
 	args, err := parseArgs()
@@ -151,9 +170,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	exec := executr.New(
 		executr.WithTimeout(cfg.Flags.Timeout),

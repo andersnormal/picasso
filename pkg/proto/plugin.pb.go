@@ -102,8 +102,10 @@ type PluginResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// FilePaths ...
+	FilePaths []string `protobuf:"bytes,1,rep,name=FilePaths,proto3" json:"FilePaths,omitempty"`
 	// Error ...
-	Error string `protobuf:"bytes,1,opt,name=Error,proto3" json:"Error,omitempty"`
+	Error string `protobuf:"bytes,2,opt,name=Error,proto3" json:"Error,omitempty"`
 }
 
 func (x *PluginResponse) Reset() {
@@ -138,11 +140,259 @@ func (*PluginResponse) Descriptor() ([]byte, []int) {
 	return file_pkg_proto_plugin_proto_rawDescGZIP(), []int{1}
 }
 
+func (x *PluginResponse) GetFilePaths() []string {
+	if x != nil {
+		return x.FilePaths
+	}
+	return nil
+}
+
 func (x *PluginResponse) GetError() string {
 	if x != nil {
 		return x.Error
 	}
 	return ""
+}
+
+// PluginCommandRequest ...
+type PluginCommandRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Command ...
+	Command string `protobuf:"bytes,1,opt,name=Command,proto3" json:"Command,omitempty"`
+	// Parameters ...
+	Parameters map[string]string `protobuf:"bytes,2,rep,name=Parameters,proto3" json:"Parameters,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Spec ...
+	Spec string `protobuf:"bytes,3,opt,name=Spec,proto3" json:"Spec,omitempty"`
+	// Version ...
+	Version string `protobuf:"bytes,4,opt,name=Version,proto3" json:"Version,omitempty"`
+}
+
+func (x *PluginCommandRequest) Reset() {
+	*x = PluginCommandRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_plugin_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PluginCommandRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PluginCommandRequest) ProtoMessage() {}
+
+func (x *PluginCommandRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_plugin_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PluginCommandRequest.ProtoReflect.Descriptor instead.
+func (*PluginCommandRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_plugin_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PluginCommandRequest) GetCommand() string {
+	if x != nil {
+		return x.Command
+	}
+	return ""
+}
+
+func (x *PluginCommandRequest) GetParameters() map[string]string {
+	if x != nil {
+		return x.Parameters
+	}
+	return nil
+}
+
+func (x *PluginCommandRequest) GetSpec() string {
+	if x != nil {
+		return x.Spec
+	}
+	return ""
+}
+
+func (x *PluginCommandRequest) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+// PluginCommandResponse ...
+type PluginCommandResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Error ...
+	Error string `protobuf:"bytes,1,opt,name=Error,proto3" json:"Error,omitempty"`
+}
+
+func (x *PluginCommandResponse) Reset() {
+	*x = PluginCommandResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_plugin_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PluginCommandResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PluginCommandResponse) ProtoMessage() {}
+
+func (x *PluginCommandResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_plugin_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PluginCommandResponse.ProtoReflect.Descriptor instead.
+func (*PluginCommandResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_plugin_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PluginCommandResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+// PluginUsageRequest ...
+type PluginUsageRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Spec ...
+	Spec string `protobuf:"bytes,1,opt,name=Spec,proto3" json:"Spec,omitempty"`
+	// Version ...
+	Version string `protobuf:"bytes,2,opt,name=Version,proto3" json:"Version,omitempty"`
+}
+
+func (x *PluginUsageRequest) Reset() {
+	*x = PluginUsageRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_plugin_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PluginUsageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PluginUsageRequest) ProtoMessage() {}
+
+func (x *PluginUsageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_plugin_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PluginUsageRequest.ProtoReflect.Descriptor instead.
+func (*PluginUsageRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_plugin_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PluginUsageRequest) GetSpec() string {
+	if x != nil {
+		return x.Spec
+	}
+	return ""
+}
+
+func (x *PluginUsageRequest) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+// PluginUsageResponse ...
+type PluginUsageResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Error ...
+	Error string `protobuf:"bytes,1,opt,name=Error,proto3" json:"Error,omitempty"`
+	// Parameters ...
+	Parameters map[string]string `protobuf:"bytes,2,rep,name=Parameters,proto3" json:"Parameters,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (x *PluginUsageResponse) Reset() {
+	*x = PluginUsageResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_plugin_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PluginUsageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PluginUsageResponse) ProtoMessage() {}
+
+func (x *PluginUsageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_plugin_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PluginUsageResponse.ProtoReflect.Descriptor instead.
+func (*PluginUsageResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_plugin_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PluginUsageResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+func (x *PluginUsageResponse) GetParameters() map[string]string {
+	if x != nil {
+		return x.Parameters
+	}
+	return nil
 }
 
 var File_pkg_proto_plugin_proto protoreflect.FileDescriptor
@@ -164,12 +414,48 @@ var file_pkg_proto_plugin_proto_rawDesc = []byte{
 	0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
 	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02,
-	0x38, 0x01, 0x22, 0x26, 0x0a, 0x0e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x6e,
-	0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x2f, 0x70, 0x69, 0x63, 0x61, 0x73, 0x73, 0x6f, 0x2f, 0x70, 0x6b,
-	0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x38, 0x01, 0x22, 0x44, 0x0a, 0x0e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x46, 0x69, 0x6c, 0x65, 0x50, 0x61, 0x74, 0x68,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x46, 0x69, 0x6c, 0x65, 0x50, 0x61, 0x74,
+	0x68, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x22, 0xea, 0x01, 0x0a, 0x14, 0x50, 0x6c, 0x75,
+	0x67, 0x69, 0x6e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x18, 0x0a, 0x07, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x4b, 0x0a, 0x0a, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x2b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x43, 0x6f,
+	0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x50, 0x61, 0x72,
+	0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x50, 0x61,
+	0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x53, 0x70, 0x65, 0x63,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x53, 0x70, 0x65, 0x63, 0x12, 0x18, 0x0a, 0x07,
+	0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x56,
+	0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x1a, 0x3d, 0x0a, 0x0f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x65,
+	0x74, 0x65, 0x72, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x2d, 0x0a, 0x15, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14,
+	0x0a, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x45,
+	0x72, 0x72, 0x6f, 0x72, 0x22, 0x42, 0x0a, 0x12, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x55, 0x73,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x53, 0x70,
+	0x65, 0x63, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x53, 0x70, 0x65, 0x63, 0x12, 0x18,
+	0x0a, 0x07, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x22, 0xb6, 0x01, 0x0a, 0x13, 0x50, 0x6c, 0x75,
+	0x67, 0x69, 0x6e, 0x55, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x14, 0x0a, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x12, 0x4a, 0x0a, 0x0a, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x65,
+	0x74, 0x65, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x55, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72,
+	0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65,
+	0x72, 0x73, 0x1a, 0x3d, 0x0a, 0x0f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73,
+	0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38,
+	0x01, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x61, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x6e, 0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x2f, 0x70, 0x69, 0x63,
+	0x61, 0x73, 0x73, 0x6f, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -184,19 +470,27 @@ func file_pkg_proto_plugin_proto_rawDescGZIP() []byte {
 	return file_pkg_proto_plugin_proto_rawDescData
 }
 
-var file_pkg_proto_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_pkg_proto_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_pkg_proto_plugin_proto_goTypes = []interface{}{
-	(*PluginRequest)(nil),  // 0: proto.PluginRequest
-	(*PluginResponse)(nil), // 1: proto.PluginResponse
-	nil,                    // 2: proto.PluginRequest.ParametersEntry
+	(*PluginRequest)(nil),         // 0: proto.PluginRequest
+	(*PluginResponse)(nil),        // 1: proto.PluginResponse
+	(*PluginCommandRequest)(nil),  // 2: proto.PluginCommandRequest
+	(*PluginCommandResponse)(nil), // 3: proto.PluginCommandResponse
+	(*PluginUsageRequest)(nil),    // 4: proto.PluginUsageRequest
+	(*PluginUsageResponse)(nil),   // 5: proto.PluginUsageResponse
+	nil,                           // 6: proto.PluginRequest.ParametersEntry
+	nil,                           // 7: proto.PluginCommandRequest.ParametersEntry
+	nil,                           // 8: proto.PluginUsageResponse.ParametersEntry
 }
 var file_pkg_proto_plugin_proto_depIdxs = []int32{
-	2, // 0: proto.PluginRequest.Parameters:type_name -> proto.PluginRequest.ParametersEntry
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	6, // 0: proto.PluginRequest.Parameters:type_name -> proto.PluginRequest.ParametersEntry
+	7, // 1: proto.PluginCommandRequest.Parameters:type_name -> proto.PluginCommandRequest.ParametersEntry
+	8, // 2: proto.PluginUsageResponse.Parameters:type_name -> proto.PluginUsageResponse.ParametersEntry
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_pkg_proto_plugin_proto_init() }
@@ -229,6 +523,54 @@ func file_pkg_proto_plugin_proto_init() {
 				return nil
 			}
 		}
+		file_pkg_proto_plugin_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PluginCommandRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_plugin_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PluginCommandResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_plugin_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PluginUsageRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_plugin_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PluginUsageResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -236,7 +578,7 @@ func file_pkg_proto_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_proto_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -44,6 +44,8 @@ func run(opts Options, f func(*Plugin) error) error {
 		return err
 	}
 
+	fmt.Println("help", out)
+
 	_, err = os.Stdout.Write(out)
 	if err != nil {
 		return err

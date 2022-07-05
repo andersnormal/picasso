@@ -5,12 +5,65 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 
 	"google.golang.org/protobuf/proto"
 )
 
-type executor struct{}
+// Opt ...
+type Opt func(*Opts)
+
+// Opts ...
+type Opts struct {
+	Stdin  io.Reader
+	Stdout io.Writer
+	Stderr io.Writer
+}
+
+// Configure ...
+func (o *Opts) Configure(opts ...Opt) {
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	if o.Stdin == nil {
+		o.Stdin = os.Stdin
+	}
+
+	if o.Stdout == nil {
+		o.Stdout = os.Stdout
+	}
+
+	if o.Stderr == nil {
+		o.Stderr = os.Stderr
+	}
+}
+
+// WithStdin ...
+func WithStdin(r io.Reader) Opt {
+	return func(o *Opts) {
+		o.Stdin = r
+	}
+}
+
+// WithStdout ...
+func WithStdout(w io.Writer) Opt {
+	return func(o *Opts) {
+		o.Stdout = w
+	}
+}
+
+// WithStderr ...
+func WithStderr(w io.Writer) Opt {
+	return func(o *Opts) {
+		o.Stderr = w
+	}
+}
+
+type executor struct {
+	opts *Opts
+}
 
 // Executor ...
 type Executor interface {
@@ -19,8 +72,14 @@ type Executor interface {
 }
 
 // NewExecutor ...
-func NewExecutor() Executor {
-	return &executor{}
+func NewExecutor(opts ...Opt) Executor {
+	options := &Opts{}
+	options.Configure(opts...)
+
+	e := new(executor)
+	e.opts = options
+
+	return e
 }
 
 // ExecWithContext ...
