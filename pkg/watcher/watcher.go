@@ -74,20 +74,11 @@ func (w *watcher) Reload(ctx context.Context) error {
 		}
 	}
 
-	for {
-		select {
-		case <-ticker.C:
-			// case <-w.fs.Events:
-			// 	if err := w.task.ExecDeps(ctx); err != nil {
-			// 		return err
-			// 	}
-
-			// 	if err := w.task.Exec(ctx); err != nil {
-			// 		return err
-			// 	}
-		}
-		// }
+	for range ticker.C {
+		return nil
 	}
+
+	return nil
 }
 
 func (w *watcher) Close() {

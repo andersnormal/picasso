@@ -38,7 +38,10 @@ func (e *executor) ExecWithContext(ctx context.Context, p string, req *PluginReq
 
 	go func() {
 		defer stdin.Close()
-		io.Copy(stdin, bytes.NewReader(m))
+		_, err = io.Copy(stdin, bytes.NewReader(m))
+		if err != nil {
+			fmt.Println(err)
+		}
 	}()
 
 	bb, err := exec.CombinedOutput()

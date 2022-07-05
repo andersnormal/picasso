@@ -53,10 +53,7 @@ func run(opts Options, f func(*Plugin) error) error {
 }
 
 // Options ...
-type Options struct {
-	// ParamFunc ...
-	paramFunc func(name, value string) error
-}
+type Options struct{}
 
 // Plugin ...
 type Plugin struct {
@@ -74,6 +71,7 @@ func (opts Options) New(req *PluginRequest) (*Plugin, error) {
 		Parameters: req.GetParameters(),
 		Version:    req.GetVersion(),
 		Spec:       req.GetSpec(),
+		opts:       opts,
 	}
 
 	return gen, nil
