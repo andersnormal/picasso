@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
+	"runtime/debug"
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
@@ -17,7 +19,11 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const usage = `Usage: picasso [-cfglvsd] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--validate] [--init] [task...] 
+var (
+	version = ""
+)
+
+const usage = `Usage: picasso [-cfglvsd] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--validate] [--init] [--version] [task...] 
 
 '''
 spec: 	 1
@@ -62,7 +68,13 @@ func main() {
 	pflag.BoolVarP(&cfg.Flags.Validate, "validate", "V", cfg.Flags.Validate, "validate config")
 	pflag.BoolVarP(&cfg.Flags.List, "list", "l", cfg.Flags.List, "list tasks")
 	pflag.DurationVarP(&cfg.Flags.Timeout, "timeout", "t", time.Second*300, "timeout")
+	pflag.BoolVar(&cfg.Flags.Version, "version", cfg.Flags.Version, "version")
 	pflag.Parse()
+
+	if cfg.Flags.Version {
+		fmt.Printf("%s\n", getVersion())
+		return
+	}
 
 	if cfg.Flags.Help {
 		pflag.Usage()
@@ -166,4 +178,22 @@ func parseArgs() ([]string, error) {
 	}
 
 	return args[:dash], nil
+}
+
+func getVersion() string {
+	if version != "" {
+		return version
+	}
+
+	info, ok := debug.ReadBuildInfo()
+	if !ok || info.Main.Version == "" {
+		return "unknown"
+	}
+
+	version = info.Main.Version
+	if info.Main.Sum != "" {
+		version += fmt.Sprintf(" (%s)", info.Main.Sum)
+	}
+
+	return version
 }

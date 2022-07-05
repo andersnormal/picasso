@@ -8,6 +8,8 @@ build:
   goarch:
     - 386
     - amd64
+    - arm
+    - arm64
   ignore:
       - goos: darwin
         goarch: 386
@@ -15,6 +17,9 @@ build:
     - CGO_ENABLED=0
   ldflags:
       - -s -w
+
+gomod:
+  proxy: true
 
 release:
   draft: true
