@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const usage = `Usage: picasso [-cfgvsd] [--config] [--force] [--generator] [--verbose] [--silent] [--dry] [--validate] [--init] [task...] 
+const usage = `Usage: picasso [-cfglvsd] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--validate] [--init] [task...] 
 
 '''
 spec: 	 1
@@ -60,6 +60,7 @@ func main() {
 	pflag.StringSliceVarP(&cfg.Flags.Env, "env", "e", cfg.Flags.Env, "environment variables")
 	pflag.StringVarP(&cfg.Flags.Generator, "generator", "g", cfg.Flags.Generator, "generator")
 	pflag.BoolVarP(&cfg.Flags.Validate, "validate", "V", cfg.Flags.Validate, "validate config")
+	pflag.BoolVarP(&cfg.Flags.List, "list", "l", cfg.Flags.List, "list tasks")
 	pflag.Parse()
 
 	if cfg.Flags.Help {
@@ -76,6 +77,13 @@ func main() {
 		err = s.Validate()
 		if err != nil {
 			log.Fatal(err)
+		}
+		os.Exit(0)
+	}
+
+	if cfg.Flags.List {
+		for k, t := range s.Tasks {
+			log.Printf("%s (%s)", k, t.Description)
 		}
 		os.Exit(0)
 	}
@@ -98,7 +106,7 @@ func main() {
 		}
 
 		if ok && !cfg.Flags.Force {
-			log.Fatal("config file already exists, use --force to overwrite")
+			log.Fatalf("%s already exists, use --force to overwrite", cfg.File)
 		}
 
 		f, err := os.Create(cfg.File)
@@ -124,10 +132,6 @@ func main() {
 
 	if len(args) == 0 && len(tasks) == 0 {
 		log.Fatal("no default task")
-	}
-
-	for k, _ := range s.Tasks {
-		log.Printf("%s", k)
 	}
 
 	tt, err := s.Find(args)

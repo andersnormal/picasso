@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -13,6 +14,7 @@ import (
 type Flags struct {
 	Version   bool
 	Generator string
+	List      bool
 	Validate  bool
 	Silent    bool
 	Help      bool
@@ -21,6 +23,7 @@ type Flags struct {
 	Verbose   bool
 	Dry       bool
 	Env       []string
+	Timeout   time.Duration
 }
 
 // Config ...
@@ -76,20 +79,6 @@ type RunConfig struct {
 	Timeout time.Duration
 }
 
-// Vars ...
-type Vars map[string][]Var
-
-// Var
-type Var string
-
-// Settings ...
-type Settings struct {
-	Version string
-	Author  string
-	Project string
-	Vars    Vars
-}
-
 // New ...
 func New() *Config {
 	return &Config{
@@ -101,7 +90,7 @@ func New() *Config {
 		TermSignal:   syscall.SIGTERM,
 		Verbose:      false,
 		InitConfig:   InitConfig{Folder: "", URL: ""},
-		RunConfig:    RunConfig{Env: []string{}, Timeout: time.Second * 300},
+		RunConfig:    RunConfig{Env: []string{}, Timeout: time.Nanosecond * math.MaxInt64},
 	}
 }
 
