@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/init/iface"
+	"github.com/andersnormal/picasso/examples/gen-tmpl/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v3"

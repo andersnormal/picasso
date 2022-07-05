@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/init/iface"
+	"github.com/andersnormal/picasso/examples/gen-tmpl/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"gopkg.in/yaml.v3"
