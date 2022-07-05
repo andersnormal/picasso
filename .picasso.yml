@@ -4,26 +4,10 @@ authors:
   - Sebastian Döll <sebastian@katallaxie.me>
 homepage: https://github.com/andersnormal/picasso
 repository: https://github.com/andersnormal/picasso
-generators:
-  - 
-    id: picasso-gen-react
-    name: React generator
-    path: picasso-gen-react
-    inputs:
-      -
-        name: View
-        type: string
-        description: Name of the view to generate
 plugins:
   -
-    id: picasso-plugin-remote
-    path: picasso-plugin-remote
-template:
-  inputs:
-    -
-      name: ProjectName
-      type: string
-      description: The name of a new project if clones
+    id: picasso-plugin-init
+    path: picasso-plugin-init
 tasks:
   release:
     desc: release
@@ -35,7 +19,7 @@ tasks:
     vars:
       region: test
     cmd:
-      - go test -v ./...
+      - echo "{{.OS}}"
   build:
     default: true
     deps:

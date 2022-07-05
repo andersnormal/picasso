@@ -22,6 +22,7 @@ type Flags struct {
 	Verbose  bool
 	Dry      bool
 	Env      []string
+	Vars     []string
 	Timeout  time.Duration
 }
 

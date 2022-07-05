@@ -24,7 +24,7 @@ var (
 	version = ""
 )
 
-const usage = `Usage: picasso [-cfglvsdp] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--validate] [--init] [--version] [task...] 
+const usage = `Usage: picasso [-cfglvsdp] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--validate] [--var] [--init] [--version] [task...] 
 
 '''
 spec: 	 1
@@ -70,6 +70,7 @@ func main() {
 	pflag.BoolVarP(&cfg.Flags.List, "list", "l", cfg.Flags.List, "list tasks")
 	pflag.DurationVarP(&cfg.Flags.Timeout, "timeout", "t", time.Second*300, "timeout")
 	pflag.BoolVar(&cfg.Flags.Version, "version", cfg.Flags.Version, "version")
+	pflag.StringSliceVar(&cfg.Flags.Vars, "var", cfg.Flags.Vars, "variables")
 	pflag.Parse()
 
 	if cfg.Flags.Version {

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/andersnormal/picasso/pkg/templr"
 
 	"mvdan.cc/sh/expand"
 	"mvdan.cc/sh/interp"
@@ -46,8 +47,17 @@ func (e *exectur) Run(ctx context.Context, task spec.Task) error {
 	ctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
 	defer cancel()
 
+	fields, err := templr.DefaultFields()
+	if err != nil {
+		return err
+	}
+
+	t := templr.New(templr.WithFields(fields))
+
 	for _, cmd := range task.Commands {
-		p, err := syntax.NewParser().Parse(strings.NewReader(string(cmd)), "")
+		s := t.Parse(string(cmd))
+
+		p, err := syntax.NewParser().Parse(strings.NewReader(s), "")
 		if err != nil {
 			return err
 		}
