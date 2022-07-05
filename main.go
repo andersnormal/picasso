@@ -61,6 +61,7 @@ func main() {
 	pflag.StringVarP(&cfg.Flags.Generator, "generator", "g", cfg.Flags.Generator, "generator")
 	pflag.BoolVarP(&cfg.Flags.Validate, "validate", "V", cfg.Flags.Validate, "validate config")
 	pflag.BoolVarP(&cfg.Flags.List, "list", "l", cfg.Flags.List, "list tasks")
+	pflag.DurationVarP(&cfg.Flags.Timeout, "timeout", "t", time.Second*300, "timeout")
 	pflag.Parse()
 
 	if cfg.Flags.Help {
@@ -144,6 +145,9 @@ func main() {
 
 	exec := executr.New(
 		executr.WithTimeout(cfg.RunConfig.Timeout),
+		executr.WithStderr(cfg.Stderr),
+		executr.WithStdin(cfg.Stdin),
+		executr.WithStdout(cfg.Stdout),
 	)
 
 	for _, t := range tt {

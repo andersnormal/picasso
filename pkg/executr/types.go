@@ -82,6 +82,27 @@ func WithEnv(env Env) Opt {
 	}
 }
 
+// WithStdin ...
+func WithStdin(r io.Reader) Opt {
+	return func(o *Opts) {
+		o.Stdin = r
+	}
+}
+
+// WithStdout ...
+func WithStdout(w io.Writer) Opt {
+	return func(o *Opts) {
+		o.Stdout = w
+	}
+}
+
+// WithStderr ...
+func WithStderr(w io.Writer) Opt {
+	return func(o *Opts) {
+		o.Stderr = w
+	}
+}
+
 // WithTimeout ...
 func WithTimeout(timeout time.Duration) Opt {
 	return func(o *Opts) {

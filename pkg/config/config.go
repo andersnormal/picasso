@@ -1,7 +1,6 @@
 package config
 
 import (
-	"math"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -44,21 +43,14 @@ type Config struct {
 	File string
 	// FileMode
 	FileMode os.FileMode
-	// InitConfig ...
-	InitConfig InitConfig
-	// RunConfig ...
-	RunConfig RunConfig
-	// Plugins ...
-	Plugins []string
-
 	// Flags ...
 	Flags Flags
 	// Stdin ...
-	Stdin *os.FileInfo
+	Stdin *os.File
 	// Stdout ...
-	Stdout *os.FileInfo
+	Stdout *os.File
 	// Stderr ...
-	Stderr *os.FileInfo
+	Stderr *os.File
 }
 
 // InitConfig ...
@@ -71,14 +63,6 @@ type InitConfig struct {
 	ArchiveMode bool
 }
 
-// RunConfig ...
-type RunConfig struct {
-	// Env ...
-	Env []string
-	// TImeout ...
-	Timeout time.Duration
-}
-
 // New ...
 func New() *Config {
 	return &Config{
@@ -88,9 +72,9 @@ func New() *Config {
 		LogLevel:     "warn",
 		ReloadSignal: syscall.SIGHUP,
 		TermSignal:   syscall.SIGTERM,
-		Verbose:      false,
-		InitConfig:   InitConfig{Folder: "", URL: ""},
-		RunConfig:    RunConfig{Env: []string{}, Timeout: time.Nanosecond * math.MaxInt64},
+		Stdin:        os.Stdin,
+		Stdout:       os.Stdout,
+		Stderr:       os.Stderr,
 	}
 }
 
@@ -101,7 +85,6 @@ func (c *Config) InitDefaultConfig() error {
 		return err
 	}
 	c.File = filepath.Join(cwd, c.File)
-	c.InitConfig.Folder = cwd
 
 	return nil
 }
