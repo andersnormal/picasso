@@ -3,7 +3,7 @@ module github.com/andersnormal/picasso
 go 1.18
 
 require (
-	github.com/andersnormal/pkg v0.0.0-20220628075653-b1e3f91ea3f9
+	github.com/andersnormal/pkg v0.0.0-20220702120339-a71ec741773d
 	github.com/fsnotify/fsnotify v1.5.4
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/go-playground/validator/v10 v10.11.0
@@ -14,7 +14,7 @@ require (
 	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.28.0
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.1
 	mvdan.cc/sh v2.6.4+incompatible
 )
 
@@ -55,5 +55,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

@@ -15,7 +15,7 @@ import (
 	"github.com/andersnormal/picasso/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type archiveProvider struct {

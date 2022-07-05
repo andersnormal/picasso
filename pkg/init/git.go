@@ -12,7 +12,7 @@ import (
 	"github.com/andersnormal/picasso/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/tmpl"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/andersnormal/pkg/utils"
 	gg "github.com/go-git/go-git/v5"

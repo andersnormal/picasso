@@ -6,8 +6,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/andersnormal/picasso/pkg/proto"
 	"github.com/go-playground/validator/v10"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -22,27 +23,27 @@ const (
 // Spec ...
 type Spec struct {
 	// Spec ...
-	Spec string `validate:"required" yaml:"spec"`
+	Spec int `validate:"required" yaml:"spec"`
 	// Version ...
-	Version string `validate:"required" yaml:"version"`
+	Version string `validate:"required" yaml:"version,omitempty"`
 	// Description ...
-	Description string `yaml:"description"`
+	Description string `yaml:"description,omitempty"`
 	// Authors ...
-	Authors Authors `validate:"required" yaml:"authors"`
+	Authors Authors `validate:"required" yaml:"authors,omitempty"`
 	// Homepage ...
-	Homepage string `yaml:"homepage"`
+	Homepage string `yaml:"homepage,omitempty"`
 	// License ...
-	License string `yaml:"license"`
+	License string `yaml:"license,omitempty"`
 	// Repository ...
-	Repository string `yaml:"repository"`
+	Repository string `yaml:"repository,omitempty"`
 	// Plugins ...
-	Plugins Plugins `yaml:"plugins"`
+	Plugins Plugins `yaml:"plugins,omitempty"`
 	// Tasks ...
 	Tasks Tasks `yaml:"tasks"`
 	// Generators ...
-	Generators Generators `yaml:"generators"`
+	Generators Generators `yaml:"generators,omitempty"`
 	// Template ...
-	Template Template `yaml:"template"`
+	Template Template `yaml:"template,omitempty"`
 }
 
 // Validate ..
@@ -115,11 +116,11 @@ func (s *Spec) Find(names []string) ([]Task, error) {
 }
 
 // Proto ...
-// func (s *Spec) Proto() *plugin.Spec {
-// 	spec := &plugin.Spec{}
+func (s *Spec) Proto() *proto.Spec {
+	spec := &proto.Spec{}
 
-// 	return spec
-// }
+	return spec
+}
 
 // Authors ...
 type Authors []string

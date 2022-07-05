@@ -11,14 +11,16 @@ import (
 
 // Flags ...
 type Flags struct {
-	Version bool
-	Silent  bool
-	Help    bool
-	Init    bool
-	Force   bool
-	Verbose bool
-	Dry     bool
-	Env     []string
+	Version   bool
+	Generator string
+	Validate  bool
+	Silent    bool
+	Help      bool
+	Init      bool
+	Force     bool
+	Verbose   bool
+	Dry       bool
+	Env       []string
 }
 
 // Config ...

@@ -9,11 +9,15 @@ import (
 
 	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/executr"
+	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/andersnormal/pkg/utils"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/spf13/pflag"
 )
 
-const usage = `Usage: picasso [-cfvsd] [--config] [--force] [--verbose] [--silent] [--dry] [task...]
+const usage = `Usage: picasso [-cfgvsd] [--config] [--force] [--generator] [--verbose] [--silent] [--dry] [--validate] [--init] [task...] 
 
 '''
 spec: 	 1
@@ -48,12 +52,14 @@ func main() {
 
 	pflag.BoolVarP(&cfg.Flags.Verbose, "verbose", "v", cfg.Flags.Verbose, "verbose output")
 	pflag.BoolVarP(&cfg.Flags.Help, "help", "h", cfg.Flags.Help, "show help")
-	pflag.BoolVarP(&cfg.Flags.Init, "init", "i", cfg.Flags.Init, "init config")
+	pflag.BoolVar(&cfg.Flags.Init, "init", cfg.Flags.Init, "init config")
 	pflag.BoolVarP(&cfg.Flags.Force, "force", "f", cfg.Flags.Force, "force init")
 	pflag.BoolVarP(&cfg.Flags.Dry, "dry", "d", cfg.Flags.Dry, "dry run")
 	pflag.BoolVarP(&cfg.Flags.Silent, "silent", "s", cfg.Flags.Silent, "silent mode")
 	pflag.StringVarP(&cfg.File, "config", "c", cfg.File, "config file")
 	pflag.StringSliceVarP(&cfg.Flags.Env, "env", "e", cfg.Flags.Env, "environment variables")
+	pflag.StringVarP(&cfg.Flags.Generator, "generator", "g", cfg.Flags.Generator, "generator")
+	pflag.BoolVarP(&cfg.Flags.Validate, "validate", "V", cfg.Flags.Validate, "validate config")
 	pflag.Parse()
 
 	if cfg.Flags.Help {
@@ -66,15 +72,62 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for _, t := range s.Tasks {
-		log.Printf("%s", t.Name)
+	if cfg.Flags.Validate {
+		err = s.Validate()
+		if err != nil {
+			log.Fatal(err)
+		}
+		os.Exit(0)
 	}
 
-	pflag.Parse()
+	if cfg.Flags.Init {
+		s := &spec.Spec{
+			Spec:    1,
+			Version: "0.0.1",
+			Tasks:   map[string]spec.Task{},
+		}
+
+		b, err := yaml.Marshal(&s)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ok, err := utils.FileExists(cfg.File)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if ok && !cfg.Flags.Force {
+			log.Fatal("config file already exists, use --force to overwrite")
+		}
+
+		f, err := os.Create(cfg.File)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+
+		_, err = f.Write(b)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		os.Exit(0)
+	}
+
+	tasks := s.Default()
 
 	args, err := parseArgs()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if len(args) == 0 && len(tasks) == 0 {
+		log.Fatal("no default task")
+	}
+
+	for k, _ := range s.Tasks {
+		log.Printf("%s", k)
 	}
 
 	tt, err := s.Find(args)
