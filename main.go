@@ -144,7 +144,7 @@ func main() {
 	defer cancel()
 
 	exec := executr.New(
-		executr.WithTimeout(cfg.RunConfig.Timeout),
+		executr.WithTimeout(cfg.Flags.Timeout),
 		executr.WithStderr(cfg.Stderr),
 		executr.WithStdin(cfg.Stdin),
 		executr.WithStdout(cfg.Stdout),

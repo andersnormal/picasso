@@ -21,23 +21,51 @@ brew install andersnormal/picasso/picasso
 ## Example
 
 ```yaml
-version: 1
-author: demo demo@example.com
-project: demo
+spec: 1
+version: 1.0.0
+authors:
+  - Sebastian Döll <sebastian@katallaxie.me>
+homepage: https://github.com/andersnormal/picasso
+repository: https://github.com/andersnormal/picasso
+generators:
+  - 
+    id: picasso-gen-react
+    name: React generator
+    path: picasso-gen-react
+    inputs:
+      -
+        name: View
+        type: string
+        description: Name of the view to generate
+plugins:
+  -
+    id: picasso-plugin-remote
+    path: picasso-plugin-remote
+template:
+  inputs:
+    -
+      name: ProjectName
+      type: string
+      description: The name of a new project if clones
 tasks:
+  release:
+    desc: release
+    cmd:
+      - gox -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-s -w -X github.com/andersnormal/picasso/version.Version=${TRAVIS_TAG}" -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
   test:
-    desc: run tests
-    cmds:
+    disable: true
+    desc: test
+    vars:
+      region: test
+    cmd:
       - go test -v ./...
-  dev:
-    desc: build and watch
+  build:
+    default: true
     deps:
       - test
     vars:
-      region:
-        - test
-    cmds:
-      - go test -v ./...
+      region: test
+    cmd:
       - go build
     watch:
       paths:
