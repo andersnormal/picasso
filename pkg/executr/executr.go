@@ -3,8 +3,10 @@ package executr
 import (
 	"context"
 	"io"
+	"math"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/templr"
@@ -45,7 +47,13 @@ func (e *exectur) Stderr() io.Writer {
 
 // Run ...
 func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
-	ctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
+	timeout := e.opts.Timeout
+
+	if watch {
+		timeout = time.Duration(time.Nanosecond * math.MaxInt)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	err := e.runCmd(ctx, task.Commands)
@@ -61,6 +69,7 @@ func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 	if err != nil {
 		return err
 	}
+	defer fs.Close()
 
 	for _, p := range task.Watch.Paths {
 		if err := fs.Add(p); err != nil {
