@@ -2,7 +2,6 @@ package executr
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -73,9 +72,7 @@ func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case event := <-fs.Events:
-			fmt.Println(event.Op)
-
+		case <-fs.Events:
 			err := e.runCmd(ctx, task.Commands)
 			if err != nil {
 				return err
