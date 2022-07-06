@@ -4,6 +4,49 @@ package proto;
 
 option go_package = "github.com/andersnormal/picasso/pkg/proto";
 
+// Provider 
+service Plugin {
+    rpc Start(Start.Request) returns (Start.Response) {}
+    rpc Stop(Stop.Request) returns (Stop.Response) {}
+}
+
+// Start ...
+message Start {
+    // Request ...
+    message Request {
+        string version  = 1;
+    }
+    // Response ...
+    message Response {
+    }
+}
+
+// Stop ...
+message Stop {
+    // Request ...
+    message Request {
+
+    }
+    // Response ...
+    message Response {
+        string Error = 1;
+    }
+}
+
+// Diagnostic ...
+message Diagnostic {
+    enum Severity {
+        INVALID     = 0;
+        ERROR       = 1;
+        WARNING     = 2;
+    }
+
+    Severity severity                = 1;
+    string summary                   = 2;
+    string detail                    = 3;
+    repeated string FilePaths        = 4;
+}
+
 // PluginRequest ...
 message PluginRequest {
     // FilePaths ...

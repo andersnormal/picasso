@@ -47,10 +47,10 @@ func (e *exectur) Stderr() io.Writer {
 
 // Run ...
 func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
-	timeout := e.opts.Timeout
+	timeout := time.Duration(time.Nanosecond * math.MaxInt)
 
-	if watch {
-		timeout = time.Duration(time.Nanosecond * math.MaxInt)
+	if !watch {
+		timeout = time.Duration(e.opts.Timeout)
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, timeout)
