@@ -28,7 +28,7 @@ type ServeOpts struct {
 }
 
 // Serve ...
-func Serve() {
+func Serve(opts *ServeOpts) {
 	p.Serve(&p.ServeConfig{
 		GRPCServer: p.DefaultGRPCServer,
 	})
