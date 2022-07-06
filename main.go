@@ -24,7 +24,7 @@ var (
 	version = ""
 )
 
-const usage = `Usage: picasso [-cfglvsdp] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--validate] [--var] [--init] [--version] [task...] 
+const usage = `Usage: picasso [-cfglvsdpw] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--watch] [--validate] [--var] [--init] [--version] [task...] 
 
 '''
 spec: 	 1
@@ -71,6 +71,7 @@ func main() {
 	pflag.DurationVarP(&cfg.Flags.Timeout, "timeout", "t", time.Second*300, "timeout")
 	pflag.BoolVar(&cfg.Flags.Version, "version", cfg.Flags.Version, "version")
 	pflag.StringSliceVar(&cfg.Flags.Vars, "var", cfg.Flags.Vars, "variables")
+	pflag.BoolVarP(&cfg.Flags.Watch, "watch", "w", cfg.Flags.Watch, "watch")
 	pflag.Parse()
 
 	if cfg.Flags.Version {
@@ -180,7 +181,7 @@ func main() {
 	)
 
 	for _, t := range tt {
-		if err := exec.Run(ctx, t); err != nil {
+		if err := exec.Run(ctx, t, cfg.Flags.Watch); err != nil {
 			log.Fatal(err)
 		}
 	}

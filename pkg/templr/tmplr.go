@@ -2,6 +2,7 @@ package templr
 
 import (
 	"bytes"
+	"os"
 	"runtime"
 
 	"text/template"
@@ -48,7 +49,16 @@ func WithFields(fields Fields) Opt {
 
 // DefaultFields ...
 func DefaultFields() (Fields, error) {
-	fields := Fields{"OS": runtime.GOOS, "ARCH": runtime.GOARCH}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	fields := Fields{
+		"OS":   runtime.GOOS,
+		"ARCH": runtime.GOARCH,
+		"CWD":  cwd,
+	}
 
 	return fields, nil
 }
@@ -56,7 +66,7 @@ func DefaultFields() (Fields, error) {
 // New ...
 func New(opts ...Opt) Templr {
 	options := &Opts{
-		Fields: Fields{"OS": runtime.GOOS, "ARCH": runtime.GOARCH},
+		Fields: make(Fields),
 	}
 	options.Configure(opts...)
 

@@ -2,12 +2,14 @@ package executr
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/picasso/pkg/templr"
+	"github.com/fsnotify/fsnotify"
 
 	"mvdan.cc/sh/expand"
 	"mvdan.cc/sh/interp"
@@ -43,10 +45,48 @@ func (e *exectur) Stderr() io.Writer {
 }
 
 // Run ...
-func (e *exectur) Run(ctx context.Context, task spec.Task) error {
+func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 	ctx, cancel := context.WithTimeout(ctx, e.opts.Timeout)
 	defer cancel()
 
+	err := e.runCmd(ctx, task.Commands)
+	if err != nil {
+		return err
+	}
+
+	if !watch {
+		return nil
+	}
+
+	fs, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+
+	for _, p := range task.Watch.Paths {
+		if err := fs.Add(p); err != nil {
+			return err
+		}
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case event := <-fs.Events:
+			fmt.Println(event.Op)
+
+			err := e.runCmd(ctx, task.Commands)
+			if err != nil {
+				return err
+			}
+		case err := <-fs.Errors:
+			return err
+		}
+	}
+}
+
+func (e *exectur) runCmd(ctx context.Context, cmds []spec.Command) error {
 	fields, err := templr.DefaultFields()
 	if err != nil {
 		return err
@@ -54,7 +94,7 @@ func (e *exectur) Run(ctx context.Context, task spec.Task) error {
 
 	t := templr.New(templr.WithFields(fields))
 
-	for _, cmd := range task.Commands {
+	for _, cmd := range cmds {
 		s := t.Parse(string(cmd))
 
 		p, err := syntax.NewParser().Parse(strings.NewReader(s), "")

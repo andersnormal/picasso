@@ -20,6 +20,9 @@ tasks:
       region: test
     cmd:
       - echo "{{.OS}}"
+    watch:
+      paths:
+        - ./pkg/config/config.go
   build:
     default: true
     deps:

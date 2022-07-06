@@ -11,19 +11,20 @@ import (
 
 // Flags ...
 type Flags struct {
-	Version  bool
-	Plugin   string
-	List     bool
-	Validate bool
-	Silent   bool
-	Help     bool
-	Init     bool
-	Force    bool
-	Verbose  bool
 	Dry      bool
 	Env      []string
-	Vars     []string
+	Force    bool
+	Help     bool
+	Init     bool
+	List     bool
+	Plugin   string
+	Silent   bool
 	Timeout  time.Duration
+	Validate bool
+	Vars     []string
+	Verbose  bool
+	Version  bool
+	Watch    bool
 }
 
 // Config ...
