@@ -68,11 +68,18 @@ func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 		}
 	}
 
+Loop:
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-fs.Events:
+		case event := <-fs.Events:
+			for _, p := range task.Watch.Ignores {
+				if strings.Contains(event.Name, p) {
+					continue Loop
+				}
+			}
+
 			err := e.runCmd(ctx, task.Commands)
 			if err != nil {
 				return err

@@ -22,7 +22,7 @@ tasks:
       - echo "{{.OS}}"
     watch:
       paths:
-        - ./pkg/config/config.go
+        - pkg/config
   build:
     default: true
     deps:
