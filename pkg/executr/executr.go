@@ -61,6 +61,11 @@ func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 		return err
 	}
 
+	err = e.genTemplates(task.Templates)
+	if err != nil {
+		return err
+	}
+
 	if !watch {
 		return nil
 	}
@@ -97,6 +102,24 @@ Loop:
 			return err
 		}
 	}
+}
+
+func (e *exectur) genTemplates(tt spec.Templates) error {
+	fields, err := templr.DefaultFields()
+	if err != nil {
+		return err
+	}
+
+	t := templr.New(templr.WithFields(fields))
+
+	for _, tpl := range tt {
+		err := t.ParseFile(tpl.File, tpl.Out)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (e *exectur) runCmd(ctx context.Context, cmds []spec.Command) error {

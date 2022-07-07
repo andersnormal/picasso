@@ -34,26 +34,10 @@ authors:
   - Sebastian Döll <sebastian@katallaxie.me>
 homepage: https://github.com/andersnormal/picasso
 repository: https://github.com/andersnormal/picasso
-generators:
-  - 
-    id: picasso-gen-react
-    name: React generator
-    path: picasso-gen-react
-    inputs:
-      -
-        name: View
-        type: string
-        description: Name of the view to generate
 plugins:
   -
-    id: picasso-plugin-remote
-    path: picasso-plugin-remote
-template:
-  inputs:
-    -
-      name: ProjectName
-      type: string
-      description: The name of a new project if clones
+    id: picasso-plugin-init
+    path: picasso-plugin-init
 tasks:
   release:
     desc: release
@@ -65,36 +49,26 @@ tasks:
     vars:
       region: test
     cmd:
-      - go test -v ./...
-  build:
-    default: true
-    deps:
-      - test
-    vars:
-      region: test
-    cmd:
-      - go build
+      - echo "{{.OS}}"
     watch:
       paths:
-        - examples
-      ignore:
-        - .gitignore
-        - .picasso.yml
-    templates:
+        - pkg/config
+    template:
       - 
         file: ./examples/config.json.tpl
-        output: ./config.json
+        out: ./config.json
         vars:
-          foo: bar
+          foo: bar    
 ```
 
 ## Development
 
 The goal is that Picasso is build and maintained by itself. However, up until this very moment. There two quick steps to build it.
 
-```
+```bash
 env GO111MODULE=on mkdir -p bin && go build -i -o bin/picasso && chmod +x bin/picasso
 ```
 
 ## License
+
 [Apache 2.0](/LICENSE)

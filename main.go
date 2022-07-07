@@ -201,8 +201,8 @@ func main() {
 		executr.WithStdout(cfg.Stdout),
 	)
 
-	for _, t := range tt {
-		if err := exec.Run(ctx, t, cfg.Flags.Watch); err != nil {
+	for _, task := range tt {
+		if err := exec.Run(ctx, task, cfg.Flags.Watch); err != nil {
 			log.Fatal(err)
 		}
 	}

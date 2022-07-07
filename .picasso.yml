@@ -23,6 +23,12 @@ tasks:
     watch:
       paths:
         - pkg/config
+    template:
+      - 
+        file: ./examples/config.json.tpl
+        out: ./config.json
+        vars:
+          foo: bar
   build:
     default: true
     deps:
@@ -37,10 +43,10 @@ tasks:
       ignore:
         - .gitignore
         - .picasso.yml
-    templates:
+    template:
       - 
         file: ./examples/config.json.tpl
-        output: ./config.json
+        out: ./config.json
         vars:
           foo: bar
       

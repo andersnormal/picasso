@@ -2,6 +2,7 @@ package templr
 
 import (
 	"bytes"
+	"io/ioutil"
 	"os"
 	"runtime"
 
@@ -12,6 +13,7 @@ import (
 
 type Templr interface {
 	Parse(s string) string
+	ParseFile(string, string) error
 	Err() error
 }
 
@@ -74,6 +76,32 @@ func New(opts ...Opt) Templr {
 	t.opts = options
 
 	return t
+}
+
+// ParseFile ...
+func (t *templr) ParseFile(in, out string) error {
+	i, err := ioutil.ReadFile(in)
+	if err != nil {
+		return err
+	}
+
+	o, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		return err
+	}
+	defer o.Close()
+
+	tmpl, err := template.New("tmpl").Parse(string(i))
+	if err != nil {
+		return err
+	}
+
+	err = tmpl.Execute(o, t.opts.Fields)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parse ...
