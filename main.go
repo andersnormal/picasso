@@ -11,7 +11,7 @@ import (
 
 	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/executr"
-	"github.com/andersnormal/picasso/pkg/proto"
+	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
 
@@ -143,16 +143,37 @@ func main() {
 	defer cancel()
 
 	if cfg.Flags.Plugin != "" {
-		e := proto.NewExecutor(
-			proto.WithStderr(cfg.Stderr),
-			proto.WithStdin(cfg.Stdin),
-			proto.WithStdout(cfg.Stdout),
-		)
+		m := &plugin.Meta{Path: cfg.Flags.Plugin}
+		f := m.Factory()
 
-		err = e.ExecWithContext(context.Background(), cfg.Flags.Plugin, &proto.PluginRequest{})
+		p, err := f()
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer p.Close()
+
+		resp, err := p.Execute(plugin.ExecuteRequest{})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(resp)
+
+		err = p.Stop()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// e := proto.NewExecutor(
+		// 	proto.WithStderr(cfg.Stderr),
+		// 	proto.WithStdin(cfg.Stdin),
+		// 	proto.WithStdout(cfg.Stdout),
+		// )
+
+		// err = e.ExecWithContext(context.Background(), cfg.Flags.Plugin, &proto.PluginRequest{})
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 		os.Exit(0)
 	}

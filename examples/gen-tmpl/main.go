@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/proto"
@@ -20,11 +21,15 @@ type server struct {
 }
 
 // Start ...
-func (s *server) Start(ctx context.Context, req *proto.Start_Request) (*proto.Start_Response, error) {
-	return nil, nil
+func (s *server) Execute(ctx context.Context, req *proto.Execute_Request) (*proto.Execute_Response, error) {
+	fmt.Println("Execute")
+
+	return &proto.Execute_Response{}, nil
 }
 
 // Stop ...
 func (s *server) Stop(ctx context.Context, req *proto.Stop_Request) (*proto.Stop_Response, error) {
-	return nil, nil
+	fmt.Println("Stop")
+
+	return &proto.Stop_Response{}, nil
 }

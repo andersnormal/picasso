@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginClient interface {
-	Start(ctx context.Context, in *Start_Request, opts ...grpc.CallOption) (*Start_Response, error)
+	Execute(ctx context.Context, in *Execute_Request, opts ...grpc.CallOption) (*Execute_Response, error)
 	Stop(ctx context.Context, in *Stop_Request, opts ...grpc.CallOption) (*Stop_Response, error)
 }
 
@@ -34,9 +34,9 @@ func NewPluginClient(cc grpc.ClientConnInterface) PluginClient {
 	return &pluginClient{cc}
 }
 
-func (c *pluginClient) Start(ctx context.Context, in *Start_Request, opts ...grpc.CallOption) (*Start_Response, error) {
-	out := new(Start_Response)
-	err := c.cc.Invoke(ctx, "/proto.Plugin/Start", in, out, opts...)
+func (c *pluginClient) Execute(ctx context.Context, in *Execute_Request, opts ...grpc.CallOption) (*Execute_Response, error) {
+	out := new(Execute_Response)
+	err := c.cc.Invoke(ctx, "/proto.Plugin/Execute", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *pluginClient) Stop(ctx context.Context, in *Stop_Request, opts ...grpc.
 // All implementations must embed UnimplementedPluginServer
 // for forward compatibility
 type PluginServer interface {
-	Start(context.Context, *Start_Request) (*Start_Response, error)
+	Execute(context.Context, *Execute_Request) (*Execute_Response, error)
 	Stop(context.Context, *Stop_Request) (*Stop_Response, error)
 	mustEmbedUnimplementedPluginServer()
 }
@@ -65,8 +65,8 @@ type PluginServer interface {
 type UnimplementedPluginServer struct {
 }
 
-func (UnimplementedPluginServer) Start(context.Context, *Start_Request) (*Start_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Start not implemented")
+func (UnimplementedPluginServer) Execute(context.Context, *Execute_Request) (*Execute_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
 }
 func (UnimplementedPluginServer) Stop(context.Context, *Stop_Request) (*Stop_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
@@ -84,20 +84,20 @@ func RegisterPluginServer(s grpc.ServiceRegistrar, srv PluginServer) {
 	s.RegisterService(&Plugin_ServiceDesc, srv)
 }
 
-func _Plugin_Start_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Start_Request)
+func _Plugin_Execute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Execute_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PluginServer).Start(ctx, in)
+		return srv.(PluginServer).Execute(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Plugin/Start",
+		FullMethod: "/proto.Plugin/Execute",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).Start(ctx, req.(*Start_Request))
+		return srv.(PluginServer).Execute(ctx, req.(*Execute_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -128,8 +128,8 @@ var Plugin_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Start",
-			Handler:    _Plugin_Start_Handler,
+			MethodName: "Execute",
+			Handler:    _Plugin_Execute_Handler,
 		},
 		{
 			MethodName: "Stop",

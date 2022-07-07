@@ -7,9 +7,15 @@ import (
 )
 
 const (
-	PluginName             = "provider"
+	PluginName             = "plugin"
 	DefaultProtocolVersion = 1
 )
+
+var VersionedPlugins = map[int]p.PluginSet{
+	1: {
+		"plugin": &GRPCTaskPlugin{},
+	},
+}
 
 // Handshake ...
 var Handshake = p.HandshakeConfig{
@@ -30,6 +36,23 @@ type ServeOpts struct {
 // Serve ...
 func Serve(opts *ServeOpts) {
 	p.Serve(&p.ServeConfig{
-		GRPCServer: p.DefaultGRPCServer,
+		GRPCServer:       p.DefaultGRPCServer,
+		HandshakeConfig:  Handshake,
+		VersionedPlugins: pluginSet(opts),
 	})
+}
+
+func pluginSet(opts *ServeOpts) map[int]p.PluginSet {
+	plugins := map[int]p.PluginSet{}
+
+	// add the new protocol versions if they're configured
+	if opts.GRPCPluginFunc != nil {
+		plugins[1] = p.PluginSet{
+			"plugin": &GRPCTaskPlugin{
+				GRPCPlugin: opts.GRPCPluginFunc,
+			},
+		}
+	}
+
+	return plugins
 }

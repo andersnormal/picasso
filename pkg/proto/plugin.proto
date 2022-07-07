@@ -6,12 +6,12 @@ option go_package = "github.com/andersnormal/picasso/pkg/proto";
 
 // Provider 
 service Plugin {
-    rpc Start(Start.Request) returns (Start.Response) {}
+    rpc Execute(Execute.Request) returns (Execute.Response) {}
     rpc Stop(Stop.Request) returns (Stop.Response) {}
 }
 
 // Start ...
-message Start {
+message Execute {
     // Request ...
     message Request {
         string version  = 1;
