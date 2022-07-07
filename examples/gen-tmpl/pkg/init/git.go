@@ -112,9 +112,6 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 
 	// Apply prompts ...
 	t := tmpl.New()
-	if err := t.ApplyPrompts(s.Template.Inputs); err != nil {
-		return err
-	}
 
 	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
@@ -139,12 +136,6 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		ok, err := f.IsBinary()
 		if err != nil {
 			return err
-		}
-
-		for _, e := range s.Template.Excludes {
-			if strings.Contains(f.Name, e) {
-				return nil
-			}
 		}
 
 		r, err := f.Reader()
