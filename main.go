@@ -202,6 +202,10 @@ func main() {
 	)
 
 	for _, task := range tt {
+		if task.Disabled {
+			continue
+		}
+
 		if err := exec.Run(ctx, task, cfg.Flags.Watch); err != nil {
 			log.Fatal(err)
 		}

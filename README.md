@@ -39,12 +39,8 @@ plugins:
     id: picasso-plugin-init
     path: picasso-plugin-init
 tasks:
-  release:
-    desc: release
-    cmd:
-      - gox -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-s -w -X github.com/andersnormal/picasso/version.Version=${TRAVIS_TAG}" -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
   test:
-    disable: true
+    disabled: true
     desc: test
     vars:
       region: test
