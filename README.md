@@ -12,9 +12,10 @@ Picasso is a versatile task runner :running: and awesome build tool.
 
 ## Features
 
-* Universal task runner
+* Universal task runner :hammer_and_wrench:
+* Extensible via plugins :partying_face:
 * Template generation in task runs
-* Task watcher (allows to watch on file system changes and re-runs tasks)
+* Task watcher (allows to watch on file system changes and re-runs tasks)no 
 
 ## Install
 
