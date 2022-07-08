@@ -75,8 +75,10 @@ picasso --var url=https://github.com/katallaxie/template-go --var folder=. --plu
 
 The goal is that Picasso is build and maintained by itself. However, up until this very moment. There two quick steps to build it.
 
+The development is intended to be run with [Codespaces](https://github.com/features/codespaces) the blazing fast cloud developer environment.
+
 ```bash
-env GO111MODULE=on mkdir -p bin && go build -i -o bin/picasso && chmod +x bin/picasso
+env GO111MODULE=on goreleaser release --snapshot --rm-dist
 ```
 
 ## License

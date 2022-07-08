@@ -1,11 +1,11 @@
 {
     "name": "andersnormal/picasso",
-    "image": "mcr.microsoft.com/vscode/devcontainers/go:latest",
+    "image": "mcr.microsoft.com/vscode/devcontainers/universal:latest",
     "postCreateCommand": "bash scripts/postCreateCommand.sh",
-    "forwardPorts": [8080],
-    "appPort": [8080],
+    "forwardPorts": [3000],
+    "appPort": [3000],
     "portsAttributes": {
-      "8080": {
+      "3000": {
         "label": "web"
       }
     },
