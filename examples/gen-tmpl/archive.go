@@ -1,4 +1,4 @@
-package init
+package main
 
 import (
 	"archive/zip"
@@ -12,19 +12,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andersnormal/picasso/examples/gen-tmpl/pkg/init/iface"
 	"github.com/andersnormal/picasso/pkg/spec"
 
 	"gopkg.in/yaml.v3"
 )
 
 type archiveProvider struct {
-	opts *iface.ProviderOpts
+	opts *ProviderOpts
 }
 
 // NewArchive ...
-func NewArchive(url string, folder string, opts ...iface.ProviderOpt) iface.Provider {
-	options := new(iface.ProviderOpts)
+func NewArchive(url string, folder string, opts ...ProviderOpt) Provider {
+	options := new(ProviderOpts)
 
 	p := new(archiveProvider)
 	p.opts = options
@@ -141,7 +140,7 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func configure(a *archiveProvider, opts ...iface.ProviderOpt) error {
+func configure(a *archiveProvider, opts ...ProviderOpt) error {
 	for _, o := range opts {
 		o(a.opts)
 	}

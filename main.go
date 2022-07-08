@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
@@ -73,6 +74,11 @@ func main() {
 	pflag.StringSliceVar(&cfg.Flags.Vars, "var", cfg.Flags.Vars, "variables")
 	pflag.BoolVarP(&cfg.Flags.Watch, "watch", "w", cfg.Flags.Watch, "watch")
 	pflag.Parse()
+
+	if cfg.Flags.Verbose {
+		start := time.Now()
+		defer func() { log.Printf("time: %s", time.Since(start)) }()
+	}
 
 	if cfg.Flags.Version {
 		fmt.Printf("%s\n", getVersion())
@@ -152,7 +158,19 @@ func main() {
 		}
 		defer p.Close()
 
-		resp, err := p.Execute(plugin.ExecuteRequest{})
+		params := map[string]string{}
+		for _, v := range cfg.Flags.Vars {
+			kv := strings.Split(v, "=")
+			if len(kv) != 2 {
+				params[kv[0]] = ""
+				continue
+			}
+			params[kv[0]] = kv[1]
+		}
+
+		resp, err := p.Execute(plugin.ExecuteRequest{
+			Parameters: params,
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -163,17 +181,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		// e := proto.NewExecutor(
-		// 	proto.WithStderr(cfg.Stderr),
-		// 	proto.WithStdin(cfg.Stdin),
-		// 	proto.WithStdout(cfg.Stdout),
-		// )
-
-		// err = e.ExecWithContext(context.Background(), cfg.Flags.Plugin, &proto.PluginRequest{})
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
 
 		os.Exit(0)
 	}

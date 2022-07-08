@@ -12,12 +12,22 @@ service Plugin {
 
 // Start ...
 message Execute {
+    enum Status {
+        UNKNOWN = 0;
+        SUCCESS = 1;
+        FAILURE = 2;
+    }
+
     // Request ...
     message Request {
-        string version  = 1;
+        string version              = 1;
+        map<string, string> vars    = 2;
+        repeated string params      = 3;
     }
     // Response ...
     message Response {
+        Status status = 1;
+        repeated Diagnostic diagnostic = 10;
     }
 }
 

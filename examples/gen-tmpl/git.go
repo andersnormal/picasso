@@ -1,18 +1,12 @@
-package init
+package main
 
 import (
 	"context"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/andersnormal/picasso/examples/gen-tmpl/pkg/init/iface"
-	"github.com/andersnormal/picasso/pkg/spec"
-	"github.com/andersnormal/picasso/pkg/tmpl"
-	"gopkg.in/yaml.v3"
 
 	"github.com/andersnormal/pkg/utils"
 	gg "github.com/go-git/go-git/v5"
@@ -26,12 +20,12 @@ var (
 )
 
 type git struct {
-	opts *iface.ProviderOpts
+	opts *ProviderOpts
 }
 
 // NewGit ...
-func NewGit(opts ...iface.ProviderOpt) iface.Provider {
-	options := new(iface.ProviderOpts)
+func NewGit(opts ...ProviderOpt) Provider {
+	options := new(ProviderOpts)
 
 	g := new(git)
 	g.opts = options
@@ -79,41 +73,6 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		return err
 	}
 
-	var s *spec.Spec
-	_ = tmpl.New()
-
-	// Find spec ...
-	if err := ff.ForEach(func(f *object.File) error {
-		if !strings.Contains(f.Name, spec.DefaultFilename) {
-			return nil
-		}
-
-		r, err := f.Reader()
-		if err != nil {
-			return err
-		}
-
-		err = yaml.NewDecoder(r).Decode(&s)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	// :-) just resetting the iterator
-	ff.Close()
-	ff, err = ref.Files()
-	if err != nil {
-		return err
-	}
-
-	// Apply prompts ...
-	t := tmpl.New()
-
-	// Find spec ...
 	if err := ff.ForEach(func(f *object.File) error {
 		parts := strings.Split(f.Name, string(os.PathSeparator))
 		fpath := filepath.Join(path, filepath.Join(parts...))
@@ -133,36 +92,12 @@ func (g *git) CloneWithContext(ctx context.Context, url string, folder string) e
 		}
 		defer outFile.Close()
 
-		ok, err := f.IsBinary()
-		if err != nil {
-			return err
-		}
-
 		r, err := f.Reader()
 		if err != nil {
 			return err
 		}
 
-		if ok {
-			_, err = io.Copy(outFile, r)
-			if err != nil {
-				return err
-			}
-
-			return nil
-		}
-
-		buf, err := ioutil.ReadAll(r)
-		if err != nil {
-			return err
-		}
-
-		out, err := t.Apply(string(buf))
-		if err != nil {
-			return err
-		}
-
-		_, err = io.Copy(outFile, strings.NewReader(out))
+		_, err = io.Copy(outFile, r)
 		if err != nil {
 			return err
 		}

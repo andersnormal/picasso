@@ -84,7 +84,10 @@ func (p *GRPCPlugin) Close() error {
 
 // Execute ...
 func (p *GRPCPlugin) Execute(req ExecuteRequest) (ExecuteResponse, error) {
-	_, err := p.client.Execute(p.ctx, new(proto.Execute_Request))
+	r := new(proto.Execute_Request)
+	r.Vars = req.Parameters
+
+	_, err := p.client.Execute(p.ctx, r)
 	if err != nil {
 		return ExecuteResponse{}, err
 	}

@@ -22,7 +22,19 @@ type server struct {
 
 // Start ...
 func (s *server) Execute(ctx context.Context, req *proto.Execute_Request) (*proto.Execute_Response, error) {
-	fmt.Println("Execute")
+	resp := &proto.Execute_Response{}
+
+	p := NewGit()
+
+	fmt.Println(req.Vars)
+
+	err := p.CloneWithContext(ctx, req.Vars["url"], req.Vars["folder"])
+	if err != nil {
+		resp.Diagnostic = []*proto.Diagnostic{
+			proto.DiagnosticFromError(err),
+		}
+		return resp, err
+	}
 
 	return &proto.Execute_Response{}, nil
 }
