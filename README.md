@@ -57,6 +57,20 @@ tasks:
           foo: bar    
 ```
 
+## Plugins
+
+Plugins are implemented using the [go plugin over RPC](https://github.com/hashicorp/go-plugin) package.
+
+Plugins are triggered using the `--plugin` flag. They are executed with the `vars` set with the `--var` flag and the global `vars` property in the `.picasso.yml` file.
+
+### Example: `gen-tmpl`
+
+This plugins clones a repository into a folder to generate a new project.
+
+```bash
+picasso --var url=https://github.com/katallaxie/template-go --var folder=. --plugin gen-tmpl
+```
+
 ## Development
 
 The goal is that Picasso is build and maintained by itself. However, up until this very moment. There two quick steps to build it.

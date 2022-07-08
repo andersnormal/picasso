@@ -6,7 +6,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/proto"
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v3"
 )
@@ -113,13 +112,6 @@ func (s *Spec) Find(names []string) ([]Task, error) {
 	}
 
 	return tt, nil
-}
-
-// Proto ...
-func (s *Spec) Proto() *proto.Spec {
-	spec := &proto.Spec{}
-
-	return spec
 }
 
 // Authors ...
