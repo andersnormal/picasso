@@ -9,7 +9,7 @@ on:
       - 'docs/**'
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,10 +23,11 @@ jobs:
         node-version: 16
     - 
       run: |
-        npm i
+        npm i --legacy-peer-deps
         npm run build
+        npm run export
     - 
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/public 
+        publish_dir: ./docs/out 
