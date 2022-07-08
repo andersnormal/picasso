@@ -40,8 +40,10 @@ type Spec struct {
 	Plugins Plugins `yaml:"plugins,omitempty"`
 	// Tasks ...
 	Tasks Tasks `yaml:"tasks"`
-	// Generators ...
-	Generators Generators `yaml:"generators,omitempty"`
+	// Vars ...
+	Vars Vars `yaml:"vars"`
+	// Env ...
+	Env Env `yaml:"env"`
 }
 
 // Validate ..
@@ -141,7 +143,7 @@ type Task struct {
 	Disabled    bool      `yaml:"disabled"`
 	Default     bool      `yaml:"default"`
 	DependsOn   DependsOn `yaml:"depends_on"`
-	Var         Var       `yaml:"vars"`
+	Vars        Vars      `yaml:"vars"`
 	Env         Env       `yaml:"env"`
 	Watch       Watch     `yaml:"watch"`
 	Templates   Templates `yaml:"template,omitempty"`
@@ -154,7 +156,7 @@ type Templates []Template
 type Template struct {
 	File string `yaml:"file"`
 	Out  string `yaml:"out"`
-	Var  Var    `yaml:"var"`
+	Vars Vars   `yaml:"var"`
 }
 
 // Watch ...
@@ -170,7 +172,7 @@ type Paths []string
 type Ignores []string
 
 // Vars ...
-type Var map[string]string
+type Vars map[string]string
 
 // Env ...
 type Env map[string]string

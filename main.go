@@ -16,9 +16,9 @@ import (
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
 
-	"gopkg.in/yaml.v3"
-
 	"github.com/spf13/pflag"
+	"golang.org/x/exp/maps"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -148,6 +148,16 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	params := map[string]string{}
+	for _, v := range cfg.Flags.Vars {
+		kv := strings.Split(v, "=")
+		if len(kv) != 2 {
+			params[kv[0]] = ""
+			continue
+		}
+		params[kv[0]] = kv[1]
+	}
+
 	if cfg.Flags.Plugin != "" {
 		m := &plugin.Meta{Path: cfg.Flags.Plugin}
 		f := m.Factory()
@@ -158,18 +168,11 @@ func main() {
 		}
 		defer p.Close()
 
-		params := map[string]string{}
-		for _, v := range cfg.Flags.Vars {
-			kv := strings.Split(v, "=")
-			if len(kv) != 2 {
-				params[kv[0]] = ""
-				continue
-			}
-			params[kv[0]] = kv[1]
-		}
+		pp := s.Vars
+		maps.Copy(pp, params)
 
 		resp, err := p.Execute(plugin.ExecuteRequest{
-			Parameters: params,
+			Parameters: pp,
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -209,6 +212,11 @@ func main() {
 	)
 
 	for _, task := range tt {
+		pp := s.Vars
+		maps.Copy(pp, task.Vars)
+		maps.Copy(pp, params)
+		task.Vars = pp
+
 		if task.Disabled {
 			continue
 		}
