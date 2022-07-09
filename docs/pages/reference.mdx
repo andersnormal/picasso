@@ -1,0 +1,14 @@
+# API Reference
+
+## CLI
+
+Picasso has the following command line syntax:
+
+```bash
+picasso [--flags] [tasks...] [-- ARGS...]
+```
+
+| Short | Flag | Type | Default | Description |
+| - | - | - | - | - |
+| `-c` | `--config` | `string` | `.picasso.yml` | Config file. Enabled by default. Set to `.picasso.yml` or change to the location of your config |
+| `-w` | `--watch` | `bool` | `false` | Enables watch of the given tasks. This factors in the `watch` config in your `.picasso.yml` file. |
