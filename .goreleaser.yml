@@ -1,22 +1,49 @@
-build:
-  binary: picasso
-  main: main.go
-  goos:
-    - windows
-    - darwin
-    - linux
-  goarch:
-    - 386
-    - amd64
-    - arm
-    - arm64
-  ignore:
-      - goos: darwin
-        goarch: 386
-  env:
-    - CGO_ENABLED=0
-  ldflags:
-      - -s -w
+builds:
+  - id: action
+    binary: action-{{.Os}}-{{ .Arch }}
+    main: ./cmd/action/main.go
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+        - -s -w
+    no_unique_dist_dir: true
+
+  - id: picasso
+    binary: picasso-{{.Os}}-{{ .Arch }}
+    main: main.go
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    ignore:
+        - goos: darwin
+          goarch: 386
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+        - -s -w
+    no_unique_dist_dir: true
+
+archives:
+  -
+    id: action
+    builds:
+      - action
+    name_template: "action_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  -
+    id: picasso
+    builds:
+      - picasso
+    name_template: "picasso_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 gomod:
   proxy: true
@@ -28,4 +55,4 @@ snapshot:
   name_template: "{{.Tag}}"
 
 checksum:
-  name_template: "task_checksums.txt"
+  name_template: "picasso_checksums.txt"
