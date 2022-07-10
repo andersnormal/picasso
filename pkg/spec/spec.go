@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
 
@@ -165,6 +166,11 @@ type Ignores []string
 
 // Vars ...
 type Vars map[string]string
+
+// Merge ...
+func (v Vars) Merge(vars Vars) {
+	maps.Copy(v, vars)
+}
 
 // Env ...
 type Env map[string]string

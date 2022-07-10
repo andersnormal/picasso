@@ -15,6 +15,7 @@ import (
 	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
+	"mvdan.cc/sh/syntax"
 
 	"github.com/spf13/pflag"
 	"golang.org/x/exp/maps"
@@ -190,7 +191,7 @@ func main() {
 
 	tasks := s.Default()
 
-	args, err := parseArgs()
+	args, _, err := parseArgs()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -227,15 +228,21 @@ func main() {
 	}
 }
 
-func parseArgs() ([]string, error) {
+func parseArgs() ([]string, []string, error) {
 	args := pflag.Args()
-	dash := pflag.CommandLine.ArgsLenAtDash()
+	dashPos := pflag.CommandLine.ArgsLenAtDash()
 
-	if dash == -1 {
-		return args, nil
+	if dashPos == -1 {
+		return args, []string{}, nil
 	}
 
-	return args[:dash], nil
+	cliArgs := make([]string, 0)
+	for _, arg := range args[dashPos:] {
+		arg = syntax.QuotePattern(arg)
+		cliArgs = append(cliArgs, arg)
+	}
+
+	return args[:dashPos], cliArgs, nil
 }
 
 func getVersion() string {
