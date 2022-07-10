@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/andersnormal/picasso/pkg/config"
+	a "github.com/andersnormal/picasso/pkg/action"
 
 	githubactions "github.com/sethvargo/go-githubactions"
 )
@@ -11,10 +11,9 @@ var action *githubactions.Action
 func run() error {
 	action = githubactions.New()
 
-	c := config.New()
-	err := c.InitActionConfig(action)
+	_, err := a.NewFromInputs(action)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	return nil
