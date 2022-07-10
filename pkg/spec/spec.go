@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/andersnormal/picasso/pkg/templr"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
@@ -44,6 +45,20 @@ type Spec struct {
 	Vars Vars `yaml:"vars"`
 	// Env ...
 	Env Env `yaml:"env"`
+}
+
+// Fields ...
+func (s *Spec) Fields() templr.Fields {
+	fields := templr.Fields{
+		"Spec":        s.Spec,
+		"Version":     s.Version,
+		"Description": s.Description,
+		"Authors":     s.Authors,
+		"License":     s.License,
+		"Repository":  s.Repository,
+	}
+
+	return fields
 }
 
 // Validate ..

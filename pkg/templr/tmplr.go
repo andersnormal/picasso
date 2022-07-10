@@ -42,6 +42,11 @@ func (o *Opts) Configure(opts ...Opt) {
 // Fields ...
 type Fields map[string]interface{}
 
+// Merge ...
+func (f Fields) Merge(fields Fields) {
+	maps.Copy(f, fields)
+}
+
 // WithVars ...
 func WithFields(fields Fields) Opt {
 	return func(o *Opts) {

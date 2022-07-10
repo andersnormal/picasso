@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
+	"github.com/sethvargo/go-githubactions"
 )
 
 // Flags ...
@@ -77,6 +78,13 @@ func (c *Config) InitDefaultConfig() error {
 		return err
 	}
 	c.File = filepath.Join(cwd, c.File)
+
+	return nil
+}
+
+// InitActionConfig ...
+func (c *Config) InitActionConfig(action *githubactions.Action) error {
+	c.File = action.GetInput("config")
 
 	return nil
 }

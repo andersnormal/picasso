@@ -213,7 +213,8 @@ func main() {
 	)
 
 	for _, task := range tt {
-		pp := s.Vars
+		pp := make(spec.Vars)
+		maps.Copy(pp, s.Vars)
 		maps.Copy(pp, task.Vars)
 		maps.Copy(pp, params)
 		task.Vars = pp
