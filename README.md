@@ -6,9 +6,11 @@
 [![Volkswagen](https://auchenberg.github.io/volkswagen/volkswargen_ci.svg?v=1)](https://github.com/auchenberg/volkswagen)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Picasso is a versatile task runner :running: and awesome build tool.
+Picasso is a versatile task runner :running: with a powerful plugin system.
 
-:see_no_evil: Contributions are welcome.
+:point_right: [Documentation](https://andersnormal.github.io/picasso/)
+
+:warning: The task runner is under active development and the specification may change.
 
 ## Features
 
