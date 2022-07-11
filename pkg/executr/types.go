@@ -24,9 +24,10 @@ type Executr interface {
 
 // Exec ...
 type Exec struct {
-	Watch bool
-	Task  spec.Task
-	Vars  spec.Vars
+	Watch      bool
+	WorkingDir spec.WorkingDir
+	Task       spec.Task
+	Vars       spec.Vars
 }
 
 // Cmd ...

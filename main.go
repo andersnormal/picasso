@@ -26,7 +26,7 @@ var (
 	version = ""
 )
 
-const usage = `Usage: picasso [-cfglvsdpw] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--watch] [--validate] [--var] [--init] [--version] [task...] 
+const usage = `Usage: picasso [-cfglvsdpw] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--watch] [--validate] [--var] [--init] [--version] [--dir] [task...] 
 
 '''
 spec: 	 1
@@ -74,7 +74,17 @@ func main() {
 	pflag.BoolVar(&cfg.Flags.Version, "version", cfg.Flags.Version, "version")
 	pflag.StringSliceVar(&cfg.Flags.Vars, "var", cfg.Flags.Vars, "variables")
 	pflag.BoolVarP(&cfg.Flags.Watch, "watch", "w", cfg.Flags.Watch, "watch")
+	pflag.StringVar(&cfg.Flags.Dir, "dir", "", "working directory")
 	pflag.Parse()
+
+	cwd, err := cfg.Cwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if cfg.Flags.Dir != "" {
+		cwd = cfg.Flags.Dir
+	}
 
 	if cfg.Flags.Verbose {
 		start := time.Now()
@@ -225,8 +235,13 @@ func main() {
 		}
 
 		run := executr.Exec{
-			Task:  task,
-			Watch: cfg.Flags.Watch,
+			Task:       task,
+			WorkingDir: task.WorkingDir,
+			Watch:      cfg.Flags.Watch,
+		}
+
+		if run.WorkingDir == "" {
+			run.WorkingDir = spec.WorkingDir(cwd)
 		}
 
 		if err := exec.Run(ctx, run); err != nil {

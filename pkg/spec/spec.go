@@ -159,6 +159,11 @@ type Task struct {
 // WorkingDir ...
 type WorkingDir string
 
+// String ...
+func (w WorkingDir) String() string {
+	return string(w)
+}
+
 // Templates ...
 type Templates []Template
 

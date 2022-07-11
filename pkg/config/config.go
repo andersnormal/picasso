@@ -13,6 +13,7 @@ import (
 type Flags struct {
 	Dry      bool
 	Env      []string
+	Dir      string
 	Force    bool
 	Help     bool
 	Init     bool

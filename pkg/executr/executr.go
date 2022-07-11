@@ -56,7 +56,7 @@ func (e *exectur) Run(ctx context.Context, exec Exec) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	err := e.runCmd(ctx, exec.Task.Commands)
+	err := e.runCmd(ctx, exec.WorkingDir, exec.Task.Commands)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ Loop:
 				}
 			}
 
-			err := e.runCmd(ctx, exec.Task.Commands)
+			err := e.runCmd(ctx, exec.WorkingDir, exec.Task.Commands)
 			if err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (e *exectur) genTemplates(tt spec.Templates) error {
 	return nil
 }
 
-func (e *exectur) runCmd(ctx context.Context, cmds []spec.Command) error {
+func (e *exectur) runCmd(ctx context.Context, dir spec.WorkingDir, cmds []spec.Command) error {
 	fields, err := templr.DefaultFields()
 	if err != nil {
 		return err
@@ -139,6 +139,7 @@ func (e *exectur) runCmd(ctx context.Context, cmds []spec.Command) error {
 		}
 
 		r, err := interp.New(
+			interp.Dir(dir.String()),
 			interp.Env(expand.ListEnviron(append(os.Environ(), e.opts.Env.Strings()...)...)),
 
 			interp.Module(interp.DefaultExec),
