@@ -146,6 +146,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	args, cliArgs, err := parseArgs()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -173,7 +178,8 @@ func main() {
 		maps.Copy(pp, params)
 
 		resp, err := p.Execute(plugin.ExecuteRequest{
-			Parameters: pp,
+			Vars:      pp,
+			Arguments: cliArgs,
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -190,11 +196,6 @@ func main() {
 	}
 
 	tasks := s.Default()
-
-	args, _, err := parseArgs()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	if len(args) == 0 && len(tasks) == 0 {
 		log.Fatal("no default task")
@@ -223,7 +224,12 @@ func main() {
 			continue
 		}
 
-		if err := exec.Run(ctx, task, cfg.Flags.Watch); err != nil {
+		run := executr.Exec{
+			Task:  task,
+			Watch: cfg.Flags.Watch,
+		}
+
+		if err := exec.Run(ctx, run); err != nil {
 			log.Fatal(err)
 		}
 	}

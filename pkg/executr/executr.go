@@ -46,27 +46,27 @@ func (e *exectur) Stderr() io.Writer {
 }
 
 // Run ...
-func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
+func (e *exectur) Run(ctx context.Context, exec Exec) error {
 	timeout := time.Duration(time.Nanosecond * math.MaxInt)
 
-	if !watch {
+	if !exec.Watch {
 		timeout = time.Duration(e.opts.Timeout)
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	err := e.runCmd(ctx, task.Commands)
+	err := e.runCmd(ctx, exec.Task.Commands)
 	if err != nil {
 		return err
 	}
 
-	err = e.genTemplates(task.Templates)
+	err = e.genTemplates(exec.Task.Templates)
 	if err != nil {
 		return err
 	}
 
-	if !watch {
+	if !exec.Watch {
 		return nil
 	}
 
@@ -76,7 +76,7 @@ func (e *exectur) Run(ctx context.Context, task spec.Task, watch bool) error {
 	}
 	defer fs.Close()
 
-	for _, p := range task.Watch.Paths {
+	for _, p := range exec.Task.Watch.Paths {
 		if err := fs.Add(p); err != nil {
 			return err
 		}
@@ -88,13 +88,13 @@ Loop:
 		case <-ctx.Done():
 			return ctx.Err()
 		case event := <-fs.Events:
-			for _, p := range task.Watch.Ignores {
+			for _, p := range exec.Task.Watch.Ignores {
 				if strings.Contains(event.Name, p) {
 					continue Loop
 				}
 			}
 
-			err := e.runCmd(ctx, task.Commands)
+			err := e.runCmd(ctx, exec.Task.Commands)
 			if err != nil {
 				return err
 			}

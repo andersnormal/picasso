@@ -85,7 +85,7 @@ func (p *GRPCPlugin) Close() error {
 // Execute ...
 func (p *GRPCPlugin) Execute(req ExecuteRequest) (ExecuteResponse, error) {
 	r := new(proto.Execute_Request)
-	r.Vars = req.Parameters
+	r.Vars = req.Vars
 
 	_, err := p.client.Execute(p.ctx, r)
 	if err != nil {
@@ -110,8 +110,8 @@ type Plugin interface {
 
 // ExecuteRequest ...
 type ExecuteRequest struct {
-	Arguments  []string
-	Parameters map[string]string
+	Vars      map[string]string
+	Arguments []string
 }
 
 // ExecuteResponse ...
