@@ -9,4 +9,25 @@ import Callout from 'nextra-theme-docs/callout'
 
 Picasso is a versatile task runner and build tool. It is easy to use and highly extensible via plugins.
 
-<Bleed>Picasso</Bleed>
+[Installation](/installation) is super easy. You can initialize a new project via `picasso --init` in the current directory to create the `.picasso.yml` specifiction file. Otherwise create a `.picasso.yml` in the directory by hand.
+
+```yaml
+spec: 1
+tasks:
+    hello:
+        - echo "Hello World from {{.Dir}}!"
+```
+
+The task is run via `picasso hello`.
+
+You can learn more about the power of the task runner in the [reference](/reference).
+
+<Callout>
+    [Plugins](/plugins) are a powerful mechanism to extend the task runner with any new feature you can imagine.
+</Callout>
+
+## Features 
+
+* [Plugins](/plugins) to extend the task runner with new features without bloating it up.
+* Availble on [GitHub Actions](https://github.com/features/actions) or any other continious integration.
+* Easy [installation](/installation) of a small binary.

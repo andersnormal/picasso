@@ -12,6 +12,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/spf13/pflag v1.0.5
+	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
 	google.golang.org/grpc v1.47.0
@@ -25,6 +26,7 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
@@ -42,6 +44,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
 	github.com/oklog/run v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/sethvargo/go-envconfig v0.6.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect

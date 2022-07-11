@@ -139,23 +139,25 @@ type Plugins []Plugin
 // Tasks ...
 type Tasks map[string]Task
 
-// Generators ...
-type Generators []Generator
-
 // Task ...
 type Task struct {
-	Id          string    `yaml:"id"`
-	Name        string    `yaml:"name"`
-	Description string    `yaml:"description"`
-	Commands    Commands  `yaml:"cmd"`
-	Disabled    bool      `yaml:"disabled"`
-	Default     bool      `yaml:"default"`
-	DependsOn   DependsOn `yaml:"depends_on"`
-	Vars        Vars      `yaml:"vars"`
-	Env         Env       `yaml:"env"`
-	Watch       Watch     `yaml:"watch"`
-	Templates   Templates `yaml:"template,omitempty"`
+	Id string `yaml:"id"`
+
+	Commands    Commands   `yaml:"cmd"`
+	Default     bool       `yaml:"default"`
+	DependsOn   DependsOn  `yaml:"depends_on"`
+	Description string     `yaml:"description"`
+	Disabled    bool       `yaml:"disabled"`
+	Env         Env        `yaml:"env"`
+	Name        string     `yaml:"name"`
+	Templates   Templates  `yaml:"template,omitempty"`
+	Vars        Vars       `yaml:"vars"`
+	Watch       Watch      `yaml:"watch"`
+	WorkingDir  WorkingDir `yaml:"working_dir"`
 }
+
+// WorkingDir ...
+type WorkingDir string
 
 // Templates ...
 type Templates []Template
@@ -198,17 +200,6 @@ type Commands []Command
 
 // Command ...
 type Command string
-
-// Generator ...
-type Generator struct {
-	Id          string   `yaml:"id"`
-	Name        string   `yaml:"name"`
-	Description string   `yaml:"description"`
-	Path        string   `yaml:"path"`
-	Includes    Includes `yaml:"includes"`
-	Excludes    Excludes `yaml:"excludes"`
-	Inputs      Inputs   `yaml:"inputs"`
-}
 
 // Inputs ...
 type Inputs []Input
