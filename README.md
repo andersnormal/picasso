@@ -65,13 +65,9 @@ Plugins are implemented using the [go plugin over RPC](https://github.com/hashic
 
 Plugins are triggered using the `--plugin` flag. They are executed with the `vars` set with the `--var` flag and the global `vars` property in the `.picasso.yml` file.
 
-### Example: `gen-tmpl`
+### Example: 
 
-This plugins clones a repository into a folder to generate a new project.
-
-```bash
-picasso --var url=https://github.com/katallaxie/template-go --var folder=. --plugin gen-tmpl
-```
+See [`plugin.go`](/examples/plugin.go) for an example.
 
 ## Development
 
