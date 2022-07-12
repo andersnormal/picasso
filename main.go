@@ -26,7 +26,7 @@ var (
 	version = ""
 )
 
-const usage = `Usage: picasso [-cfglvsdpw] [--config] [--force] [--generator] [--list] [--verbose] [--silent] [--dry] [--plugin] [--watch] [--validate] [--var] [--init] [--version] [--dir] [task...] 
+const usage = `Usage: picasso [-cflvsdpw] [--config] [--force] [--list] [--verbose] [--silent] [--dry] [--plugin] [--watch] [--validate] [--var] [--init] [--version] [--dir] [task...] 
 
 '''
 spec: 	 1

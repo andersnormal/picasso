@@ -12,6 +12,18 @@ picasso [--flags] [tasks...] [-- ARGS...]
 | - | - | - | - | - |
 | `-c` | `--config` | `string` | `.picasso.yml` | Config file. Enabled by default. Set to `.picasso.yml` or change to the location of your config |
 | `-w` | `--watch` | `bool` | `false` | Enables watch of the given tasks. This factors in the `watch` config in your `.picasso.yml` file. |
+| `-f` | `--force` | `bool` | `false` | Forces the execution of operations. |
+| `-l` | `--list` | `bool` | `false` | Lists the available tasks specified in the `.picasso.yml` file. |
+| `-v` | `--verbose` | `bool` | `false` | Enables verbose logging of runtime information. |
+| `-s` | `--silent` | `bool` | `false` | Does not log any runtime information. |
+| `-d` | `--dry` | `bool` | `false` | Does not apply destructive operations. |
+| `-p` | `--plugin` | `string` |  | Executes the provided plugin. Passes the CLI arguments via `--vars` and after the `--` to the execution of the plugin. |
+| `-w` | `--watch` | `bool` | `false` | Enables watch of the given tasks. This factors in the `watch` config in your `.picasso.yml` file. |
+|  | `--dir` | `string` | `.` | Sets the current working directory. Defaults to the current directory of execution. |
+|  | `--validate` | `bool` | `false` | Validates the specification file provided via `.picasso.yml`. |
+|  | `--var` | `[]string` |  | Sets the a variable in the format of `key=value` |
+|  | `--init` | `bool` | `false` | Creates a new `.picasso.yml` file at the provided location of `--config` (default: `./.picasso.yml`) |
+|  | `--version` | `bool` | `false` | Prints the current version. |
 
 ## Schema
 

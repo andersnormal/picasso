@@ -19,6 +19,8 @@ var enablePluginAutoMTLS = os.Getenv("PICASSO_DISABLE_PLUGIN_TLS") == ""
 type Meta struct {
 	// Path ...
 	Path string
+	// Arguments ...
+	Arguments []string
 }
 
 // ExecutableFile ...
@@ -86,6 +88,7 @@ func (p *GRPCPlugin) Close() error {
 func (p *GRPCPlugin) Execute(req ExecuteRequest) (ExecuteResponse, error) {
 	r := new(proto.Execute_Request)
 	r.Vars = req.Vars
+	r.Args = req.Arguments
 
 	_, err := p.client.Execute(p.ctx, r)
 	if err != nil {
@@ -137,7 +140,7 @@ func pluginFactory(meta *Meta) Factory {
 			AutoMTLS:         enablePluginAutoMTLS,
 			Managed:          true,
 			AllowedProtocols: []p.Protocol{p.ProtocolGRPC},
-			Cmd:              exec.Command(f),
+			Cmd:              exec.Command(f, meta.Arguments...),
 			SyncStderr:       l.StandardWriter(&hclog.StandardLoggerOptions{}),
 			SyncStdout:       l.StandardWriter(&hclog.StandardLoggerOptions{}),
 		}

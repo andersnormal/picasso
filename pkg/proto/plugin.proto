@@ -22,7 +22,7 @@ message Execute {
     message Request {
         string version              = 1;
         map<string, string> vars    = 2;
-        repeated string params      = 3;
+        repeated string args        = 3;
     }
     // Response ...
     message Response {
