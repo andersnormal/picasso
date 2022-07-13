@@ -127,20 +127,34 @@ func (s *Spec) Default() []Task {
 
 // Find ...
 func (s *Spec) Find(names []string) ([]Task, error) {
-	tt := make([]Task, 0, len(names))
+	all := make(map[string]bool)
+	tt := make([]Task, 0)
 
 	for _, name := range names {
-		found := false
-		for k, t := range s.Tasks {
-			if k == name {
-				tt = append(tt, t)
-				found = true
-			}
+		if _, exists := all[name]; exists {
+			continue
 		}
 
-		if !found {
+		t, ok := s.Tasks[name]
+		if !ok {
 			return nil, ErrTaskNotFound
 		}
+
+		for _, dep := range t.DependsOn {
+			if _, exists := all[dep]; exists {
+				continue
+			}
+
+			d, ok := s.Tasks[dep]
+			if !ok {
+				return nil, ErrTaskNotFound
+			}
+			tt = append(tt, d)
+			all[d.Name] = true
+		}
+
+		all[name] = true
+		tt = append(tt, t)
 	}
 
 	return tt, nil

@@ -5,8 +5,9 @@ authors:
 homepage: https://github.com/andersnormal/picasso
 repository: https://github.com/andersnormal/picasso
 tasks:
-  test:
+  foo:
     disabled: true
+  test:
     desc: test
     cmd:
       - echo "{{.OS}}"
