@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
-	"github.com/andersnormal/picasso/pkg/executr"
+	"github.com/andersnormal/picasso/pkg/executer"
 	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
@@ -116,7 +116,7 @@ func main() {
 
 	if cfg.Flags.List {
 		for k, t := range s.Tasks {
-			log.Printf("%s (%s)", k, t.Description)
+			log.Printf("%s (%s)", k, t.Name)
 		}
 		os.Exit(0)
 	}
@@ -216,25 +216,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	exec := executr.New(
-		executr.WithTimeout(cfg.Flags.Timeout),
-		executr.WithStderr(cfg.Stderr),
-		executr.WithStdin(cfg.Stdin),
-		executr.WithStdout(cfg.Stdout),
+	exec := executer.New(
+		executer.WithTimeout(cfg.Flags.Timeout),
+		executer.WithStderr(cfg.Stderr),
+		executer.WithStdin(cfg.Stdin),
+		executer.WithStdout(cfg.Stdout),
 	)
 
 	for _, task := range tt {
 		pp := make(spec.Vars)
 		maps.Copy(pp, s.Vars)
-		maps.Copy(pp, task.Vars)
 		maps.Copy(pp, params)
-		task.Vars = pp
 
 		if task.Disabled {
 			continue
 		}
 
-		run := executr.Exec{
+		run := executer.Exec{
 			Task:       task,
 			WorkingDir: task.WorkingDir,
 			Watch:      cfg.Flags.Watch,

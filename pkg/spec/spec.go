@@ -3,6 +3,7 @@ package spec
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 
@@ -80,6 +81,21 @@ func (s *Spec) Validate() error {
 	return v.Struct(s)
 }
 
+// Environ ...
+func (s *Spec) Environ() []string {
+	if s.Env == nil {
+		return nil
+	}
+
+	environ := os.Environ()
+
+	for k, v := range s.Env {
+		environ = append(environ, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	return environ
+}
+
 // Load ...
 func Load(file string) (*Spec, error) {
 	f, err := ioutil.ReadFile(file)
@@ -141,19 +157,51 @@ type Tasks map[string]Task
 
 // Task ...
 type Task struct {
-	Id string `yaml:"id"`
+	If        string    `yaml:"if"`
+	Default   bool      `yaml:"default"`
+	DependsOn DependsOn `yaml:"depends-on"`
+	Name      string    `yaml:"name"`
+	Disabled  bool      `yaml:"disabled"`
+	Env       Env       `yaml:"env"`
+	Vars      Vars      `yaml:"vars"`
+	Templates Templates `yaml:"template,omitempty"`
 
-	Commands    Commands   `yaml:"cmd"`
-	Default     bool       `yaml:"default"`
-	DependsOn   DependsOn  `yaml:"depends_on"`
-	Description string     `yaml:"description"`
-	Disabled    bool       `yaml:"disabled"`
-	Env         Env        `yaml:"env"`
-	Name        string     `yaml:"name"`
-	Templates   Templates  `yaml:"template,omitempty"`
-	Vars        Vars       `yaml:"vars"`
-	Watch       Watch      `yaml:"watch"`
-	WorkingDir  WorkingDir `yaml:"working_dir"`
+	Watch      Watch      `yaml:"watch"`
+	WorkingDir WorkingDir `yaml:"working-dir"`
+	Steps      Steps      `yaml:"steps"`
+}
+
+// Step ...
+type Step struct {
+	Id               string            `yaml:"id"`
+	Cmd              string            `yaml:"cmd"`
+	Env              Env               `yaml:"env"`
+	Vars             Vars              `yaml:"vars"`
+	If               string            `yaml:"if"`
+	TimeoutInSeconds int64             `yaml:"timeout-in-seconds"`
+	Uses             string            `yaml:"uses"`
+	With             map[string]string `yaml:"with"`
+	WorkingDir       WorkingDir        `yaml:"working-dir"`
+	ContinueOnError  bool              `yaml:"continue-on-error"`
+	Templates        Templates         `yaml:"template,omitempty"`
+}
+
+// Steps ...
+type Steps []Step
+
+// Task ...
+func (t *Task) Environ() []string {
+	if t.Env == nil {
+		return nil
+	}
+
+	environ := os.Environ()
+
+	for k, v := range t.Env {
+		environ = append(environ, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	return environ
 }
 
 // WorkingDir ...

@@ -90,7 +90,7 @@ tasks:
 | `name` | `string` | | Name of the task. |
 | `description` | `string` | | Description of the task. |
 | `cmd` | `[]string` | | Commands to execute for the task. |
-| `working_dir` | `string` | `cwd` | Current directort which the task should run in. |
+| `working-dir` | `string` | `cwd` | Current directort which the task should run in. |
 | `disabled` | `bool` | `false` | Disable the task in execution. |
 | `depends_on` | `DependsOn` | | List of other task this task depends on in execution. |
 | `vars` | [`Vars`](#variable) | | Variables for this task. |
@@ -98,4 +98,4 @@ tasks:
 | `watch` | [`Watch`](#watch) | | Configuration for `watch` flag of the task. |
 | `template` | [`Templates`](#template) | | Templates to create for this task. |
 
-> The `working_dir` is set to the current directory.
+> The `working-dir` is set to the current directory.

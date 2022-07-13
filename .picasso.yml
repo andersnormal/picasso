@@ -4,20 +4,10 @@ authors:
   - Sebastian Döll <sebastian@katallaxie.me>
 homepage: https://github.com/andersnormal/picasso
 repository: https://github.com/andersnormal/picasso
-plugins:
-  -
-    id: picasso-plugin-init
-    path: picasso-plugin-init
 tasks:
-  release:
-    desc: release
-    cmd:
-      - gox -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-s -w -X github.com/andersnormal/picasso/version.Version=${TRAVIS_TAG}" -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
   test:
     disabled: true
     desc: test
-    vars:
-      region: test
     cmd:
       - echo "{{.OS}}"
     watch:
@@ -29,14 +19,16 @@ tasks:
         out: ./config.json
         vars:
           foo: bar
+    steps:
+      - cmd: go test -cover -p 1 -race -v ./...
   build:
     default: true
-    deps:
+    depends-on:
       - test
     vars:
-      region: test
-    cmd:
-      - go build
+      region: eu-west-1
+    env:
+      REGION: eu-west-1
     watch:
       paths:
         - examples
@@ -49,4 +41,14 @@ tasks:
         out: ./config.json
         vars:
           foo: bar
+    steps:
+      - name: "demo"
+      - cmd: exit 1;
+        continue-on-error: true
+      - cmd: |
+          echo "{{.OSR}"
+          echo "{{.Dir}}"
+      - cmd: |
+          echo "building on {{.OS}}"
+          goreleaser build --snapshot --rm-dist
       
