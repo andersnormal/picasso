@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/andersnormal/pkg v0.0.0-20220702120339-a71ec741773d
-	github.com/fsnotify/fsnotify v1.5.4
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/hashicorp/go-hclog v0.14.1

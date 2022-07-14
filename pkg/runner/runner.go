@@ -2,14 +2,15 @@ package runner
 
 import (
 	"context"
-
-	"github.com/andersnormal/picasso/pkg/spec"
+	"sync"
 )
 
 // Runner ...
 type Runner struct {
 	ctx   context.Context
 	funcs []RunFunc
+	pool  sync.Pool
+	sync.Mutex
 }
 
 // Context ...
@@ -17,17 +18,51 @@ func (r *Runner) Context() context.Context {
 	return r.ctx
 }
 
+// AcquireCtx ...
+func (r *Runner) AcquireCtx() *Ctx {
+	c := r.pool.Get().(*Ctx)
+	c.Reset()
+
+	c.runner = r
+
+	return c
+}
+
+// ReleaseFunc ...
+type ReleaseFunc func()
+
+// ReleseCtx ...
+func (r *Runner) ReleaseCtx(c *Ctx) ReleaseFunc {
+	return func() { r.pool.Put(c) }
+}
+
 // RunFunc ...
 type RunFunc func(c *Ctx) error
 
 // Run ...
-func (r *Runner) Run(task *spec.Task, fn RunFunc) error
+func (r *Runner) Run(fn ...RunFunc) error {
+	c := r.AcquireCtx()
+	defer r.ReleaseCtx(c)
+
+	for _, fn := range append(r.funcs, fn...) {
+		if err := fn(c); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // WithContext ...
 func WithContext(ctx context.Context) *Runner {
 	return &Runner{
-		ctx,
-		make([]RunFunc, 0),
+		ctx:   ctx,
+		funcs: make([]RunFunc, 0),
+		pool: sync.Pool{
+			New: func() interface{} {
+				return new(Ctx)
+			},
+		},
 	}
 }
 

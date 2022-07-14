@@ -12,8 +12,8 @@ type Ctx struct {
 	runner     *Runner
 	cmd        Cmd
 	workingDir WorkingDir
-	vars       Values[string, string]
-	env        Values[string, string]
+	vars       Vars
+	env        Env
 }
 
 // WorkingDir ..
@@ -37,6 +37,14 @@ func (c *Ctx) Runner() *Runner {
 	return c.runner
 }
 
+// Reset ...
+func (c *Ctx) Reset() {
+	c.env = make(Env)
+	c.vars = make(Vars)
+	c.cmd = ""
+	c.workingDir = ""
+}
+
 // Context ...
 func (c *Ctx) Context() context.Context {
 	return c.runner.Context()
@@ -56,6 +64,12 @@ func (c *Ctx) Env() []string {
 
 	return env
 }
+
+// Vars ...
+type Vars = Values[string, string]
+
+// Env ...
+type Env = Values[string, string]
 
 // Values ...
 type Values[K comparable, T any] map[K]Value[T]

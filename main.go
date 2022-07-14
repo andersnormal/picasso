@@ -7,12 +7,12 @@ import (
 	"math/rand"
 	"os"
 	"runtime/debug"
-	"strings"
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
 	"github.com/andersnormal/picasso/pkg/executer"
 	"github.com/andersnormal/picasso/pkg/plugin"
+	"github.com/andersnormal/picasso/pkg/runner"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
 	"mvdan.cc/sh/syntax"
@@ -32,8 +32,8 @@ const usage = `Usage: picasso [-cflvsdpw] [--config] [--force] [--list] [--verbo
 spec: 	 1
 tasks:
   test:
-    cmd:
-      - go test -v ./...
+    steps:
+      - cmd: go test -v ./...
 '''
 
 Options:
@@ -164,15 +164,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	params := map[string]string{}
-	for _, v := range cfg.Flags.Vars {
-		kv := strings.Split(v, "=")
-		if len(kv) != 2 {
-			params[kv[0]] = ""
-			continue
-		}
-		params[kv[0]] = kv[1]
-	}
+	r := runner.WithContext(ctx)
+	r.Lock()
+	defer r.Unlock()
 
 	if cfg.Flags.Plugin != "" {
 		m := &plugin.Meta{Path: cfg.Flags.Plugin}
@@ -185,7 +179,6 @@ func main() {
 		defer p.Close()
 
 		pp := s.Vars
-		maps.Copy(pp, params)
 
 		resp, err := p.Execute(plugin.ExecuteRequest{
 			Vars:      pp,
@@ -226,7 +219,6 @@ func main() {
 	for _, task := range tt {
 		pp := make(spec.Vars)
 		maps.Copy(pp, s.Vars)
-		maps.Copy(pp, params)
 
 		if task.Disabled {
 			continue
