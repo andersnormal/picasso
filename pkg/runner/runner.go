@@ -93,13 +93,9 @@ func (r *Runner) Run(fn ...RunFunc) error {
 	c := r.AcquireCtx()
 	defer r.ReleaseCtx(c)
 
-	for _, fn := range append(r.funcs, fn...) {
-		if err := fn(c); err != nil {
-			return err
-		}
-	}
+	c.funcs = append(r.funcs, fn...)
 
-	return nil
+	return c.funcs[c.idx](c)
 }
 
 // WithContext ...

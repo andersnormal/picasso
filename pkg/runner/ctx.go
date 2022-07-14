@@ -9,6 +9,8 @@ import (
 
 // Ctx ...
 type Ctx struct {
+	funcs      []RunFunc
+	idx        int
 	cmd        Cmd
 	env        Env
 	runner     *Runner
@@ -43,6 +45,18 @@ func (c *Ctx) Reset() {
 	c.vars = make(Vars)
 	c.cmd = ""
 	c.workingDir = ""
+}
+
+// Next ...
+func (c *Ctx) Next() error {
+	c.idx++
+	if c.idx < len(c.funcs) {
+		if err := c.funcs[c.idx](c); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Context ...

@@ -26,7 +26,7 @@ func AddStringSlice(vars []string) RunFunc {
 			c.Vars().Add(kv[0], kv[1])
 		}
 
-		return nil
+		return c.Next()
 	}
 }
 
@@ -37,7 +37,7 @@ func AddVars(vars spec.Vars) RunFunc {
 			c.Vars().Add(k, v)
 		}
 
-		return nil
+		return c.Next()
 	}
 }
 
@@ -65,7 +65,7 @@ func RunTask(t spec.Task, cwd string) RunFunc {
 			}
 		}
 
-		return nil
+		return c.Next()
 	}
 }
 
