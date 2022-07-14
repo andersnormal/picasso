@@ -65,6 +65,7 @@ func (s *Spec) Fields() templr.Fields {
 // Validate ..
 func (s *Spec) Validate() error {
 	v := validator.New()
+
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
 		if name == "-" {
@@ -187,17 +188,17 @@ type Task struct {
 
 // Step ...
 type Step struct {
-	Id               string            `yaml:"id"`
 	Cmd              string            `yaml:"cmd"`
+	ContinueOnError  bool              `yaml:"continue-on-error"`
 	Env              Env               `yaml:"env"`
-	Vars             Vars              `yaml:"vars"`
+	Id               string            `yaml:"id"`
 	If               string            `yaml:"if"`
+	Templates        Templates         `yaml:"template,omitempty"`
 	TimeoutInSeconds int64             `yaml:"timeout-in-seconds"`
 	Uses             string            `yaml:"uses"`
+	Vars             Vars              `yaml:"vars"`
 	With             map[string]string `yaml:"with"`
 	WorkingDir       WorkingDir        `yaml:"working-dir"`
-	ContinueOnError  bool              `yaml:"continue-on-error"`
-	Templates        Templates         `yaml:"template,omitempty"`
 }
 
 // Steps ...

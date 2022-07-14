@@ -42,12 +42,14 @@ plugins:
     path: picasso-plugin-init
 tasks:
   test:
-    disabled: true
+    disabled: false
     desc: test
     vars:
       region: test
-    cmd:
-      - echo "{{.OS}}"
+    env:
+      REGION: test
+    steps:
+      - cmd: echo {{.OS}}
     watch:
       paths:
         - pkg/config
