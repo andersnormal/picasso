@@ -2,10 +2,13 @@ package runner
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/andersnormal/picasso/pkg/spec"
 )
 
 // Runner ...
@@ -13,8 +16,9 @@ type Runner struct {
 	ctx   context.Context
 	funcs []RunFunc
 	pool  sync.Pool
+	opts  *Opts
+
 	sync.Mutex
-	opts *Opts
 }
 
 // Opt ...
@@ -22,10 +26,14 @@ type Opt func(*Opts)
 
 // Opts ...
 type Opts struct {
-	Stdin   io.Reader
-	Stdout  io.Writer
-	Stderr  io.Writer
-	Timeout time.Duration
+	Stdin      io.Reader
+	Stdout     io.Writer
+	Stderr     io.Writer
+	Timeout    time.Duration
+	File       *spec.Spec
+	Vars       Vars
+	Env        Env
+	WorkingDir WorkingDir
 }
 
 // Configure ...
@@ -44,6 +52,34 @@ func (o *Opts) Configure(opts ...Opt) {
 
 	if o.Stderr == nil {
 		o.Stderr = os.Stderr
+	}
+}
+
+// WithSpec ...
+func WithSpec(file *spec.Spec) Opt {
+	return func(o *Opts) {
+		o.File = file
+	}
+}
+
+// WithVars ...
+func WithVars(vars Vars) Opt {
+	return func(o *Opts) {
+		o.Vars = vars
+	}
+}
+
+// WithEnv ...
+func WithEnv(env Env) Opt {
+	return func(o *Opts) {
+		o.Env = env
+	}
+}
+
+// WithWorkingDir ...
+func WithWorkingDir(cwd string) Opt {
+	return func(o *Opts) {
+		o.WorkingDir = WorkingDir(cwd)
 	}
 }
 
@@ -98,15 +134,40 @@ func (r *Runner) Run(fn ...RunFunc) error {
 	return c.funcs[c.idx](c)
 }
 
+// RunTask ...
+func (r *Runner) RunTasks(tasks ...string) error {
+	for _, task := range tasks {
+		c := r.AcquireCtx()
+		defer r.ReleaseCtx(c)
+
+		t, ok := r.opts.File.Tasks[task]
+		if !ok {
+			return fmt.Errorf("task %s not found", task)
+		}
+
+		c.vars = NewFromMap(r.opts.File.Vars)
+		c.vars.Copy(NewFromMap(t.Vars))
+		c.vars.Copy(r.opts.Vars)
+		c.task = t
+
+		for _, fn := range r.funcs {
+			if err := fn(c); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 // WithContext ...
 func WithContext(ctx context.Context, opts ...Opt) *Runner {
 	options := new(Opts)
 	options.Configure(opts...)
 
 	return &Runner{
-		ctx:   ctx,
-		opts:  options,
-		funcs: make([]RunFunc, 0),
+		ctx:  ctx,
+		opts: options,
 		pool: sync.Pool{
 			New: func() interface{} {
 				return new(Ctx)

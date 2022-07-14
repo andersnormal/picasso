@@ -41,14 +41,20 @@ func AddVars(vars spec.Vars) RunFunc {
 	}
 }
 
-// RunTask ...
-func RunTask(t spec.Task, cwd string) RunFunc {
+// SkipDisabled ...
+func SkipDisabled(t spec.Task) RunFunc {
 	return func(c *Ctx) error {
 		if t.Disabled {
 			return nil
 		}
+		return c.Next()
+	}
+}
 
-		for _, s := range t.Steps {
+// RunTask ...
+func RunTask() RunFunc {
+	return func(c *Ctx) error {
+		for _, s := range c.Task().Steps {
 			cmds := strings.Split(s.Cmd, "\n")
 			timeout := time.Duration(time.Nanosecond * math.MaxInt)
 
@@ -56,7 +62,7 @@ func RunTask(t spec.Task, cwd string) RunFunc {
 				timeout = time.Duration(s.TimeoutInSeconds) * time.Second
 			}
 
-			if err := runCmd(c.Context(), timeout, c.WorkingDir(), c.runner.Stdin(), c.runner.Stdout(), c.runner.Stderr(), t.Environ(), cmds...); err != nil {
+			if err := runCmd(c.Context(), timeout, c.WorkingDir(), c.runner.Stdin(), c.runner.Stdout(), c.runner.Stderr(), c.Env(), cmds...); err != nil {
 				if s.ContinueOnError {
 					continue
 				}

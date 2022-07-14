@@ -162,7 +162,14 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r := runner.WithContext(ctx)
+	r := runner.WithContext(ctx,
+		runner.WithSpec(s),
+		runner.WithWorkingDir(cwd),
+		runner.WithEnv(runner.NewFromSlice(cfg.Flags.Env)),
+		runner.WithVars(runner.NewFromSlice(cfg.Flags.Vars)),
+	)
+	r.Use(runner.RunTask())
+
 	r.Lock()
 	defer r.Unlock()
 
@@ -202,36 +209,8 @@ func main() {
 		log.Fatal("no default task")
 	}
 
-	tt, err := s.Find(args)
-	if err != nil {
+	if err := r.RunTasks(args...); err != nil {
 		log.Fatal(err)
-	}
-
-	for _, task := range tt {
-		if err := r.Run(runner.RunTask(task, cwd)); err != nil {
-			log.Fatal(err)
-		}
-
-		// pp := make(spec.Vars)
-		// maps.Copy(pp, s.Vars)
-
-		// if task.Disabled {
-		// 	continue
-		// }
-
-		// run := executer.Exec{
-		// 	Task:       task,
-		// 	WorkingDir: task.WorkingDir,
-		// 	Watch:      cfg.Flags.Watch,
-		// }
-
-		// if run.WorkingDir == "" {
-		// 	run.WorkingDir = spec.WorkingDir(cwd)
-		// }
-
-		// if err := exec.Run(ctx, run); err != nil {
-		// 	log.Fatal(err)
-		// }
 	}
 }
 

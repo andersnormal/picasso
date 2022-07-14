@@ -3,7 +3,9 @@ package runner
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/andersnormal/picasso/pkg/spec"
 	"golang.org/x/exp/maps"
 )
 
@@ -16,6 +18,7 @@ type Ctx struct {
 	runner     *Runner
 	vars       Vars
 	workingDir WorkingDir
+	task       spec.Task
 }
 
 // WorkingDir ..
@@ -37,6 +40,11 @@ func (c *Ctx) Cmd() Cmd {
 // Runner ...
 func (c *Ctx) Runner() *Runner {
 	return c.runner
+}
+
+// Task ...
+func (c *Ctx) Task() spec.Task {
+	return c.task
 }
 
 // Reset ...
@@ -87,6 +95,31 @@ type Env = Values[string, string]
 
 // Values ...
 type Values[K comparable, T any] map[K]Value[T]
+
+// NewFromSlice ...
+func NewFromSlice(s []string) Values[string, string] {
+	vv := make(Values[string, string])
+	for _, v := range s {
+		kv := strings.Split(v, "=")
+		if len(kv) != 2 {
+			vv.Add(kv[0], "")
+			continue
+		}
+		vv.Add(kv[0], kv[1])
+	}
+
+	return vv
+}
+
+// NewFromMap ...
+func NewFromMap(m map[string]string) Values[string, string] {
+	vv := make(Values[string, string])
+	for k, v := range m {
+		vv.Add(k, v)
+	}
+
+	return vv
+}
 
 // Add ..
 func (vv Values[K, T]) Add(key K, value T) {
