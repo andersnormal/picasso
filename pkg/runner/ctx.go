@@ -9,11 +9,11 @@ import (
 
 // Ctx ...
 type Ctx struct {
-	runner     *Runner
 	cmd        Cmd
-	workingDir WorkingDir
-	vars       Vars
 	env        Env
+	runner     *Runner
+	vars       Vars
+	workingDir WorkingDir
 }
 
 // WorkingDir ..

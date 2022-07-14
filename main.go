@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
-	"github.com/andersnormal/picasso/pkg/executer"
 	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/runner"
 	"github.com/andersnormal/picasso/pkg/spec"
@@ -18,7 +17,6 @@ import (
 	"mvdan.cc/sh/syntax"
 
 	"github.com/spf13/pflag"
-	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
 
@@ -209,34 +207,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	exec := executer.New(
-		executer.WithTimeout(cfg.Flags.Timeout),
-		executer.WithStderr(cfg.Stderr),
-		executer.WithStdin(cfg.Stdin),
-		executer.WithStdout(cfg.Stdout),
-	)
-
 	for _, task := range tt {
-		pp := make(spec.Vars)
-		maps.Copy(pp, s.Vars)
-
-		if task.Disabled {
-			continue
-		}
-
-		run := executer.Exec{
-			Task:       task,
-			WorkingDir: task.WorkingDir,
-			Watch:      cfg.Flags.Watch,
-		}
-
-		if run.WorkingDir == "" {
-			run.WorkingDir = spec.WorkingDir(cwd)
-		}
-
-		if err := exec.Run(ctx, run); err != nil {
+		if err := r.Run(runner.RunTask(task, cwd)); err != nil {
 			log.Fatal(err)
 		}
+
+		// pp := make(spec.Vars)
+		// maps.Copy(pp, s.Vars)
+
+		// if task.Disabled {
+		// 	continue
+		// }
+
+		// run := executer.Exec{
+		// 	Task:       task,
+		// 	WorkingDir: task.WorkingDir,
+		// 	Watch:      cfg.Flags.Watch,
+		// }
+
+		// if run.WorkingDir == "" {
+		// 	run.WorkingDir = spec.WorkingDir(cwd)
+		// }
+
+		// if err := exec.Run(ctx, run); err != nil {
+		// 	log.Fatal(err)
+		// }
 	}
 }
 
