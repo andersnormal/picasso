@@ -2,19 +2,21 @@ package tmpl
 
 import (
 	"bytes"
+	"io/ioutil"
+	"os"
 	"text/template"
 )
 
 // Template ...
 type Template struct {
-	opts TmplOpts
+	opts Opts
 }
 
 // Fields ...
 type Fields map[string]interface{}
 
 // New ...
-func New(opts ...TmplOpt) *Template {
+func New(opts ...Opt) *Template {
 	options := NewOpts()
 	options.Configure(opts...)
 
@@ -23,9 +25,34 @@ func New(opts ...TmplOpt) *Template {
 	}
 }
 
+// ApplyFile ...
+func (t *Template) ApplyFile(in, out string) error {
+	i, err := ioutil.ReadFile(in)
+	if err != nil {
+		return err
+	}
+
+	o, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		return err
+	}
+	defer o.Close()
+
+	s, err := t.Apply(string(i))
+	if err != nil {
+		return err
+	}
+
+	_, err = o.WriteString(s)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Apply ...
 func (t *Template) Apply(s string) (string, error) {
-
 	tmpl, err := template.New("").Funcs(t.opts.Funcs).Parse(s)
 	if err != nil {
 		return "", err

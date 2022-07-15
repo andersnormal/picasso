@@ -9,50 +9,11 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/plugin"
-	"github.com/andersnormal/picasso/pkg/spec"
-	"github.com/andersnormal/picasso/pkg/templr"
 
 	"mvdan.cc/sh/expand"
 	"mvdan.cc/sh/interp"
 	"mvdan.cc/sh/syntax"
 )
-
-// AddStringSlice ...
-func AddStringSlice(vars []string) RunFunc {
-	return func(c *Ctx) error {
-		for _, v := range vars {
-			kv := strings.Split(v, "=")
-			if len(kv) != 2 {
-				c.Vars().Add(kv[0], "")
-				continue
-			}
-			c.Vars().Add(kv[0], kv[1])
-		}
-
-		return c.Next()
-	}
-}
-
-// AddVars...
-func AddVars(vars spec.Vars) RunFunc {
-	return func(c *Ctx) error {
-		for k, v := range vars {
-			c.Vars().Add(k, v)
-		}
-
-		return c.Next()
-	}
-}
-
-// SkipDisabled ...
-func SkipDisabled(t spec.Task) RunFunc {
-	return func(c *Ctx) error {
-		if t.Disabled {
-			return nil
-		}
-		return c.Next()
-	}
-}
 
 // RunTask ...
 func RunTask() RunFunc {
@@ -113,13 +74,6 @@ func runPlugin(ctx context.Context, name string, dir WorkingDir, stdin io.Reader
 func runCmd(ctx context.Context, timeout time.Duration, dir WorkingDir, stdin io.Reader, stdout io.Writer, stderr io.Writer, env []string, cmds ...string) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-
-	fields, err := templr.DefaultFields()
-	if err != nil {
-		return err
-	}
-
-	_ = templr.New(templr.WithFields(fields))
 
 	for _, cmd := range cmds {
 		p, err := syntax.NewParser().Parse(strings.NewReader(cmd), "")

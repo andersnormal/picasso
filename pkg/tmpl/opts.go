@@ -2,11 +2,11 @@ package tmpl
 
 import "text/template"
 
-// TmplOpt ...
-type TmplOpt func(*TmplOpts)
+// Opt ...
+type Opt func(*Opts)
 
 // Opts ...
-type TmplOpts struct {
+type Opts struct {
 	Fields                TmplFields
 	Funcs                 template.FuncMap
 	FailOnMissing         bool
@@ -17,23 +17,23 @@ type TmplOpts struct {
 type TmplFields map[string]interface{}
 
 // NewOpts ...
-func NewOpts() TmplOpts {
-	return TmplOpts{
+func NewOpts() Opts {
+	return Opts{
 		Fields: make(TmplFields),
 		Funcs:  tmplFuncs,
 	}
 }
 
 // Configure os configuring the options.
-func (o *TmplOpts) Configure(opts ...TmplOpt) {
+func (o *Opts) Configure(opts ...Opt) {
 	for _, opt := range opts {
 		opt(o)
 	}
 }
 
 // WithExtraFields ...
-func WithExtraFields(fields TmplFields) TmplOpt {
-	return func(opts *TmplOpts) {
+func WithExtraFields(fields TmplFields) Opt {
+	return func(opts *Opts) {
 		for f, v := range fields {
 			opts.Fields[f] = v
 		}
@@ -41,8 +41,8 @@ func WithExtraFields(fields TmplFields) TmplOpt {
 }
 
 // WithExtraFuncs ...
-func WithExtraFuncs(funcs template.FuncMap) TmplOpt {
-	return func(opts *TmplOpts) {
+func WithExtraFuncs(funcs template.FuncMap) Opt {
+	return func(opts *Opts) {
 		for f, v := range funcs {
 			opts.Funcs[f] = v
 		}
@@ -50,15 +50,15 @@ func WithExtraFuncs(funcs template.FuncMap) TmplOpt {
 }
 
 // WithDisableReplaceNoValue ...
-func WithDisableReplaceNoValue() TmplOpt {
-	return func(opts *TmplOpts) {
+func WithDisableReplaceNoValue() Opt {
+	return func(opts *Opts) {
 		opts.DisableReplaceNoValue = true
 	}
 }
 
 // WithFailOnMissing ...
-func WithFailOnMissing() TmplOpt {
-	return func(opts *TmplOpts) {
+func WithFailOnMissing() Opt {
+	return func(opts *Opts) {
 		opts.FailOnMissing = true
 	}
 }

@@ -21,15 +21,15 @@ func TestTemplate_Apply(t *testing.T) {
 		want     string
 		hasError bool
 		err      error
-		opts     []tmpl.TmplOpt
+		opts     []tmpl.Opt
 	}
 
 	tests := []test{
 		{input: "{{OS}}", want: runtime.GOOS, err: nil},
 		{input: "{{ARCH}}", want: runtime.GOARCH, err: nil},
 		{input: "{{.FOO}}", want: "", err: nil},
-		{input: "{{.FOO}}", want: "<no value>", err: nil, opts: []tmpl.TmplOpt{tmpl.WithDisableReplaceNoValue()}},
-		{input: "{{.FOO}}", want: "", hasError: true, err: errors.New("map has no entry for key"), opts: []tmpl.TmplOpt{tmpl.WithFailOnMissing()}},
+		{input: "{{.FOO}}", want: "<no value>", err: nil, opts: []tmpl.Opt{tmpl.WithDisableReplaceNoValue()}},
+		{input: "{{.FOO}}", want: "", hasError: true, err: errors.New("map has no entry for key"), opts: []tmpl.Opt{tmpl.WithFailOnMissing()}},
 	}
 
 	for _, tc := range tests {

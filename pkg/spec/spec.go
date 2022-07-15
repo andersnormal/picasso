@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/andersnormal/picasso/pkg/templr"
+	"github.com/andersnormal/picasso/pkg/tmpl"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
@@ -49,8 +49,8 @@ type Spec struct {
 }
 
 // Fields ...
-func (s *Spec) Fields() templr.Fields {
-	fields := templr.Fields{
+func (s *Spec) Fields() tmpl.Fields {
+	fields := tmpl.Fields{
 		"Spec":        s.Spec,
 		"Version":     s.Version,
 		"Description": s.Description,
