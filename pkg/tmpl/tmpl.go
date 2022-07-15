@@ -3,10 +3,6 @@ package tmpl
 import (
 	"bytes"
 	"text/template"
-
-	"github.com/andersnormal/picasso/pkg/spec"
-
-	"github.com/manifoldco/promptui"
 )
 
 // Template ...
@@ -29,37 +25,26 @@ func New(opts ...TmplOpt) *Template {
 
 // Apply ...
 func (t *Template) Apply(s string) (string, error) {
-	var out bytes.Buffer
 
-	tmpl, err := template.New("tmpl").Option("missingkey=error").Parse(s)
+	tmpl, err := template.New("").Funcs(t.opts.Funcs).Parse(s)
 	if err != nil {
 		return "", err
 	}
 
-	err = tmpl.Execute(&out, t.opts.Fields)
-
-	return out.String(), err
-}
-
-// ApplyPrompts ...
-func (t *Template) ApplyPrompts(pp spec.Inputs) error {
-	ff := make(Fields)
-
-	for _, p := range pp {
-		prompt := promptui.Prompt{
-			Label: p.Prompt,
-		}
-
-		res, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-		ff[p.Name] = res
+	if t.opts.FailOnMissing {
+		tmpl.Option("missingkey=error")
 	}
 
-	for f, v := range ff {
-		t.opts.Fields[f] = v
+	var out bytes.Buffer
+	if err := tmpl.Execute(&out, t.opts.Fields); err != nil {
+		return "", err
 	}
 
-	return nil
+	if t.opts.DisableReplaceNoValue {
+		return out.String(), nil
+	}
+
+	b := bytes.ReplaceAll(out.Bytes(), []byte("<no value>"), []byte(""))
+
+	return string(b), err
 }

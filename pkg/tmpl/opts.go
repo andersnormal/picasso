@@ -7,8 +7,10 @@ type TmplOpt func(*TmplOpts)
 
 // Opts ...
 type TmplOpts struct {
-	Fields TmplFields
-	Funcs  template.FuncMap
+	Fields                TmplFields
+	Funcs                 template.FuncMap
+	FailOnMissing         bool
+	DisableReplaceNoValue bool
 }
 
 // TmplFields ...
@@ -18,7 +20,7 @@ type TmplFields map[string]interface{}
 func NewOpts() TmplOpts {
 	return TmplOpts{
 		Fields: make(TmplFields),
-		Funcs:  make(template.FuncMap),
+		Funcs:  tmplFuncs,
 	}
 }
 
@@ -44,5 +46,19 @@ func WithExtraFuncs(funcs template.FuncMap) TmplOpt {
 		for f, v := range funcs {
 			opts.Funcs[f] = v
 		}
+	}
+}
+
+// WithDisableReplaceNoValue ...
+func WithDisableReplaceNoValue() TmplOpt {
+	return func(opts *TmplOpts) {
+		opts.DisableReplaceNoValue = true
+	}
+}
+
+// WithFailOnMissing ...
+func WithFailOnMissing() TmplOpt {
+	return func(opts *TmplOpts) {
+		opts.FailOnMissing = true
 	}
 }
