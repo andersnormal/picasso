@@ -3,7 +3,7 @@ module github.com/andersnormal/picasso
 go 1.18
 
 require (
-	github.com/andersnormal/pkg v0.0.0-20220702120339-a71ec741773d
+	github.com/andersnormal/pkg v0.0.0-20220715145430-119c43b2a60d
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-task/slim-sprig v2.20.0+incompatible

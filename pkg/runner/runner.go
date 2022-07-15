@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
+	"golang.org/x/exp/maps"
 )
 
 // Runner ...
@@ -145,9 +146,10 @@ func (r *Runner) RunTasks(tasks ...string) error {
 			return fmt.Errorf("task %s not found", task)
 		}
 
-		c.vars = NewFromMap(r.opts.File.Vars)
-		c.vars.Copy(NewFromMap(t.Vars))
-		c.vars.Copy(r.opts.Vars)
+		c.vars = Vars(r.opts.File.Vars)
+		maps.Copy(c.vars, Vars(t.Vars))
+		maps.Copy(c.vars, r.opts.Vars)
+
 		c.task = t
 
 		for _, fn := range r.funcs {

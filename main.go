@@ -14,6 +14,7 @@ import (
 	"github.com/andersnormal/picasso/pkg/runner"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
+	"github.com/andersnormal/pkg/utils/maps"
 	"mvdan.cc/sh/syntax"
 
 	"github.com/spf13/pflag"
@@ -165,8 +166,8 @@ func main() {
 	r := runner.WithContext(ctx,
 		runner.WithSpec(s),
 		runner.WithWorkingDir(cwd),
-		runner.WithEnv(runner.NewFromSlice(cfg.Flags.Env)),
-		runner.WithVars(runner.NewFromSlice(cfg.Flags.Vars)),
+		runner.WithEnv(maps.FromSlice(cfg.Flags.Env)),
+		runner.WithVars(maps.FromSlice(cfg.Flags.Vars)),
 	)
 	r.Use(runner.RunTask())
 
