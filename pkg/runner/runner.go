@@ -125,16 +125,6 @@ func (r *Runner) ReleaseCtx(c *Ctx) ReleaseFunc {
 // RunFunc ...
 type RunFunc func(c *Ctx) error
 
-// Run ...
-func (r *Runner) Run(fn ...RunFunc) error {
-	c := r.AcquireCtx()
-	defer r.ReleaseCtx(c)
-
-	c.funcs = append(r.funcs, fn...)
-
-	return c.funcs[c.idx](c)
-}
-
 // RunTask ...
 func (r *Runner) RunTasks(tasks ...string) error {
 	for _, task := range tasks {

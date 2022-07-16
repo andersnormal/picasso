@@ -1,16 +1,23 @@
 package spec
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/andersnormal/picasso/pkg/tmpl"
+	"github.com/andersnormal/picasso/pkg/utils"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
+	"mvdan.cc/sh/expand"
+	"mvdan.cc/sh/interp"
+	"mvdan.cc/sh/syntax"
 )
 
 var (
@@ -186,6 +193,80 @@ type Task struct {
 	Steps      Steps      `yaml:"steps"`
 }
 
+// RunOpt ...
+type RunOpt func(*RunOpts)
+
+// RunOpts ...
+type RunOpts struct {
+	WorkingDir WorkingDir
+	Vars       Vars
+	Env        Env
+	Timeout    time.Duration
+	Stdin      io.Reader
+	Stdout     io.Writer
+	Stderr     io.Writer
+}
+
+// Configure ...
+func (o *RunOpts) Configure(opts ...RunOpt) {
+	for _, opt := range opts {
+		opt(o)
+	}
+}
+
+// WithExtraVars ...
+func WithExtraVars(vars Vars) RunOpt {
+	return func(o *RunOpts) {
+		o.Vars = vars
+	}
+}
+
+// WithStdin ...
+func WithStdin(r io.Reader) RunOpt {
+	return func(o *RunOpts) {
+		o.Stdin = r
+	}
+}
+
+// WithStdout ...
+func WithStdout(w io.Writer) RunOpt {
+	return func(o *RunOpts) {
+		o.Stdout = w
+	}
+}
+
+// WithStderr ...
+func WithStderr(w io.Writer) RunOpt {
+	return func(o *RunOpts) {
+		o.Stderr = w
+	}
+}
+
+// WithExtraEnv ...
+func WithExtraEnv(env Env) RunOpt {
+	return func(o *RunOpts) {
+		o.Env = env
+	}
+}
+
+// WithWorkingDir ...
+func WithWorkingDir(dir WorkingDir) RunOpt {
+	return func(o *RunOpts) {
+		o.WorkingDir = dir
+	}
+}
+
+// Run ...
+func (t *Task) Run(ctx context.Context, opts ...RunOpt) error {
+	for _, s := range t.Steps {
+		if err := s.Run(ctx, opts...); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Step ...
 type Step struct {
 	Cmd              string            `yaml:"cmd"`
@@ -199,6 +280,52 @@ type Step struct {
 	Vars             Vars              `yaml:"vars"`
 	With             map[string]string `yaml:"with"`
 	WorkingDir       WorkingDir        `yaml:"working-dir"`
+}
+
+// Run ...
+func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
+	options := new(RunOpts)
+	options.Configure(opts...)
+
+	cmds := strings.Split(s.Cmd, "\n")
+	for _, cmd := range cmds {
+		err := s.runCmd(ctx, cmd, options)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Step) runCmd(ctx context.Context, cmd string, opts *RunOpts) error {
+	ctx, cancel := context.WithTimeout(ctx, opts.Timeout)
+	defer cancel()
+
+	p, err := syntax.NewParser().Parse(strings.NewReader(cmd), "")
+	if err != nil {
+		return err
+	}
+
+	r, err := interp.New(
+		interp.Dir(string(opts.WorkingDir)),
+		interp.Env(expand.ListEnviron(utils.Strings(opts.Env)...)),
+
+		interp.Module(interp.DefaultExec),
+		interp.Module(interp.OpenDevImpls(interp.DefaultOpen)),
+
+		interp.StdIO(opts.Stdin, opts.Stdout, opts.Stderr),
+	)
+	if err != nil {
+		return err
+	}
+
+	err = r.Run(ctx, p)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Steps ...
