@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"reflect"
 	"strings"
@@ -201,7 +202,6 @@ type RunOpts struct {
 	WorkingDir WorkingDir
 	Vars       Vars
 	Env        Env
-	Timeout    time.Duration
 	Stdin      io.Reader
 	Stdout     io.Writer
 	Stderr     io.Writer
@@ -259,7 +259,7 @@ func WithWorkingDir(dir WorkingDir) RunOpt {
 // Run ...
 func (t *Task) Run(ctx context.Context, opts ...RunOpt) error {
 	for _, s := range t.Steps {
-		if err := s.Run(ctx, opts...); err != nil {
+		if err := s.Run(ctx, append(opts, WithExtraEnv(t.Env), WithExtraVars(t.Vars))...); err != nil {
 			return err
 		}
 	}
@@ -287,10 +287,22 @@ func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
 	options := new(RunOpts)
 	options.Configure(opts...)
 
+	maps.Copy(options.Env, s.Env)
+	maps.Copy(options.Vars, s.Vars)
+
+	if s.WorkingDir != "" {
+		options.WorkingDir = s.WorkingDir
+	}
+
 	cmds := strings.Split(s.Cmd, "\n")
+	timeout := time.Duration(time.Nanosecond * math.MaxInt)
+	if s.TimeoutInSeconds > 0 {
+		timeout = time.Duration(time.Second * time.Duration(s.TimeoutInSeconds))
+	}
+
 	for _, cmd := range cmds {
-		err := s.runCmd(ctx, cmd, options)
-		if err != nil {
+		err := s.runCmd(ctx, cmd, timeout, options)
+		if err != nil && !s.ContinueOnError {
 			return err
 		}
 	}
@@ -298,8 +310,8 @@ func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
 	return nil
 }
 
-func (s *Step) runCmd(ctx context.Context, cmd string, opts *RunOpts) error {
-	ctx, cancel := context.WithTimeout(ctx, opts.Timeout)
+func (s *Step) runCmd(ctx context.Context, cmd string, timeout time.Duration, opts *RunOpts) error {
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	p, err := syntax.NewParser().Parse(strings.NewReader(cmd), "")
