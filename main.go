@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/config"
+	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/runner"
 	"github.com/andersnormal/picasso/pkg/spec"
 	"github.com/andersnormal/pkg/utils"
-	"github.com/andersnormal/pkg/utils/maps"
 	"mvdan.cc/sh/syntax"
 
 	"github.com/spf13/pflag"
@@ -154,7 +154,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	args, _, err := parseArgs()
+	args, cliArgs, err := parseArgs()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,45 +162,35 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r := runner.WithContext(ctx,
-		runner.WithSpec(s),
-		runner.WithWorkingDir(cwd),
-		runner.WithEnv(maps.FromSlice(cfg.Flags.Env)),
-		runner.WithVars(maps.FromSlice(cfg.Flags.Vars)),
-	)
+	r := runner.WithContext(ctx, runner.WithSpec(s), runner.WithWorkingDir(cwd))
 
 	r.Lock()
 	defer r.Unlock()
 
-	// if cfg.Flags.Plugin != "" {
-	// 	m := &plugin.Meta{Path: cfg.Flags.Plugin}
-	// 	f := m.Factory()
+	if cfg.Flags.Plugin != "" {
+		m := &plugin.Meta{Path: cfg.Flags.Plugin}
+		f := m.Factory(ctx)
 
-	// 	p, err := f()
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	defer p.Close()
+		p, err := f()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer p.Close()
 
-	// 	pp := s.Vars
+		pp := s.Vars
 
-	// 	resp, err := p.Execute(plugin.ExecuteRequest{
-	// 		Vars:      pp,
-	// 		Arguments: cliArgs,
-	// 	})
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
+		resp, err := p.Execute(plugin.ExecuteRequest{
+			Vars:      pp,
+			Arguments: cliArgs,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	// 	fmt.Println(resp)
+		fmt.Println(resp)
 
-	// 	err = p.Stop()
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	os.Exit(0)
-	// }
+		os.Exit(0)
+	}
 
 	tasks := s.Default()
 

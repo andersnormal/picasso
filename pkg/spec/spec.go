@@ -303,14 +303,16 @@ func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
 		timeout = time.Duration(time.Second * time.Duration(s.TimeoutInSeconds))
 	}
 
-	for _, cmd := range cmds {
-		if s.Uses != "" {
-			err := s.runRemote(ctx, cmd, timeout, options)
-			if err != nil && !s.ContinueOnError {
-				return err
-			}
-			continue
+	if s.Uses != "" {
+		err := s.runRemote(ctx, s.Uses, timeout)
+		if err != nil && !s.ContinueOnError {
+			return err
 		}
+
+		return nil
+	}
+
+	for _, cmd := range cmds {
 
 		err := s.runCmd(ctx, cmd, timeout, options)
 		if err != nil && !s.ContinueOnError {
@@ -321,9 +323,9 @@ func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
 	return nil
 }
 
-func (s *Step) runRemote(ctx context.Context, path string, timeout time.Duration, options *RunOpts) error {
+func (s *Step) runRemote(ctx context.Context, path string, timeout time.Duration) error {
 	m := &plugin.Meta{Path: path}
-	f := m.Factory()
+	f := m.Factory(ctx)
 
 	p, err := f()
 	if err != nil {

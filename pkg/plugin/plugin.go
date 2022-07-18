@@ -28,8 +28,8 @@ func (m *Meta) ExecutableFile() (string, error) {
 	return m.Path, nil
 }
 
-func (m *Meta) Factory() Factory {
-	return pluginFactory(m)
+func (m *Meta) Factory(ctx context.Context) Factory {
+	return pluginFactory(ctx, m)
 }
 
 // GRPCTaskPlugin ...
@@ -104,7 +104,7 @@ type ExecuteRequest struct {
 type ExecuteResponse struct {
 }
 
-func pluginFactory(meta *Meta) Factory {
+func pluginFactory(ctx context.Context, meta *Meta) Factory {
 	return func() (Plugin, error) {
 		f, err := meta.ExecutableFile()
 		if err != nil {
@@ -123,7 +123,7 @@ func pluginFactory(meta *Meta) Factory {
 			AutoMTLS:         enablePluginAutoMTLS,
 			Managed:          true,
 			AllowedProtocols: []p.Protocol{p.ProtocolGRPC},
-			Cmd:              exec.Command(f, meta.Arguments...),
+			Cmd:              exec.CommandContext(ctx, f, meta.Arguments...),
 			SyncStderr:       l.StandardWriter(&hclog.StandardLoggerOptions{}),
 			SyncStdout:       l.StandardWriter(&hclog.StandardLoggerOptions{}),
 		}

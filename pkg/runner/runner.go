@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/andersnormal/picasso/pkg/spec"
-	"golang.org/x/exp/maps"
 )
 
 // Runner ...
@@ -34,7 +33,7 @@ type Opts struct {
 	File       *spec.Spec
 	Vars       Vars
 	Env        Env
-	WorkingDir WorkingDir
+	WorkingDir spec.WorkingDir
 }
 
 // Configure ...
@@ -80,7 +79,7 @@ func WithEnv(env Env) Opt {
 // WithWorkingDir ...
 func WithWorkingDir(cwd string) Opt {
 	return func(o *Opts) {
-		o.WorkingDir = WorkingDir(cwd)
+		o.WorkingDir = spec.WorkingDir(cwd)
 	}
 }
 
@@ -136,15 +135,11 @@ func (r *Runner) RunTasks(tasks ...string) error {
 			return fmt.Errorf("task %s not found", task)
 		}
 
-		c.vars = Vars(r.opts.File.Vars)
-		maps.Copy(c.vars, Vars(t.Vars))
-		maps.Copy(c.vars, r.opts.Vars)
-
-		c.task = t
-
 		if err := t.Run(
 			c.Context(),
-			spec.WithExtraVars(spec.Vars(c.vars)),
+			spec.WithWorkingDir(r.opts.WorkingDir),
+			spec.WithExtraVars(r.opts.File.Vars),
+			spec.WithExtraEnv(r.opts.File.Env),
 			spec.WithStderr(c.runner.Stderr()),
 			spec.WithStdin(c.runner.Stdin()),
 			spec.WithStdout(c.runner.Stdout()),

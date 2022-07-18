@@ -21,6 +21,8 @@ tasks:
         vars:
           foo: bar
     steps:
+      - uses: examples/plugin
+        cmd: echo "{{.OS}}"
       - cmd: go test -cover -p 1 -race -v ./...
   build:
     default: true
