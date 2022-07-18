@@ -5,7 +5,9 @@ const withNextra = require('nextra')({
     themeConfig: './theme.config.js',
     unstable_staticImage: true,
 })
-module.exports = withNextra({ assetPrefix: isProd ? "/picasso/" : "", experimental: {
+module.exports = withNextra({ 
+    basePath: isProd ? "/picasso/" : "",
+    assetPrefix: isProd ? "/picasso/" : "", experimental: {
     images: {
         unoptimized: true
     }
