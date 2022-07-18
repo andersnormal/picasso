@@ -1,3 +1,3 @@
 {
-    "project": "{{.OS}}"
+    "project": "{{OS}}_{{.project}}"
 }

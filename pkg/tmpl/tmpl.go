@@ -32,7 +32,7 @@ func (t *Template) ApplyFile(in, out string) error {
 		return err
 	}
 
-	o, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	o, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}

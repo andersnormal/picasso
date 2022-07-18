@@ -18,8 +18,8 @@ tasks:
       - 
         file: ./examples/config.json.tpl
         out: ./config.json
-        vars:
-          foo: bar
+        var:
+          project: picasso
     steps:
       - uses: examples/plugin
         cmd: echo "{{.OS}}"

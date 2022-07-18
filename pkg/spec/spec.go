@@ -261,6 +261,24 @@ func WithWorkingDir(dir WorkingDir) RunOpt {
 
 // Run ...
 func (t *Task) Run(ctx context.Context, opts ...RunOpt) error {
+	options := new(RunOpts)
+	options.Configure(opts...)
+
+	for _, template := range t.Templates {
+		ff := make(tmpl.TmplFields)
+		for k, v := range template.Vars {
+			ff[k] = v
+		}
+
+		fmt.Println(template.Vars)
+
+		gen := tmpl.New(tmpl.WithExtraFields(ff))
+		err := gen.ApplyFile(template.File, template.Out)
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, s := range t.Steps {
 		if err := s.Run(ctx, append(opts, WithExtraEnv(t.Env), WithExtraVars(t.Vars))...); err != nil {
 			return err
@@ -277,7 +295,6 @@ type Step struct {
 	Env              Env               `yaml:"env"`
 	Id               string            `yaml:"id"`
 	If               string            `yaml:"if"`
-	Templates        Templates         `yaml:"template,omitempty"`
 	TimeoutInSeconds int64             `yaml:"timeout-in-seconds"`
 	Uses             string            `yaml:"uses"`
 	Vars             Vars              `yaml:"vars"`

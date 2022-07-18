@@ -126,14 +126,19 @@ type RunFunc func(c *Ctx) error
 
 // RunTask ...
 func (r *Runner) RunTasks(tasks ...string) error {
-	for _, task := range tasks {
-		c := r.AcquireCtx()
-		defer r.ReleaseCtx(c)
+	tt := make([]spec.Task, len(tasks))
 
+	for i, task := range tasks {
 		t, ok := r.opts.File.Tasks[task]
 		if !ok {
 			return fmt.Errorf("task %s not found", task)
 		}
+		tt[i] = t
+	}
+
+	for _, t := range tt {
+		c := r.AcquireCtx()
+		defer r.ReleaseCtx(c)
 
 		if err := t.Run(
 			c.Context(),

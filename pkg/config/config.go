@@ -36,15 +36,15 @@ type Config struct {
 	LogLevel string `mapstructure:"log_level"`
 	// LogFormat is the format that is used for logging
 	LogFormat string `mapstructure:"log_format"`
-	// ReloadSignal
+	// ReloadSignal ...
 	ReloadSignal syscall.Signal
-	// TermSignal
+	// TermSignal ...
 	TermSignal syscall.Signal
-	// KillSignal
+	// KillSignal ...
 	KillSignal syscall.Signal
-	// CfgFile
+	// File...
 	File string
-	// FileMode
+	// FileMode ...
 	FileMode os.FileMode
 	// Flags ...
 	Flags Flags
