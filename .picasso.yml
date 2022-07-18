@@ -8,7 +8,7 @@ tasks:
   foo:
     disabled: true
   test:
-    desc: test
+    default: true
     cmd:
       - echo "{{.OS}}"
     watch:
@@ -25,7 +25,6 @@ tasks:
         cmd: echo "{{.OS}}"
       - cmd: go test -cover -p 1 -race -v ./...
   build:
-    default: true
     depends-on:
       - test
     vars:

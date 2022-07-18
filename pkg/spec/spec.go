@@ -125,12 +125,12 @@ func Load(file string) (*Spec, error) {
 }
 
 // Default ...
-func (s *Spec) Default() []Task {
-	tt := make([]Task, 0)
+func (s *Spec) Default() []string {
+	tt := make([]string, 0)
 
-	for _, t := range s.Tasks {
+	for k, t := range s.Tasks {
 		if t.Default {
-			tt = append(tt, t)
+			tt = append(tt, k)
 		}
 	}
 
@@ -138,9 +138,9 @@ func (s *Spec) Default() []Task {
 }
 
 // Find ...
-func (s *Spec) Find(names []string) ([]Task, error) {
+func (s *Spec) Find(names ...string) ([]string, error) {
 	all := make(map[string]bool)
-	tt := make([]Task, 0)
+	tt := make([]string, 0)
 
 	for _, name := range names {
 		if _, exists := all[name]; exists {
@@ -161,12 +161,12 @@ func (s *Spec) Find(names []string) ([]Task, error) {
 			if !ok {
 				return nil, ErrTaskNotFound
 			}
-			tt = append(tt, d)
+			tt = append(tt, dep)
 			all[d.Name] = true
 		}
 
 		all[name] = true
-		tt = append(tt, t)
+		tt = append(tt, name)
 	}
 
 	return tt, nil

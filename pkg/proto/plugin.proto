@@ -10,7 +10,7 @@ service Plugin {
     rpc Execute(Execute.Request) returns (Execute.Response) {}
 }
 
-// Start ...
+// Execute ...
 message Execute {
     enum Status {
         UNKNOWN = 0;
@@ -28,18 +28,6 @@ message Execute {
     message Response {
         Status status = 1;
         repeated Diagnostic diagnostic = 10;
-    }
-}
-
-// Stop ...
-message Stop {
-    // Request ...
-    message Request {
-
-    }
-    // Response ...
-    message Response {
-        string Error = 1;
     }
 }
 

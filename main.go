@@ -179,26 +179,32 @@ func main() {
 
 		pp := s.Vars
 
-		resp, err := p.Execute(plugin.ExecuteRequest{
+		if _, err := p.Execute(plugin.ExecuteRequest{
 			Vars:      pp,
 			Arguments: cliArgs,
-		})
-		if err != nil {
+		}); err != nil {
 			log.Fatal(err)
 		}
-
-		fmt.Println(resp)
 
 		os.Exit(0)
 	}
 
-	tasks := s.Default()
+	tasks, err := s.Find(args...)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	if len(args) == 0 && len(tasks) == 0 {
+	defaultTasks := s.Default()
+
+	if len(tasks) == 0 && len(defaultTasks) == 0 {
 		log.Fatal("no default task")
 	}
 
-	if err := r.RunTasks(args...); err != nil {
+	if len(tasks) == 0 {
+		tasks = defaultTasks
+	}
+
+	if err := r.RunTasks(tasks...); err != nil {
 		log.Fatal(err)
 	}
 }
