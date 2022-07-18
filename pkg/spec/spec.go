@@ -5,14 +5,17 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"math"
 	"os"
 	"reflect"
 	"strings"
 	"time"
 
+	"github.com/andersnormal/picasso/pkg/plugin"
 	"github.com/andersnormal/picasso/pkg/tmpl"
 	"github.com/andersnormal/picasso/pkg/utils"
+
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
@@ -301,10 +304,36 @@ func (s *Step) Run(ctx context.Context, opts ...RunOpt) error {
 	}
 
 	for _, cmd := range cmds {
+		if s.Uses != "" {
+			err := s.runRemote(ctx, cmd, timeout, options)
+			if err != nil && !s.ContinueOnError {
+				return err
+			}
+			continue
+		}
+
 		err := s.runCmd(ctx, cmd, timeout, options)
 		if err != nil && !s.ContinueOnError {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *Step) runRemote(ctx context.Context, path string, timeout time.Duration, options *RunOpts) error {
+	m := &plugin.Meta{Path: path}
+	f := m.Factory()
+
+	p, err := f()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer p.Close()
+
+	_, err = p.Execute(plugin.ExecuteRequest{})
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return nil
@@ -321,7 +350,7 @@ func (s *Step) runCmd(ctx context.Context, cmd string, timeout time.Duration, op
 
 	r, err := interp.New(
 		interp.Dir(string(opts.WorkingDir)),
-		interp.Env(expand.ListEnviron(utils.Strings(opts.Env)...)),
+		interp.Env(expand.ListEnviron(append(os.Environ(), utils.Strings(opts.Env)...)...)),
 
 		interp.Module(interp.DefaultExec),
 		interp.Module(interp.OpenDevImpls(interp.DefaultOpen)),

@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginClient interface {
+	// Execute executes a plugin
 	Execute(ctx context.Context, in *Execute_Request, opts ...grpc.CallOption) (*Execute_Response, error)
-	Stop(ctx context.Context, in *Stop_Request, opts ...grpc.CallOption) (*Stop_Response, error)
 }
 
 type pluginClient struct {
@@ -43,21 +43,12 @@ func (c *pluginClient) Execute(ctx context.Context, in *Execute_Request, opts ..
 	return out, nil
 }
 
-func (c *pluginClient) Stop(ctx context.Context, in *Stop_Request, opts ...grpc.CallOption) (*Stop_Response, error) {
-	out := new(Stop_Response)
-	err := c.cc.Invoke(ctx, "/proto.Plugin/Stop", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PluginServer is the server API for Plugin service.
 // All implementations must embed UnimplementedPluginServer
 // for forward compatibility
 type PluginServer interface {
+	// Execute executes a plugin
 	Execute(context.Context, *Execute_Request) (*Execute_Response, error)
-	Stop(context.Context, *Stop_Request) (*Stop_Response, error)
 	mustEmbedUnimplementedPluginServer()
 }
 
@@ -67,9 +58,6 @@ type UnimplementedPluginServer struct {
 
 func (UnimplementedPluginServer) Execute(context.Context, *Execute_Request) (*Execute_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
-}
-func (UnimplementedPluginServer) Stop(context.Context, *Stop_Request) (*Stop_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
 }
 func (UnimplementedPluginServer) mustEmbedUnimplementedPluginServer() {}
 
@@ -102,24 +90,6 @@ func _Plugin_Execute_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Plugin_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Stop_Request)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PluginServer).Stop(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.Plugin/Stop",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PluginServer).Stop(ctx, req.(*Stop_Request))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Plugin_ServiceDesc is the grpc.ServiceDesc for Plugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,10 +100,6 @@ var Plugin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Execute",
 			Handler:    _Plugin_Execute_Handler,
-		},
-		{
-			MethodName: "Stop",
-			Handler:    _Plugin_Stop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -142,10 +142,14 @@ func (r *Runner) RunTasks(tasks ...string) error {
 
 		c.task = t
 
-		for _, fn := range r.funcs {
-			if err := fn(c); err != nil {
-				return err
-			}
+		if err := t.Run(
+			c.Context(),
+			spec.WithExtraVars(spec.Vars(c.vars)),
+			spec.WithStderr(c.runner.Stderr()),
+			spec.WithStdin(c.runner.Stdin()),
+			spec.WithStdout(c.runner.Stdout()),
+		); err != nil {
+			return err
 		}
 	}
 

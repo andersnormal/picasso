@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"context"
-	"errors"
 	"os"
 	"os/exec"
 
@@ -60,20 +59,6 @@ type GRPCPlugin struct {
 	client proto.PluginClient
 }
 
-// Stop ...
-func (p *GRPCPlugin) Stop() error {
-	resp, err := p.client.Stop(p.ctx, new(proto.Stop_Request))
-	if err != nil {
-		return err
-	}
-
-	if resp.Error != "" {
-		return errors.New(resp.Error)
-	}
-
-	return nil
-}
-
 // Start ...
 func (p *GRPCPlugin) Close() error {
 	if p.PluginClient != nil {
@@ -105,8 +90,6 @@ type Factory func() (Plugin, error)
 type Plugin interface {
 	// Execute ...
 	Execute(ExecuteRequest) (ExecuteResponse, error)
-	// Stop ...
-	Stop() error
 	// Close ...
 	Close() error
 }
