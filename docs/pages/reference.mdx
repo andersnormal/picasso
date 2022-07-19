@@ -105,7 +105,7 @@ tasks:
 | `name` | `string` | | Name of the task. |
 | `working-dir` | `string` | `cwd` | Current directort which the task should run in. |
 | `disabled` | `bool` | `false` | Disable the task in execution. |
-| `depends_on` | `DependsOn` | | List of other task this task depends on in execution. |
+| `depends-on` | `DependsOn` | | List of other task this task depends on in execution. |
 | `vars` | [`Vars`](#variable) | | Variables for this task. |
 | `env` | [`Env`](#variable) | | Task specific environment. |
 | `watch` | [`Watch`](#watch) | | Configuration for `watch` flag of the task. |
@@ -121,10 +121,9 @@ tasks:
 | `vars` | [`Vars`](#variable) | | Variables for this task. |
 | `env` | [`Env`](#variable) | | Task specific environment. |
 | `if` | [`If`](#condition) | `true` | Condition to run this step. |
-| `template` | [`Templates`](#template) | | Templates to create for this task. |
 | `uses` | `string` | | A [plugin](/plugins) to be run in this step. |
 | `with` | [`Vars`](#variable) |  | Extra variables for the plugin in the `uses` property. |
-| `depends_on` | `DependsOn` | | List of other task this task depends on in execution. |
+| `depends-on` | `DependsOn` | | List of other task this task depends on in execution. |
 | `timeout-in-seconds` | `int64` | `math.MaxInt64` | The timeout for the execution of this step. This is borrowed from the `context` timeout. |
 | `continue-on-error` | `bool` | `false` | Enables to proceed with the next step even if the current step has failed. |
 
